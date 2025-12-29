@@ -4,7 +4,7 @@ const nextConfig = {
 
   // Turbopack settings
   turbopack: {
-    root: '.',
+    root: 'C:\\Users\\Esteban\\Desktop\\proyectos\\doctorcar',
   },
 
   typescript: {
