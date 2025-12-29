@@ -4,8 +4,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   const session = await getSession();
   if (!session) {
-    // Redirect to Auth0 login
-    return NextResponse.redirect(`${process.env.AUTH0_BASE_URL}/api/auth/login`);
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
   return NextResponse.json(session.user);
 }
