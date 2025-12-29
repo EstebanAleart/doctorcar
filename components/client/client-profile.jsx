@@ -2,23 +2,30 @@
 
 import React from "react";
 import { useState } from "react";
-import { useAuth } from "@/hooks/use-auth";
-import { db } from "@/lib/db";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUser } from "@/lib/store";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User, Mail, Phone, Lock } from "lucide-react";
+import { User, Mail, Phone } from "lucide-react";
+import Image from "next/image";
 
 export function ClientProfile() {
-  const { user } = useAuth();
+  const user = useSelector((state) => state.user.data);
+  const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
     phone: user?.phone || "",
-    password: "",
   });
+
+  const handleChange = (field, value) => {
+    setFormData({ ...formData, [field]: value });
+    // Actualizar Redux en tiempo real
+    dispatch(updateUser({ [field]: value }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,13 +35,26 @@ export function ClientProfile() {
         email: formData.email,
         phone: formData.phone,
       };
-      if (formData.password) {
-        updates.password = formData.password;
-      }
-      db.updateUser(user.id, updates);
-      setIsEditing(false);
-      setFormData({ ...formData, password: "" });
+      // Aquí guardarías en BD si lo deseas
+      fetch("/api/user", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+        credentials: "include",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          dispatch(updateUser(data));
+          setIsEditing(false);
+        })
+        .catch((err) => console.error("Error saving profile:", err));
     }
+  };
+
+  // Generar foto de Gmail basada en email
+  const getGmailAvatar = (email) => {
+    if (!email) return null;
+    return `https://www.gravatar.com/avatar/${email}?d=identicon&s=64`;
   };
 
   return (
@@ -51,12 +71,21 @@ export function ClientProfile() {
         <CardContent>
           {isEditing ? (
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="flex justify-center mb-4">
+                <Image
+                  src={getGmailAvatar(user?.email)}
+                  alt="Foto de perfil"
+                  width={80}
+                  height={80}
+                  className="rounded-full"
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="name">Nombre completo</Label>
                 <Input
                   id="name"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) => handleChange("name", e.target.value)}
                   required
                 />
               </div>
@@ -66,8 +95,9 @@ export function ClientProfile() {
                   id="email"
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) => handleChange("email", e.target.value)}
                   required
+                  disabled
                 />
               </div>
               <div className="space-y-2">
@@ -75,17 +105,7 @@ export function ClientProfile() {
                 <Input
                   id="phone"
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Nueva Contraseña (opcional)</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder="Dejar en blanco para mantener la actual"
+                  onChange={(e) => handleChange("phone", e.target.value)}
                 />
               </div>
               <div className="flex gap-2">
@@ -101,7 +121,6 @@ export function ClientProfile() {
                       name: user?.name || "",
                       email: user?.email || "",
                       phone: user?.phone || "",
-                      password: "",
                     });
                   }}
                 >
@@ -111,6 +130,15 @@ export function ClientProfile() {
             </form>
           ) : (
             <div className="space-y-4">
+              <div className="flex justify-center mb-4">
+                <Image
+                  src={getGmailAvatar(user?.email)}
+                  alt="Foto de perfil"
+                  width={100}
+                  height={100}
+                  className="rounded-full"
+                />
+              </div>
               <div className="flex items-start gap-3">
                 <User className="h-5 w-5 text-muted-foreground mt-0.5" />
                 <div>
@@ -130,13 +158,6 @@ export function ClientProfile() {
                 <div>
                   <p className="text-sm text-muted-foreground">Teléfono</p>
                   <p className="font-medium">{user?.phone || "No especificado"}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Lock className="h-5 w-5 text-muted-foreground mt-0.5" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Contraseña</p>
-                  <p className="font-medium">••••••••</p>
                 </div>
               </div>
               <Button onClick={() => setIsEditing(true)} className="w-full bg-[#1a4d6d] hover:bg-[#2d6a8f]">

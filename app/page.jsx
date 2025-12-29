@@ -17,8 +17,10 @@ export default function HomePage() {
   useEffect(() => {
     // Initialize database with demo data
     db.initialize();
+  }, []);
 
-    if (!loading && user) {
+  useEffect(() => {
+    if (user && !loading) {
       switch (user.role) {
         case "admin":
           router.push("/admin");
@@ -33,16 +35,9 @@ export default function HomePage() {
     }
   }, [user, loading, router]);
 
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#1a4d6d] border-t-transparent"></div>
-      </div>
-    );
-  }
-
+  // Si está logueado, no mostrar nada (va a redirigir)
   if (user) {
-    return null; // Will redirect
+    return null;
   }
 
   return (

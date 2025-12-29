@@ -1,13 +1,19 @@
 "use client";
 
-import { useAuth } from "@/hooks/use-auth";
+import { useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
-import { LogOut, User } from "lucide-react";
+import { LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export function ClientHeader() {
-  const { user } = useAuth();
+  const user = useSelector((state) => state.user.data);
+
+  // Generar foto de Gmail basada en email
+  const getGmailAvatar = (email) => {
+    if (!email) return null;
+    return `https://www.gravatar.com/avatar/${email}?d=identicon&s=40`;
+  };
 
   return (
     <header className="border-b bg-[#1a4d6d] text-white">
@@ -27,10 +33,21 @@ export function ClientHeader() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            <span className="text-sm">{user?.name}</span>
-          </div>
+          {user && (
+            <div className="flex items-center gap-3">
+              <Image
+                src={getGmailAvatar(user.email)}
+                alt={user.name || "Perfil"}
+                width={40}
+                height={40}
+                className="rounded-full"
+              />
+              <div>
+                <p className="text-sm font-medium">{user.name}</p>
+                <p className="text-xs text-[#6cb4d8]">{user.email}</p>
+              </div>
+            </div>
+          )}
           <Link href="/api/auth/logout">
             <Button variant="ghost" size="sm" className="text-white hover:bg-[#2d6a8f]">
               <LogOut className="h-4 w-4" />

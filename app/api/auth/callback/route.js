@@ -4,6 +4,19 @@ import { userDb } from '@/lib/database';
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
+  const stateParam = searchParams.get('state');
+
+  let returnTo = '/client';
+  if (stateParam) {
+    try {
+      const parsed = JSON.parse(Buffer.from(stateParam, 'base64url').toString());
+      if (parsed?.returnTo && typeof parsed.returnTo === 'string') {
+        returnTo = parsed.returnTo;
+      }
+    } catch (e) {
+      console.warn('Invalid state param', e);
+    }
+  }
 
   if (!code) {
     return NextResponse.json({ error: 'No authorization code' }, { status: 400 });
@@ -24,11 +37,18 @@ export async function GET(request) {
     });
 
     if (!tokenResponse.ok) {
+      const body = await tokenResponse.text();
+      console.error('Token exchange failed', tokenResponse.status, body);
       throw new Error('Token exchange failed');
     }
 
     const tokens = await tokenResponse.json();
     const accessToken = tokens.access_token;
+
+    if (!accessToken) {
+      console.error('No access token in Auth0 response', tokens);
+      throw new Error('Missing access token');
+    }
 
     // Fetch user profile from Auth0
     const profileRes = await fetch(`https://${process.env.AUTH0_DOMAIN}/userinfo`, {
@@ -38,6 +58,8 @@ export async function GET(request) {
     });
 
     if (!profileRes.ok) {
+      const body = await profileRes.text();
+      console.error('Failed to fetch user profile', profileRes.status, body);
       throw new Error('Failed to fetch user profile');
     }
 
@@ -51,13 +73,13 @@ export async function GET(request) {
     // Upsert in DB with default role client
     const dbUser = await userDb.upsertFromAuth0(authUser);
 
-    // Store minimal session in cookie
-    const cookiePayload = Buffer.from(
-      JSON.stringify({ sub: authUser.sub, email: authUser.email, name: authUser.name, role: dbUser.role })
+    // Store ONLY session token in httpOnly cookie (no user data)
+    const sessionToken = Buffer.from(
+      JSON.stringify({ sub: authUser.sub, iat: Date.now() })
     ).toString('base64url');
 
-    const response = NextResponse.redirect(new URL('/', process.env.AUTH0_BASE_URL));
-    response.cookies.set('auth_user', cookiePayload, {
+    const response = NextResponse.redirect(new URL(returnTo, process.env.AUTH0_BASE_URL));
+    response.cookies.set('auth_session', sessionToken, {
       httpOnly: true,
       sameSite: 'lax',
       secure: process.env.AUTH0_BASE_URL.startsWith('https'),
