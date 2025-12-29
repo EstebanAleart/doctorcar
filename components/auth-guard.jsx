@@ -1,36 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 
 export function AuthGuard({ children, allowedRoles }) {
-  const { user, loading } = useAuth(); // Usa el hook que hace fetch
+  const { user, loading } = useAuth();
   const router = useRouter();
-  const [isChecking, setIsChecking] = useState(true);
 
-  console.log("[AuthGuard] Render - user:", user, "loading:", loading, "isChecking:", isChecking);
+  console.log("[AuthGuard] Render - user:", user, "loading:", loading);
 
   useEffect(() => {
     console.log("[AuthGuard] Effect - loading:", loading, "user:", user);
-    // Esperar a que useAuth termine de cargar
-    if (!loading) {
-      setIsChecking(false);
-      
-      if (!user) {
-        console.log("[AuthGuard] No user, redirecting to /login");
-        router.push("/login");
-      } else if (allowedRoles && !allowedRoles.includes(user.role)) {
-        console.log("[AuthGuard] Wrong role, redirecting to /unauthorized");
-        router.push("/unauthorized");
-      } else {
-        console.log("[AuthGuard] Auth OK, user:", user.email);
-      }
+    
+    if (loading) return; // Wait for auth check to complete
+    
+    if (!user) {
+      console.log("[AuthGuard] No user, redirecting to /login");
+      router.push("/login");
+    } else if (allowedRoles && !allowedRoles.includes(user.role)) {
+      console.log("[AuthGuard] Wrong role, redirecting to /unauthorized");
+      router.push("/unauthorized");
+    } else {
+      console.log("[AuthGuard] Auth OK, user:", user.email);
     }
   }, [user, loading, allowedRoles, router]);
 
   // Show loading spinner while checking
-  if (isChecking || loading) {
+  if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
