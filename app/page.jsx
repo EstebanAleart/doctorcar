@@ -67,7 +67,7 @@ export default function HomePage() {
                 Iniciar Sesión
               </Button>
             </Link>
-            <Link href="/api/auth/signup">
+            <Link href="/api/auth/login?screen_hint=signup">
               <Button className="bg-[#1a4d6d] hover:bg-[#6cb4d8]">Registrarse</Button>
             </Link>
           </div>
@@ -87,7 +87,7 @@ export default function HomePage() {
             seguros.
           </p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Link href="/api/auth/signup">
+            <Link href="/api/auth/login?screen_hint=signup">
               <Button size="lg" className="bg-[#1a4d6d] hover:bg-[#6cb4d8]">
                 Empezar Ahora
               </Button>
@@ -226,7 +226,7 @@ export default function HomePage() {
           <p className="mb-8 text-lg text-[#6cb4d8] text-pretty">
             Unite a cientos de clientes satisfechos que confían en DOCTORCAR
           </p>
-          <Link href="/api/auth/signup">
+          <Link href="/api/auth/login?screen_hint=signup">
             <Button
               size="lg"
               variant="secondary"
