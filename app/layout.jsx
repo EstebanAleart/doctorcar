@@ -1,6 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import { Auth0Provider as UserProvider } from "@auth0/nextjs-auth0/client";
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"] });
@@ -33,7 +32,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        <UserProvider>{children}</UserProvider>
+        {children}
         <Analytics />
       </body>
     </html>

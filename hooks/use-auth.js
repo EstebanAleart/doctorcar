@@ -2,7 +2,6 @@
 
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { useEffect, useState } from "react";
-import { db } from "@/lib/db";
 
 export function useAuth() {
   const { user: auth0User, error, isLoading: loading } = useUser();
@@ -10,18 +9,11 @@ export function useAuth() {
 
   useEffect(() => {
     if (auth0User) {
-      let dbUser = db.getUserByEmail(auth0User.email);
-      if (!dbUser) {
-        // Create user in local DB if doesn't exist
-        dbUser = db.createUser({
-          email: auth0User.email,
-          name: auth0User.name || auth0User.email,
-          role: "client", // Default role for new users
-          phone: "",
-          auth0Id: auth0User.sub,
-        });
-      }
-      setLocalUser(dbUser);
+      // Cargar datos del usuario desde la API
+      fetch('/api/user')
+        .then(res => res.json())
+        .then(data => setLocalUser(data))
+        .catch(err => console.error('Error loading user:', err));
     } else {
       setLocalUser(null);
     }

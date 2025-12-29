@@ -6,7 +6,8 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "eslint .",
-    "start": "next start"
+    "start": "next start",
+    "db:init": "node scripts/db-init.js"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "4.14.0",
@@ -50,6 +51,7 @@
     "lucide-react": "^0.454.0",
     "next": "16.0.10",
     "next-themes": "^0.4.6",
+    "pg": "^8.16.3",
     "react": "^19.0.0",
     "react-day-picker": "9.8.0",
     "react-dom": "^19.0.0",
@@ -68,6 +70,7 @@
     "@babel/parser": "^7.28.5",
     "@eslint/js": "^9.39.2",
     "@tailwindcss/postcss": "^4.1.9",
+    "dotenv": "^17.2.3",
     "eslint-config-prettier": "^10.1.8",
     "postcss": "^8.5",
     "prettier": "^3.7.4",
