@@ -65,8 +65,8 @@ function DialogHeader({ className, ...props }) { return ( <div data-slot="dialog
 
 function DialogFooter({ className, ...props }) { return ( <div data-slot="dialog-footer" className={cn( 'flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', className, )} {...props} /> ) }
 
-function DialogTitle({ className, ...props }) { return ( <Dialog.Title data-slot="dialog-title" className={cn('text-lg leading-none font-semibold', className)} {...props} /> ) }
+function DialogTitle({ className, ...props }) { return ( <RadixDialog.Title data-slot="dialog-title" className={cn('text-lg leading-none font-semibold', className)} {...props} /> ) }
 
-function DialogDescription({ className, ...props }) { return ( <Dialog.Description data-slot="dialog-description" className={cn('text-muted-foreground text-sm', className)} {...props} /> ) }
+function DialogDescription({ className, ...props }) { return ( <RadixDialog.Description data-slot="dialog-description" className={cn('text-muted-foreground text-sm', className)} {...props} /> ) }
 
 export { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, }

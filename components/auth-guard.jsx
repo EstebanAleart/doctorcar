@@ -8,16 +8,25 @@ export function AuthGuard({ children, allowedRoles }) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
+  console.log("[AuthGuard] Render - user:", user, "loading:", loading);
+
   useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        router.push("/login");
-      } else if (allowedRoles && !allowedRoles.includes(user.role)) {
-        router.push("/unauthorized");
-      }
+    console.log("[AuthGuard] Effect - loading:", loading, "user:", user);
+    
+    if (loading) return; // Wait for auth check to complete
+    
+    if (!user) {
+      console.log("[AuthGuard] No user, redirecting to /login");
+      router.push("/login");
+    } else if (allowedRoles && !allowedRoles.includes(user.role)) {
+      console.log("[AuthGuard] Wrong role, redirecting to /unauthorized");
+      router.push("/unauthorized");
+    } else {
+      console.log("[AuthGuard] Auth OK, user:", user.email);
     }
   }, [user, loading, allowedRoles, router]);
 
+  // Show loading spinner while checking
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -29,9 +38,11 @@ export function AuthGuard({ children, allowedRoles }) {
     );
   }
 
+  // If not authenticated or not authorized, return null (will redirect)
   if (!user || (allowedRoles && !allowedRoles.includes(user.role))) {
     return null;
   }
 
+  // User is authenticated and authorized
   return <>{children}</>;
 } 

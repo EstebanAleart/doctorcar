@@ -19,9 +19,17 @@ yarn-error.log*
 # env files
 .env*
 
+# database
+*.db
+*.db-shm
+*.db-wal
+
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# documentation (temporal)
+README.md
