@@ -148,3 +148,150 @@ CREATE INDEX IF NOT EXISTS idx_claims_client_id ON claims(client_id);
 CREATE INDEX IF NOT EXISTS idx_claims_employee_id ON claims(employee_id);
 CREATE INDEX IF NOT EXISTS idx_claims_status ON claims(status);
 CREATE INDEX IF NOT EXISTS idx_budget_items_claim_id ON budget_items(claim_id);
+
+-- Appointments (citas)
+CREATE TABLE IF NOT EXISTS appointments (
+  id TEXT PRIMARY KEY,
+  claim_id TEXT NOT NULL REFERENCES claims(id) ON DELETE CASCADE,
+  scheduled_date DATE NOT NULL,
+  scheduled_time TIME,
+  duration_minutes INTEGER DEFAULT 60,
+  status TEXT NOT NULL DEFAULT 'scheduled' CHECK(status IN ('scheduled','confirmed','in_progress','completed','cancelled','rescheduled')),
+  appointment_type TEXT NOT NULL DEFAULT 'inspection' CHECK(appointment_type IN ('inspection','repair','delivery','follow_up')),
+  notes TEXT,
+  workshop_id INTEGER DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insurance Companies
+CREATE TABLE IF NOT EXISTS insurance_companies (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  phone TEXT,
+  email TEXT,
+  contact_person TEXT,
+  workshop_id INTEGER DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Billing (facturación)
+CREATE TABLE IF NOT EXISTS billing (
+  id TEXT PRIMARY KEY,
+  claim_id TEXT NOT NULL REFERENCES claims(id) ON DELETE CASCADE,
+  billing_number TEXT UNIQUE NOT NULL,
+  billing_date DATE NOT NULL,
+  due_date DATE,
+  customer_type TEXT NOT NULL CHECK(customer_type IN ('individual','insurance_company')),
+  insurance_company_id TEXT REFERENCES insurance_companies(id),
+  insurance_policy_number TEXT,
+  subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
+  tax_rate DECIMAL(5,2) DEFAULT 0,
+  tax_amount DECIMAL(10,2) DEFAULT 0,
+  discount_percentage DECIMAL(5,2) DEFAULT 0,
+  discount_amount DECIMAL(10,2) DEFAULT 0,
+  total_amount DECIMAL(10,2) NOT NULL,
+  paid_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+  balance DECIMAL(10,2) NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','partial','paid','overdue','cancelled')),
+  notes TEXT,
+  internal_notes TEXT,
+  workshop_id INTEGER DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Billing Items
+CREATE TABLE IF NOT EXISTS billing_items (
+  id TEXT PRIMARY KEY,
+  billing_id TEXT NOT NULL REFERENCES billing(id) ON DELETE CASCADE,
+  budget_item_id TEXT REFERENCES budget_items(id) ON DELETE SET NULL,
+  description TEXT NOT NULL,
+  quantity DECIMAL(10,2) NOT NULL DEFAULT 1,
+  unit_price DECIMAL(10,2) NOT NULL,
+  total_price DECIMAL(10,2) NOT NULL,
+  item_type TEXT NOT NULL CHECK(item_type IN ('labor','parts','materials','other')),
+  workshop_id INTEGER DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Payments
+CREATE TABLE IF NOT EXISTS payments (
+  id TEXT PRIMARY KEY,
+  billing_id TEXT NOT NULL REFERENCES billing(id) ON DELETE CASCADE,
+  payment_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  amount DECIMAL(10,2) NOT NULL,
+  payment_method TEXT NOT NULL CHECK(payment_method IN ('cash','debit_card','credit_card','bank_transfer','check','insurance_direct','other')),
+  card_installments INTEGER DEFAULT 1,
+  card_interest_rate DECIMAL(5,2) DEFAULT 0,
+  card_last_digits TEXT,
+  card_authorization_code TEXT,
+  transaction_reference TEXT,
+  bank_name TEXT,
+  receipt_url TEXT,
+  receipt_filename TEXT,
+  status TEXT NOT NULL DEFAULT 'completed' CHECK(status IN ('pending','completed','failed','refunded')),
+  notes TEXT,
+  workshop_id INTEGER DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Índices para las nuevas tablas
+CREATE INDEX IF NOT EXISTS idx_appointments_claim_id ON appointments(claim_id);
+CREATE INDEX IF NOT EXISTS idx_appointments_scheduled_date ON appointments(scheduled_date);
+CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments(status);
+
+CREATE INDEX IF NOT EXISTS idx_billing_claim_id ON billing(claim_id);
+CREATE INDEX IF NOT EXISTS idx_billing_number ON billing(billing_number);
+CREATE INDEX IF NOT EXISTS idx_billing_status ON billing(status);
+CREATE INDEX IF NOT EXISTS idx_billing_customer_type ON billing(customer_type);
+CREATE INDEX IF NOT EXISTS idx_billing_insurance_company ON billing(insurance_company_id);
+
+CREATE INDEX IF NOT EXISTS idx_billing_items_billing_id ON billing_items(billing_id);
+CREATE INDEX IF NOT EXISTS idx_billing_items_budget_item ON billing_items(budget_item_id);
+
+CREATE INDEX IF NOT EXISTS idx_payments_billing_id ON payments(billing_id);
+CREATE INDEX IF NOT EXISTS idx_payments_date ON payments(payment_date);
+CREATE INDEX IF NOT EXISTS idx_payments_method ON payments(payment_method);
+
+-- FKs workshop_id para nuevas tablas
+ALTER TABLE appointments ADD COLUMN IF NOT EXISTS workshop_id INTEGER DEFAULT 1;
+ALTER TABLE insurance_companies ADD COLUMN IF NOT EXISTS workshop_id INTEGER DEFAULT 1;
+ALTER TABLE billing ADD COLUMN IF NOT EXISTS workshop_id INTEGER DEFAULT 1;
+ALTER TABLE billing_items ADD COLUMN IF NOT EXISTS workshop_id INTEGER DEFAULT 1;
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS workshop_id INTEGER DEFAULT 1;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE table_name='appointments' AND constraint_name='fk_appointments_workshop_id'
+  ) THEN
+    ALTER TABLE appointments ADD CONSTRAINT fk_appointments_workshop_id FOREIGN KEY (workshop_id) REFERENCES workshop_config(id);
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE table_name='insurance_companies' AND constraint_name='fk_insurance_companies_workshop_id'
+  ) THEN
+    ALTER TABLE insurance_companies ADD CONSTRAINT fk_insurance_companies_workshop_id FOREIGN KEY (workshop_id) REFERENCES workshop_config(id);
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE table_name='billing' AND constraint_name='fk_billing_workshop_id'
+  ) THEN
+    ALTER TABLE billing ADD CONSTRAINT fk_billing_workshop_id FOREIGN KEY (workshop_id) REFERENCES workshop_config(id);
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE table_name='billing_items' AND constraint_name='fk_billing_items_workshop_id'
+  ) THEN
+    ALTER TABLE billing_items ADD CONSTRAINT fk_billing_items_workshop_id FOREIGN KEY (workshop_id) REFERENCES workshop_config(id);
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE table_name='payments' AND constraint_name='fk_payments_workshop_id'
+  ) THEN
+    ALTER TABLE payments ADD CONSTRAINT fk_payments_workshop_id FOREIGN KEY (workshop_id) REFERENCES workshop_config(id);
+  END IF;
+END $$;
