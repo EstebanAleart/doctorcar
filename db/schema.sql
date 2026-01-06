@@ -75,6 +75,9 @@ CREATE TABLE IF NOT EXISTS claims (
   status TEXT NOT NULL CHECK(status IN ('pending','in_progress','completed','cancelled')),
   estimated_cost DECIMAL(10,2),
   photos TEXT,
+  approval_status TEXT DEFAULT 'pending' CHECK(approval_status IN ('pending','accepted','rejected')),
+  payment_method TEXT,
+  appointment_date DATE,
   workshop_id INTEGER DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -82,6 +85,9 @@ CREATE TABLE IF NOT EXISTS claims (
 
 ALTER TABLE claims ADD COLUMN IF NOT EXISTS workshop_id INTEGER DEFAULT 1;
 ALTER TABLE claims ADD COLUMN IF NOT EXISTS photos TEXT;
+ALTER TABLE claims ADD COLUMN IF NOT EXISTS approval_status TEXT DEFAULT 'pending' CHECK(approval_status IN ('pending','accepted','rejected'));
+ALTER TABLE claims ADD COLUMN IF NOT EXISTS payment_method TEXT;
+ALTER TABLE claims ADD COLUMN IF NOT EXISTS appointment_date DATE;
 
 -- Budget Items
 CREATE TABLE IF NOT EXISTS budget_items (
