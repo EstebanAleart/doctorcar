@@ -19,8 +19,14 @@ export function AuthGuard({ children, allowedRoles }) {
       console.log("[AuthGuard] No user, redirecting to /login");
       router.push("/login");
     } else if (allowedRoles && !allowedRoles.includes(user.role)) {
-      console.log("[AuthGuard] Wrong role, redirecting to /unauthorized");
-      router.push("/unauthorized");
+      const roleRedirects = {
+        admin: "/admin",
+        employee: "/employee",
+        client: "/client",
+      };
+      const target = roleRedirects[user.role];
+      console.log("[AuthGuard] Wrong role, redirecting to", target || "/unauthorized");
+      router.replace(target || "/unauthorized");
     } else {
       console.log("[AuthGuard] Auth OK, user:", user.email);
     }
