@@ -193,8 +193,8 @@ export function ClientNewClaim({ onSuccess }) {
                 </Label>
               </div>
               <div className="flex items-center space-x-2 rounded-lg border p-4">
-                <RadioGroupItem value="company" id="company" />
-                <Label htmlFor="company" className="flex-1 cursor-pointer">
+                <RadioGroupItem value="insurance" id="insurance" />
+                <Label htmlFor="insurance" className="flex-1 cursor-pointer">
                   <div className="flex items-center gap-2">
                     <Building2 className="h-5 w-5 text-[#1a4d6d]" />
                     <div>
@@ -207,7 +207,7 @@ export function ClientNewClaim({ onSuccess }) {
             </RadioGroup>
           </CardContent>
         </Card>
-        {claimType === "company" && (
+        {claimType === "insurance" && (
           <Card>
             <CardHeader>
               <CardTitle>Información de la Compañía</CardTitle>
@@ -220,7 +220,7 @@ export function ClientNewClaim({ onSuccess }) {
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   placeholder="Ej: Federación Patronal, etc."
-                  required={claimType === "company"}
+                  required={claimType === "insurance"}
                 />
               </div>
             </CardContent>

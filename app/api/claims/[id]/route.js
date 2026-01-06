@@ -21,7 +21,7 @@ export async function GET(request, { params }) {
     }
 
     const user = userResult.rows[0];
-    const { id } = params;
+    const { id } = await params;
 
     const claim = await query(
       `SELECT c.*, v.brand, v.model, v.plate, v.year, u.name as client_name, u.email as client_email
@@ -67,7 +67,7 @@ export async function PUT(request, { params }) {
     }
 
     const user = userResult.rows[0];
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     // Verificar que el reclamo existe
@@ -177,7 +177,7 @@ export async function DELETE(request, { params }) {
     }
 
     const user = userResult.rows[0];
-    const { id } = params;
+    const { id } = await params;
 
     // Solo admin puede eliminar reclamos
     if (user.role !== 'admin') {

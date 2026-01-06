@@ -20,7 +20,7 @@ export async function GET(request, { params }) {
     }
 
     const user = userResult.rows[0];
-    const { id } = params;
+    const { id } = await params;
 
     const vehicle = await query('SELECT * FROM vehicles WHERE id = $1', [id]);
     if (vehicle.rows.length === 0) {
@@ -58,7 +58,7 @@ export async function PUT(request, { params }) {
     }
 
     const user = userResult.rows[0];
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     // Verificar que el vehículo existe
@@ -123,7 +123,7 @@ export async function DELETE(request, { params }) {
     }
 
     const user = userResult.rows[0];
-    const { id } = params;
+    const { id } = await params;
 
     // Solo admin puede eliminar vehículos
     if (user.role !== 'admin') {

@@ -8,13 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Car, Plus } from "lucide-react";
+import { Car, Plus, Pencil, Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
 
 export function ClientVehicles() {
   const { user } = useAuth();
   const [vehicles, setVehicles] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
+  const [editingVehicle, setEditingVehicle] = useState(null);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     brand: "",
@@ -51,8 +52,11 @@ export function ClientVehicles() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/vehicles', {
-        method: 'POST',
+      const url = editingVehicle ? `/api/vehicles/${editingVehicle}` : '/api/vehicles';
+      const method = editingVehicle ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -61,29 +65,31 @@ export function ClientVehicles() {
       });
 
       if (response.ok) {
+        resetForm(); // Cerrar dialog primero
         await Swal.fire({
           title: '¡Éxito!',
-          text: 'Vehículo agregado correctamente',
+          text: editingVehicle ? 'Vehículo actualizado correctamente' : 'Vehículo agregado correctamente',
           icon: 'success',
           confirmButtonColor: '#1a4d6d',
           confirmButtonText: 'Aceptar',
         });
-        resetForm();
         loadVehicles();
       } else {
         const error = await response.json();
+        resetForm(); // Cerrar dialog primero
         await Swal.fire({
           title: 'Error',
           text: error.error === 'Plate already exists' 
             ? 'Esta patente ya está registrada en el sistema' 
-            : error.error || 'Error al agregar vehículo',
+            : error.error || `Error al ${editingVehicle ? 'actualizar' : 'agregar'} vehículo`,
           icon: 'error',
           confirmButtonColor: '#1a4d6d',
           confirmButtonText: 'Aceptar',
         });
       }
     } catch (error) {
-      console.error('Error creating vehicle:', error);
+      console.error('Error saving vehicle:', error);
+      resetForm(); // Cerrar dialog primero
       await Swal.fire({
         title: 'Error',
         text: 'Error al conectar con el servidor',
@@ -96,6 +102,69 @@ export function ClientVehicles() {
     }
   };
 
+  const handleEdit = (vehicle) => {
+    setEditingVehicle(vehicle.id);
+    setFormData({
+      brand: vehicle.brand,
+      model: vehicle.model,
+      year: vehicle.year.toString(),
+      plate: vehicle.plate,
+      color: vehicle.color,
+    });
+    setShowDialog(true);
+  };
+
+  const handleDelete = async (vehicleId, vehicleName) => {
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: `Se eliminará el vehículo ${vehicleName}. Esta acción no se puede deshacer.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#1a4d6d',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(`/api/vehicles/${vehicleId}`, {
+          method: 'DELETE',
+          credentials: 'include',
+        });
+
+        if (response.ok) {
+          await Swal.fire({
+            title: '¡Eliminado!',
+            text: 'El vehículo ha sido eliminado correctamente',
+            icon: 'success',
+            confirmButtonColor: '#1a4d6d',
+            confirmButtonText: 'Aceptar',
+          });
+          loadVehicles();
+        } else {
+          const error = await response.json();
+          await Swal.fire({
+            title: 'Error',
+            text: error.error || 'Error al eliminar vehículo',
+            icon: 'error',
+            confirmButtonColor: '#1a4d6d',
+            confirmButtonText: 'Aceptar',
+          });
+        }
+      } catch (error) {
+        console.error('Error deleting vehicle:', error);
+        await Swal.fire({
+          title: 'Error',
+          text: 'Error al conectar con el servidor',
+          icon: 'error',
+          confirmButtonColor: '#1a4d6d',
+          confirmButtonText: 'Aceptar',
+        });
+      }
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       brand: "",
@@ -104,6 +173,7 @@ export function ClientVehicles() {
       plate: "",
       color: "",
     });
+    setEditingVehicle(null);
     setShowDialog(false);
   };
 
@@ -123,11 +193,35 @@ export function ClientVehicles() {
         {vehicles.map((vehicle) => (
           <Card key={vehicle.id}>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Car className="h-5 w-5 text-[#1a4d6d]" />
-                {vehicle.brand} {vehicle.model}
-              </CardTitle>
-              <CardDescription>Patente: {vehicle.plate}</CardDescription>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Car className="h-5 w-5 text-[#1a4d6d]" />
+                  <div>
+                    <CardTitle className="text-lg">
+                      {vehicle.brand} {vehicle.model}
+                    </CardTitle>
+                    <CardDescription>Patente: {vehicle.plate}</CardDescription>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => handleEdit(vehicle)}
+                    className="h-8 w-8 text-[#1a4d6d] hover:bg-[#1a4d6d]/10"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => handleDelete(vehicle.id, `${vehicle.brand} ${vehicle.model}`)}
+                    className="h-8 w-8 text-red-600 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="grid gap-2 text-sm">
               <div className="flex justify-between">
