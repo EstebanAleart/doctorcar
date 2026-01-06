@@ -2,11 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
 
-  // Turbopack settings
-  turbopack: {
-    root: 'C:\\Users\\Esteban\\Desktop\\proyectos\\doctorcar',
-  },
-
   typescript: {
     ignoreBuildErrors: true,
   },
