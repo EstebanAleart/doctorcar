@@ -3,7 +3,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { db } from "@/lib/db";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,12 +10,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
 import { CalendarIcon, Upload, X, Building2, UserIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Swal from "sweetalert2";
 
 export function ClientNewClaim({ onSuccess }) {
   const { user } = useAuth();
@@ -26,19 +22,60 @@ export function ClientNewClaim({ onSuccess }) {
   const [companyName, setCompanyName] = useState("");
   const [description, setDescription] = useState("");
   const [photos, setPhotos] = useState([]);
-  const [appointmentDate, setAppointmentDate] = useState();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
-      const userVehicles = db.getVehiclesByClient(user.id);
-      setVehicles(userVehicles);
+      loadVehicles();
     }
   }, [user]);
+
+  const loadVehicles = async () => {
+    try {
+      const response = await fetch('/api/vehicles', {
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setVehicles(data);
+      } else {
+        console.error('Error loading vehicles');
+      }
+    } catch (error) {
+      console.error('Error loading vehicles:', error);
+    }
+  };
 
   const handlePhotoUpload = (e) => {
     const files = e.target.files;
     if (!files) return;
+    
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxFiles = 10;
+
+    if (photos.length + files.length > maxFiles) {
+      Swal.fire({
+        title: 'Límite excedido',
+        text: `Máximo ${maxFiles} fotos permitidas`,
+        icon: 'warning',
+        confirmButtonColor: '#1a4d6d',
+        confirmButtonText: 'Aceptar',
+      });
+      return;
+    }
+
     Array.from(files).forEach((file) => {
+      if (file.size > maxSize) {
+        Swal.fire({
+          title: 'Archivo muy grande',
+          text: `La imagen ${file.name} excede el tamaño máximo de 5MB`,
+          icon: 'warning',
+          confirmButtonColor: '#1a4d6d',
+          confirmButtonText: 'Aceptar',
+        });
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result) {
@@ -53,34 +90,80 @@ export function ClientNewClaim({ onSuccess }) {
     setPhotos((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!user || !selectedVehicle || !appointmentDate) return;
-    db.createClaim({
-      clientId: user.id,
-      vehicleId: selectedVehicle,
-      type: claimType,
-      companyName: claimType === "company" ? companyName : undefined,
-      description,
-      photos,
-      status: "pending",
-      appointmentDate: appointmentDate.toISOString(),
-    });
-    // Reset form
-    setClaimType("particular");
-    setSelectedVehicle("");
-    setCompanyName("");
-    setDescription("");
-    setPhotos([]);
-    setAppointmentDate(undefined);
-    onSuccess();
+    if (!selectedVehicle || !description || photos.length === 0) {
+      await Swal.fire({
+        title: 'Campos incompletos',
+        text: 'Por favor completa todos los campos requeridos y sube al menos una foto',
+        icon: 'warning',
+        confirmButtonColor: '#1a4d6d',
+        confirmButtonText: 'Aceptar',
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/claims', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          vehicleId: selectedVehicle,
+          type: claimType,
+          companyName: claimType === 'insurance' ? companyName : null,
+          description,
+          photos,
+        }),
+      });
+
+      if (response.ok) {
+        await Swal.fire({
+          title: '¡Éxito!',
+          text: 'Reclamo creado correctamente. Te contactaremos pronto',
+          icon: 'success',
+          confirmButtonColor: '#1a4d6d',
+          confirmButtonText: 'Aceptar',
+        });
+        // Reset form
+        setClaimType("particular");
+        setSelectedVehicle("");
+        setCompanyName("");
+        setDescription("");
+        setPhotos([]);
+        if (onSuccess) onSuccess();
+      } else {
+        const error = await response.json();
+        await Swal.fire({
+          title: 'Error',
+          text: error.error || 'Error al crear reclamo',
+          icon: 'error',
+          confirmButtonColor: '#1a4d6d',
+          confirmButtonText: 'Aceptar',
+        });
+      }
+    } catch (error) {
+      console.error('Error creating claim:', error);
+      await Swal.fire({
+        title: 'Error',
+        text: 'Error al conectar con el servidor',
+        icon: 'error',
+        confirmButtonColor: '#1a4d6d',
+        confirmButtonText: 'Aceptar',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const isFormValid =
     selectedVehicle &&
     description &&
     photos.length > 0 &&
-    appointmentDate &&
     (claimType === "particular" || companyName);
 
   return (
@@ -230,38 +313,8 @@ export function ClientNewClaim({ onSuccess }) {
             )}
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Fecha de Turno</CardTitle>
-            <CardDescription>
-              Solo se puede atender un cliente por día. Elige una fecha disponible para tu turno.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn("w-full justify-start text-left font-normal", !appointmentDate && "text-muted-foreground")}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {appointmentDate ? format(appointmentDate, "PPP", { locale: es }) : "Selecciona una fecha"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={appointmentDate}
-                  onSelect={setAppointmentDate}
-                  disabled={(date) => date < new Date()}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </CardContent>
-        </Card>
-        <Button type="submit" className="w-full bg-[#1a4d6d] hover:bg-[#2d6a8f]" disabled={!isFormValid}>
-          Enviar Reclamo
+        <Button type="submit" className="w-full bg-[#1a4d6d] hover:bg-[#2d6a8f]" disabled={!isFormValid || loading}>
+          {loading ? 'Creando reclamo...' : 'Enviar Reclamo'}
         </Button>
       </form>
     </div>

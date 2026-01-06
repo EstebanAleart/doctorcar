@@ -3,18 +3,19 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { db } from "@/lib/db";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Car, Plus } from "lucide-react";
+import Swal from "sweetalert2";
 
 export function ClientVehicles() {
   const { user } = useAuth();
   const [vehicles, setVehicles] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     brand: "",
     model: "",
@@ -29,22 +30,69 @@ export function ClientVehicles() {
     }
   }, [user]);
 
-  const loadVehicles = () => {
-    if (user) {
-      const userVehicles = db.getVehiclesByClient(user.id);
-      setVehicles(userVehicles);
+  const loadVehicles = async () => {
+    try {
+      const response = await fetch('/api/vehicles', {
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setVehicles(data);
+      } else {
+        console.error('Error loading vehicles');
+      }
+    } catch (error) {
+      console.error('Error loading vehicles:', error);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (user) {
-      db.createVehicle({
-        clientId: user.id,
-        ...formData,
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/vehicles', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData),
       });
-      resetForm();
-      loadVehicles();
+
+      if (response.ok) {
+        await Swal.fire({
+          title: '¡Éxito!',
+          text: 'Vehículo agregado correctamente',
+          icon: 'success',
+          confirmButtonColor: '#1a4d6d',
+          confirmButtonText: 'Aceptar',
+        });
+        resetForm();
+        loadVehicles();
+      } else {
+        const error = await response.json();
+        await Swal.fire({
+          title: 'Error',
+          text: error.error === 'Plate already exists' 
+            ? 'Esta patente ya está registrada en el sistema' 
+            : error.error || 'Error al agregar vehículo',
+          icon: 'error',
+          confirmButtonColor: '#1a4d6d',
+          confirmButtonText: 'Aceptar',
+        });
+      }
+    } catch (error) {
+      console.error('Error creating vehicle:', error);
+      await Swal.fire({
+        title: 'Error',
+        text: 'Error al conectar con el servidor',
+        icon: 'error',
+        confirmButtonColor: '#1a4d6d',
+        confirmButtonText: 'Aceptar',
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -160,10 +208,10 @@ export function ClientVehicles() {
               />
             </div>
             <div className="flex gap-2">
-              <Button type="submit" className="flex-1 bg-[#1a4d6d] hover:bg-[#2d6a8f]">
-                Agregar Vehículo
+              <Button type="submit" className="flex-1 bg-[#1a4d6d] hover:bg-[#2d6a8f]" disabled={loading}>
+                {loading ? 'Agregando...' : 'Agregar Vehículo'}
               </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
+              <Button type="button" variant="outline" onClick={resetForm} disabled={loading}>
                 Cancelar
               </Button>
             </div>
