@@ -74,12 +74,14 @@ CREATE TABLE IF NOT EXISTS claims (
   description TEXT NOT NULL,
   status TEXT NOT NULL CHECK(status IN ('pending','in_progress','completed','cancelled')),
   estimated_cost DECIMAL(10,2),
+  photos TEXT,
   workshop_id INTEGER DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 ALTER TABLE claims ADD COLUMN IF NOT EXISTS workshop_id INTEGER DEFAULT 1;
+ALTER TABLE claims ADD COLUMN IF NOT EXISTS photos TEXT;
 
 -- Budget Items
 CREATE TABLE IF NOT EXISTS budget_items (
