@@ -47,10 +47,11 @@ export async function GET(request) {
     const bookedDates = new Set();
     workOrders.forEach((order) => {
       // order.date es string en formato 'YYYY-MM-DD'
-      bookedDates.add(order.date);
+      const dateStr = typeof order.date === 'string' ? order.date : new Date(order.date).toISOString().split('T')[0];
+      bookedDates.add(dateStr);
       
       // Sumar un día al string
-      const dateParts = order.date.split('-');
+      const dateParts = dateStr.split('-');
       const nextDayDate = new Date(Number(dateParts[0]), Number(dateParts[1]) - 1, Number(dateParts[2]) + 1);
       const year = nextDayDate.getFullYear();
       const month = String(nextDayDate.getMonth() + 1).padStart(2, '0');
