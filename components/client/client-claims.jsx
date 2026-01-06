@@ -2,21 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { db } from "@/lib/db";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Eye, FileText, Download } from "lucide-react";
+import { Eye, FileText, Download, Pencil, Trash2 } from "lucide-react";
 import { downloadPDF } from "@/lib/pdf-generator";
+import Swal from "sweetalert2";
 
 export function ClientClaims() {
   const { user } = useAuth();
   const [claims, setClaims] = useState([]);
   const [selectedClaim, setSelectedClaim] = useState(null);
   const [showDetail, setShowDetail] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -24,10 +25,40 @@ export function ClientClaims() {
     }
   }, [user]);
 
-  const loadClaims = () => {
-    if (user) {
-      const userClaims = db.getClaimsByClient(user.id);
-      setClaims(userClaims);
+  const loadClaims = async () => {
+    try {
+      const response = await fetch("/api/claims", {
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const normalized = data.map((claim) => ({
+          ...claim,
+          companyName: claim.companyName ?? claim.company_name ?? null,
+          estimatedCost: claim.estimatedCost ?? claim.estimated_cost ?? null,
+          createdAt: claim.createdAt ?? claim.created_at,
+          photos: claim.photos
+            ? typeof claim.photos === "string"
+              ? (() => {
+                  try {
+                    return JSON.parse(claim.photos);
+                  } catch {
+                    return [];
+                  }
+                })()
+              : claim.photos
+            : [],
+          vehicle: {
+            brand: claim.brand ?? claim.vehicles?.brand,
+            model: claim.model ?? claim.vehicles?.model,
+            plate: claim.plate ?? claim.vehicles?.plate,
+            year: claim.year ?? claim.vehicles?.year,
+          },
+        }));
+        setClaims(normalized);
+      }
+    } catch (error) {
+      console.error("Error loading claims:", error);
     }
   };
 
@@ -47,11 +78,68 @@ export function ClientClaims() {
     return <Badge className={variants[status]}>{labels[status]}</Badge>;
   };
 
-  const getVehicleInfo = (vehicleId) => {
-    const vehicles = db.getVehicles();
-    const vehicle = vehicles.find((v) => v.id === vehicleId);
+  const getVehicleInfo = (claim) => {
+    if (!claim) return "Vehículo desconocido";
+    const vehicle = claim.vehicle || claim.vehicles;
     if (!vehicle) return "Vehículo desconocido";
-    return `${vehicle.brand} ${vehicle.model} - ${vehicle.plate}`;
+    const brandModel = [vehicle.brand, vehicle.model].filter(Boolean).join(" ").trim();
+    const plate = vehicle.plate ? ` - ${vehicle.plate}` : "";
+    const info = `${brandModel}${plate}`.trim();
+    return info || "Vehículo desconocido";
+  };
+
+  const handleDelete = async (claimId) => {
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Se eliminará este reclamo. Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#1a4d6d',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/claims/${claimId}`, {
+          method: 'DELETE',
+          credentials: 'include',
+        });
+
+        if (response.ok) {
+          await Swal.fire({
+            title: '¡Eliminado!',
+            text: 'Reclamo eliminado correctamente',
+            icon: 'success',
+            confirmButtonColor: '#1a4d6d',
+            confirmButtonText: 'Aceptar',
+          });
+          loadClaims();
+        } else {
+          const error = await response.json();
+          await Swal.fire({
+            title: 'Error',
+            text: error.error || 'Error al eliminar el reclamo',
+            icon: 'error',
+            confirmButtonColor: '#1a4d6d',
+            confirmButtonText: 'Aceptar',
+          });
+        }
+      } catch (error) {
+        console.error('Error deleting claim:', error);
+        await Swal.fire({
+          title: 'Error',
+          text: 'Error al conectar con el servidor',
+          icon: 'error',
+          confirmButtonColor: '#1a4d6d',
+          confirmButtonText: 'Aceptar',
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   return (
@@ -67,7 +155,7 @@ export function ClientClaims() {
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
                   <CardTitle className="text-lg">Reclamo #{claim.id.slice(-8)}</CardTitle>
-                  <CardDescription>{getVehicleInfo(claim.vehicleId)}</CardDescription>
+                  <CardDescription>{getVehicleInfo(claim)}</CardDescription>
                 </div>
                 {getStatusBadge(claim.status)}
               </div>
@@ -76,20 +164,12 @@ export function ClientClaims() {
               <div className="grid gap-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Tipo:</span>
-                  <span className="font-medium">{claim.type === "particular" ? "Particular" : "Compañía"}</span>
+                  <span className="font-medium">{claim.type === "particular" ? "Particular" : "Seguro"}</span>
                 </div>
                 {claim.companyName && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Compañía:</span>
+                    <span className="text-muted-foreground">Compañía Aseguradora:</span>
                     <span className="font-medium">{claim.companyName}</span>
-                  </div>
-                )}
-                {claim.appointmentDate && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Turno:</span>
-                    <span className="font-medium">
-                      {format(new Date(claim.appointmentDate), "PPP", { locale: es })}
-                    </span>
                   </div>
                 )}
                 {claim.estimatedCost && (
@@ -116,17 +196,26 @@ export function ClientClaims() {
                   <Eye className="h-4 w-4 mr-2" />
                   Ver Detalles
                 </Button>
-                {claim.items && claim.items.length > 0 && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => downloadPDF(claim.id)}
-                    className="flex-1 bg-[#1a4d6d] text-white hover:bg-[#2d6a8f] hover:text-white"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Descargar Presupuesto
-                  </Button>
-                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedClaim(claim);
+                    setShowDetail(true);
+                  }}
+                  className="border border-gray-300 bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDelete(claim.id)}
+                  disabled={loading}
+                  className="border border-gray-300 bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -159,15 +248,15 @@ export function ClientClaims() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Vehículo:</span>
-                  <span className="font-medium">{getVehicleInfo(selectedClaim.vehicleId)}</span>
+                  <span className="font-medium">{getVehicleInfo(selectedClaim)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Tipo:</span>
-                  <span className="font-medium">{selectedClaim.type === "particular" ? "Particular" : "Compañía"}</span>
+                  <span className="font-medium">{selectedClaim.type === "particular" ? "Particular" : "Seguro"}</span>
                 </div>
                 {selectedClaim.companyName && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Compañía:</span>
+                    <span className="text-muted-foreground">Compañía Aseguradora:</span>
                     <span className="font-medium">{selectedClaim.companyName}</span>
                   </div>
                 )}
@@ -176,17 +265,21 @@ export function ClientClaims() {
                 <h4 className="font-medium mb-2">Descripción del Daño</h4>
                 <p className="text-sm text-muted-foreground">{selectedClaim.description}</p>
               </div>
-              {selectedClaim.photos.length > 0 && (
+              {selectedClaim.photos && selectedClaim.photos.length > 0 && (
                 <div>
                   <h4 className="font-medium mb-2">Fotos ({selectedClaim.photos.length})</h4>
                   <div className="grid grid-cols-2 gap-2">
-                    {selectedClaim.photos.map((photo, idx) => (
-                      <img
-                        key={idx}
-                        src={photo || "/placeholder.svg"}
-                        alt={`Foto ${idx + 1}`}
-                        className="w-full h-32 object-cover rounded-md border"
-                      />
+                    {(typeof selectedClaim.photos === 'string' 
+                      ? JSON.parse(selectedClaim.photos) 
+                      : selectedClaim.photos
+                    ).map((photo, idx) => (
+                      <div key={idx} className="relative">
+                        <img
+                          src={typeof photo === 'string' ? photo : photo.url}
+                          alt={`Foto ${idx + 1}`}
+                          className="w-full h-32 object-cover rounded-md border"
+                        />
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -210,6 +303,28 @@ export function ClientClaims() {
                   </div>
                 </div>
               )}
+              <div className="flex gap-2 pt-4 border-t">
+                <Button
+                  onClick={() => {
+                    setShowDetail(false);
+                    // Aquí irá la edición
+                  }}
+                  className="flex-1 border border-gray-300 bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900"
+                >
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Editar
+                </Button>
+                <Button
+                  onClick={() => {
+                    setShowDetail(false);
+                    handleDelete(selectedClaim.id);
+                  }}
+                  className="flex-1 border border-gray-300 bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Eliminar
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
