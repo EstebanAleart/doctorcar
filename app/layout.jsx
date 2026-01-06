@@ -1,7 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import { Auth0Provider as UserProvider } from "@auth0/nextjs-auth0/client";
 import "./globals.css";
+import { ReduxProvider } from "@/components/redux-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const geist = Geist({ subsets: ["latin"] });
 const geistMono = Geist_Mono({ subsets: ["latin"] });
@@ -31,9 +32,18 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className="font-sans antialiased">
-        <UserProvider>{children}</UserProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className="font-sans antialiased" suppressHydrationWarning>
+        <ReduxProvider>
+          <ThemeProvider 
+            attribute="class" 
+            defaultTheme="light" 
+            enableSystem={false}
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </ReduxProvider>
         <Analytics />
       </body>
     </html>

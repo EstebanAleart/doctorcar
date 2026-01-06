@@ -17,8 +17,10 @@ export default function HomePage() {
   useEffect(() => {
     // Initialize database with demo data
     db.initialize();
+  }, []);
 
-    if (!loading && user) {
+  useEffect(() => {
+    if (user && !loading) {
       switch (user.role) {
         case "admin":
           router.push("/admin");
@@ -33,16 +35,9 @@ export default function HomePage() {
     }
   }, [user, loading, router]);
 
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#1a4d6d] border-t-transparent"></div>
-      </div>
-    );
-  }
-
+  // Si está logueado, no mostrar nada (va a redirigir)
   if (user) {
-    return null; // Will redirect
+    return null;
   }
 
   return (
@@ -67,7 +62,7 @@ export default function HomePage() {
                 Iniciar Sesión
               </Button>
             </Link>
-            <Link href="/api/auth/signup">
+            <Link href="/api/auth/login?screen_hint=signup">
               <Button className="bg-[#1a4d6d] hover:bg-[#6cb4d8]">Registrarse</Button>
             </Link>
           </div>
@@ -87,7 +82,7 @@ export default function HomePage() {
             seguros.
           </p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Link href="/api/auth/signup">
+            <Link href="/api/auth/login?screen_hint=signup">
               <Button size="lg" className="bg-[#1a4d6d] hover:bg-[#6cb4d8]">
                 Empezar Ahora
               </Button>
@@ -226,7 +221,7 @@ export default function HomePage() {
           <p className="mb-8 text-lg text-[#6cb4d8] text-pretty">
             Unite a cientos de clientes satisfechos que confían en DOCTORCAR
           </p>
-          <Link href="/api/auth/signup">
+          <Link href="/api/auth/login?screen_hint=signup">
             <Button
               size="lg"
               variant="secondary"
