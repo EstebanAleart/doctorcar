@@ -6,7 +6,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertCircle, Check, X } from "lucide-react";
-import Swal from "sweetalert2";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
   const [approvalData, setApprovalData] = useState({
@@ -15,6 +15,9 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
     appointmentDate: claim.appointment_date || "",
   });
   const [bookedDates, setBookedDates] = useState([]);
+  const [errors, setErrors] = useState([]);
+  const [dateError, setDateError] = useState("");
+  
   const formatLocalYMD = (d) => {
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -43,26 +46,22 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
   const isAccepted = approvalData.approval === "accepted";
 
   const handleSubmitAccept = async () => {
+    const newErrors = [];
+    
     if (isParticular && !approvalData.paymentMethod) {
-      await Swal.fire({
-        title: "Dato incompleto",
-        text: "Por favor selecciona un método de pago",
-        icon: "warning",
-        confirmButtonColor: "#1a4d6d",
-      });
-      return;
+      newErrors.push("Por favor selecciona un método de pago");
     }
 
     if (!approvalData.appointmentDate) {
-      await Swal.fire({
-        title: "Dato incompleto",
-        text: "Por favor selecciona una fecha para el turno",
-        icon: "warning",
-        confirmButtonColor: "#1a4d6d",
-      });
+      newErrors.push("Por favor selecciona una fecha para el turno");
+    }
+
+    if (newErrors.length > 0) {
+      setErrors(newErrors);
       return;
     }
 
+    setErrors([]);
     await onApprovalUpdate({
       approval_status: "accepted",
       payment_method: isParticular ? approvalData.paymentMethod : null,
@@ -71,18 +70,11 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
   };
 
   const handleSubmitReject = async () => {
-    const result = await Swal.fire({
-      title: "¿Rechazar Presupuesto?",
-      text: "Si rechazas este presupuesto, tendrás que crear un nuevo reclamo",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#dc2626",
-      cancelButtonColor: "#1a4d6d",
-      confirmButtonText: "Sí, rechazar",
-      cancelButtonText: "Cancelar",
-    });
-
-    if (result.isConfirmed) {
+    const confirmed = window.confirm(
+      "¿Rechazar Presupuesto?\n\nSi rechazas este presupuesto, tendrás que crear un nuevo reclamo"
+    );
+    
+    if (confirmed) {
       await onApprovalUpdate({
         approval_status: "rejected",
       });
@@ -98,12 +90,28 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
         {claim.approval_status === "rejected" && "Presupuesto rechazado"}
       </div>
 
+      {errors.length > 0 && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            <ul className="list-disc list-inside">
+              {errors.map((error, idx) => (
+                <li key={idx}>{error}</li>
+              ))}
+            </ul>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {claim.approval_status === "pending" && (
         <div className="space-y-4">
           {isParticular && (
             <div className="space-y-2">
               <Label htmlFor="payment-method">Método de Pago</Label>
-              <Select value={approvalData.paymentMethod} onValueChange={(value) => setApprovalData({ ...approvalData, paymentMethod: value })}>
+              <Select value={approvalData.paymentMethod} onValueChange={(value) => {
+                setApprovalData({ ...approvalData, paymentMethod: value });
+                setErrors(errors.filter(e => !e.includes("método de pago")));
+              }}>
                 <SelectTrigger id="payment-method">
                   <SelectValue placeholder="Selecciona un método de pago" />
                 </SelectTrigger>
@@ -122,6 +130,11 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
               <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[#1a4d6d]"></span> Seleccionada</span>
               <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-500"></span> Ocupada</span>
             </div>
+            
+            {dateError && (
+              <p className="text-sm text-red-600 mb-2">{dateError}</p>
+            )}
+            
             <Calendar
               mode="single"
               selected={approvalData.appointmentDate ? new Date(approvalData.appointmentDate + 'T00:00:00') : undefined}
@@ -129,15 +142,12 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
                 if (!date) return;
                 const ymd = formatLocalYMD(date);
                 if (bookedDates.includes(ymd)) {
-                  Swal.fire({
-                    title: 'Fecha ocupada',
-                    text: 'Esa fecha ya está ocupada. Por favor elige otra.',
-                    icon: 'warning',
-                    confirmButtonColor: '#1a4d6d',
-                  });
+                  setDateError("Esa fecha ya está ocupada. Por favor elige otra.");
                   return;
                 }
+                setDateError("");
                 setApprovalData({ ...approvalData, appointmentDate: ymd });
+                setErrors(errors.filter(e => !e.includes("fecha")));
               }}
               fromDate={new Date()}
               disabled={(date) => {

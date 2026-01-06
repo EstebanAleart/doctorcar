@@ -8,6 +8,8 @@ import { AdminUsers } from "./admin-users.jsx";
 import { AdminClaims } from "./admin-claims.jsx";
 import { AdminWorkshop } from "./admin-workshop.jsx";
 import { AdminBilling } from "./admin-billing.jsx";
+import { AdminWorkOrders } from "./admin-work-orders.jsx";
+import { AdminCalendar } from "./admin-calendar.jsx";
 
 export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -17,9 +19,11 @@ export function AdminDashboard() {
       <AdminHeader />
       <div className="container mx-auto p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-7 lg:w-auto lg:inline-grid">
             <TabsTrigger value="overview">Panel General</TabsTrigger>
             <TabsTrigger value="claims">Reclamos</TabsTrigger>
+            <TabsTrigger value="work-orders">Órdenes</TabsTrigger>
+            <TabsTrigger value="calendar">Calendario</TabsTrigger>
             <TabsTrigger value="billing">Facturación</TabsTrigger>
             <TabsTrigger value="users">Usuarios</TabsTrigger>
             <TabsTrigger value="workshop">Taller</TabsTrigger>
@@ -29,6 +33,12 @@ export function AdminDashboard() {
           </TabsContent>
           <TabsContent value="claims" className="space-y-6">
             <AdminClaims />
+          </TabsContent>
+          <TabsContent value="work-orders" className="space-y-6">
+            <AdminWorkOrders />
+          </TabsContent>
+          <TabsContent value="calendar" className="space-y-6">
+            <AdminCalendar />
           </TabsContent>
           <TabsContent value="billing" className="space-y-6">
             <AdminBilling />

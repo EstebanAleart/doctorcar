@@ -1,34 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
 import { Calendar as CalendarIcon, Clock } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
 
-export function EmployeeCalendar() {
-  const { user } = useAuth();
+export function AdminCalendar() {
   const [bookedDates, setBookedDates] = useState([]);
-  const [appointments, setAppointments] = useState([]);
+  const [workOrders, setWorkOrders] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
     loadCalendarData();
-  }, [user?.id]);
+  }, []);
 
   const loadCalendarData = async () => {
     try {
-      // Get all appointments
       const response = await fetch("/api/appointments");
-      const allAppointments = await response.json();
-
-      const workOrders = allAppointments.map((apt) => ({
+      const data = await response.json();
+      
+      const workOrders = data.map((apt) => ({
         id: apt.id,
-        date:
-          typeof apt.scheduled_date === "string"
-            ? apt.scheduled_date
-            : new Date(apt.scheduled_date).toISOString().split("T")[0],
+        date: typeof apt.scheduled_date === 'string' ? apt.scheduled_date : new Date(apt.scheduled_date).toISOString().split('T')[0],
         time: apt.scheduled_time,
         status: apt.status,
         type: apt.appointment_type,
@@ -39,12 +33,10 @@ export function EmployeeCalendar() {
         plate: apt.plate,
       }));
 
-      const bookedDatesSet = Array.from(
-        new Set(workOrders.map((order) => order.date))
-      );
-
-      setBookedDates(bookedDatesSet);
-      setAppointments(workOrders);
+      const bookedDates = Array.from(new Set(workOrders.map((order) => order.date)));
+      
+      setBookedDates(bookedDates);
+      setWorkOrders(workOrders);
     } catch (error) {
       console.error("Error fetching calendar dates:", error);
     }
@@ -84,9 +76,9 @@ export function EmployeeCalendar() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold">Mi Calendario</h2>
+        <h2 className="text-3xl font-bold">Calendario de Trabajos</h2>
         <p className="text-muted-foreground">
-          Vista de todas tus citas y trabajos programados
+          Vista de todas las citas y trabajos programados
         </p>
       </div>
 
@@ -113,67 +105,65 @@ export function EmployeeCalendar() {
             <div className="flex gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div>
-                <span>Días con Citas</span>
+                <span>Días Ocupados</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Appointments List */}
+        {/* Work Orders List */}
         <Card>
           <CardHeader>
-            <CardTitle>Citas Programadas</CardTitle>
+            <CardTitle>Trabajos Programados</CardTitle>
           </CardHeader>
           <CardContent>
-            {appointments.length === 0 ? (
+            {workOrders.length === 0 ? (
               <p className="text-center text-muted-foreground py-8">
                 No hay citas programadas
               </p>
             ) : (
               <div className="space-y-3 max-h-[500px] overflow-y-auto">
-                {appointments.map((apt) => (
-                  <Card key={apt.id}>
+                {workOrders.map((order) => (
+                  <Card key={order.id}>
                     <CardContent className="pt-4">
                       <div className="space-y-3">
                         <div className="flex items-start justify-between">
                           <div>
-                            <p className="font-medium">{apt.clientName}</p>
+                            <p className="font-medium">{order.clientName}</p>
                             <p className="text-sm text-muted-foreground">
-                              {apt.vehicle}
+                              {order.vehicle}
                             </p>
                           </div>
                           <div className="flex flex-col items-end gap-2">
                             <Badge variant="outline">
-                              {new Date(apt.date).toLocaleDateString("es-AR", {
+                              {new Date(order.date).toLocaleDateString("es-AR", {
                                 day: "2-digit",
                                 month: "2-digit",
                               })}
                             </Badge>
-                            {apt.time && (
+                            {order.time && (
                               <div className="flex items-center text-xs text-muted-foreground gap-1">
                                 <Clock className="h-3 w-3" />
-                                <span>{apt.time}</span>
+                                <span>{order.time}</span>
                               </div>
                             )}
                           </div>
                         </div>
 
                         <div className="flex gap-2 flex-wrap">
-                          <Badge variant="secondary">{apt.type}</Badge>
-                          <Badge className={getStatusBadge(apt.status)}>
-                            {apt.status}
+                          <Badge variant="secondary">{order.type}</Badge>
+                          <Badge className={getStatusBadge(order.status)}>
+                            {order.status}
                           </Badge>
-                          {apt.duration ? (
-                            <Badge variant="outline">{apt.duration} min</Badge>
+                          {order.duration ? (
+                            <Badge variant="outline">{order.duration} min</Badge>
                           ) : null}
                         </div>
 
                         <p className="text-sm text-muted-foreground">
-                          Patente: <span className="font-mono">{apt.plate}</span>
+                          Patente: <span className="font-mono">{order.plate}</span>
                         </p>
-                        {apt.description && (
-                          <p className="text-sm">{apt.description}</p>
-                        )}
+                        <p className="text-sm">{order.description}</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -189,11 +179,11 @@ export function EmployeeCalendar() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Citas
+              Total Trabajos Programados
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{appointments.length}</div>
+            <div className="text-2xl font-bold">{workOrders.length}</div>
           </CardContent>
         </Card>
 
@@ -211,13 +201,13 @@ export function EmployeeCalendar() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Próxima Cita
+              Próximo Trabajo
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {appointments.length > 0
-                ? new Date(appointments[0].date).toLocaleDateString("es-AR", {
+              {workOrders.length > 0
+                ? new Date(workOrders[0].date).toLocaleDateString("es-AR", {
                     day: "2-digit",
                     month: "2-digit",
                   })

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/database';
+import { billingDb } from '@/lib/database';
 import { uploadMultipleImages } from '@/lib/cloudinary';
 import { nanoid } from 'nanoid';
 
@@ -128,7 +129,22 @@ export async function POST(request) {
       ]
     );
 
-    return NextResponse.json(result.rows[0], { status: 201 });
+      // Crear billing record inmediatamente
+      try {
+        await billingDb.create({
+          claimId: claimId,
+          billingDate: new Date(),
+          customerType: type === 'insurance' ? 'insurance_company' : 'individual',
+          subtotal: 0,
+          totalAmount: 0,
+          balance: 0
+        });
+      } catch (billingError) {
+        console.error('Error creating billing:', billingError);
+        // Continue even if billing creation fails
+      }
+
+      return NextResponse.json(result.rows[0], { status: 201 });
   } catch (error) {
     console.error('Error creating claim:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

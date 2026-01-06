@@ -6,6 +6,7 @@ import { ClientHeader } from "./client-header.jsx";
 import { ClientClaims } from "./client-claims.jsx";
 import { ClientNewClaim } from "./client-new-claim.jsx";
 import { ClientVehicles } from "./client-vehicles.jsx";
+import { ClientCalendar } from "./client-calendar.jsx";
 import { ClientProfile } from "./client-profile.jsx";
 
 export function ClientDashboard() {
@@ -16,9 +17,10 @@ export function ClientDashboard() {
       <ClientHeader />
       <div className="container mx-auto p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
             <TabsTrigger value="claims">Mis Reclamos</TabsTrigger>
             <TabsTrigger value="new-claim">Nuevo Reclamo</TabsTrigger>
+            <TabsTrigger value="calendar">Mis Citas</TabsTrigger>
             <TabsTrigger value="vehicles">Mis Vehículos</TabsTrigger>
             <TabsTrigger value="profile">Mi Perfil</TabsTrigger>
           </TabsList>
@@ -27,6 +29,9 @@ export function ClientDashboard() {
           </TabsContent>
           <TabsContent value="new-claim" className="space-y-6">
             <ClientNewClaim onSuccess={() => setActiveTab("claims")} />
+          </TabsContent>
+          <TabsContent value="calendar" className="space-y-6">
+            <ClientCalendar />
           </TabsContent>
           <TabsContent value="vehicles" className="space-y-6">
             <ClientVehicles />

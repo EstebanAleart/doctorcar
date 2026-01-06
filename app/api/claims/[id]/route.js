@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { query } from '@/lib/database';
+import { query, billingDb, billingItemDb } from '@/lib/database';
 import pool from '@/lib/database';
 import { uploadMultipleImages, deleteMultipleImages } from '@/lib/cloudinary';
 import { nanoid } from 'nanoid';
@@ -221,17 +221,75 @@ export async function PUT(request, { params }) {
         await client.query('DELETE FROM budget_items WHERE claim_id = $1', [id]);
 
         let total = 0;
+          const budgetItemIds = [];
         for (const item of sanitizedItems) {
           const totalItem = Number(item.quantity) * Number(item.unitPrice);
           total += totalItem;
+            const itemId = nanoid();
+            budgetItemIds.push({ id: itemId, ...item, totalItem });
           await client.query(
             `INSERT INTO budget_items (id, claim_id, description, quantity, unit_price, total)
              VALUES ($1, $2, $3, $4, $5, $6)`,
-            [nanoid(), id, item.description, item.quantity, item.unitPrice, totalItem]
+              [itemId, id, item.description, item.quantity, item.unitPrice, totalItem]
           );
         }
 
         await client.query('COMMIT');
+
+          // Actualizar billing y billing_items
+          try {
+            // Buscar o crear billing para este claim
+            let billing = await billingDb.findByClaimId(id);
+            if (!billing) {
+              billing = await billingDb.create({
+                claimId: id,
+                billingDate: new Date(),
+                customerType: 'individual',
+                subtotal: 0,
+                totalAmount: 0,
+                balance: 0
+              });
+            }
+
+            // Calcular 10% desarrollo
+            const developmentFee = total * 0.10;
+            const totalWithFee = total + developmentFee;
+
+            // Actualizar billing con los nuevos montos
+            await billingDb.update(billing.id, {
+              subtotal: total,
+                totalAmount: totalWithFee,
+              balance: totalWithFee
+            });
+
+            // Recrear billing_items
+            await client.query('DELETE FROM billing_items WHERE billing_id = $1', [billing.id]);
+          
+            // Crear billing_items desde budget_items
+            for (const budgetItem of budgetItemIds) {
+              await billingItemDb.create({
+                billingId: billing.id,
+                budgetItemId: budgetItem.id,
+                description: budgetItem.description,
+                quantity: budgetItem.quantity,
+                  unitPrice: budgetItem.unitPrice,
+                itemType: 'labor'
+              });
+            }
+
+            // Añadir item de comisión desarrollo
+            await billingItemDb.create({
+              billingId: billing.id,
+              budgetItemId: null,
+              description: 'Comisión por desarrollo (10%)',
+              quantity: 1,
+              unitPrice: developmentFee,
+              itemType: 'other'
+            });
+          } catch (billingError) {
+            console.error('Error updating billing:', billingError);
+            // Continue even if billing update fails
+          }
 
         // Si no se envía estimatedCost, lo calculamos
         if (!values.includes(total) && (items.length > 0)) {
