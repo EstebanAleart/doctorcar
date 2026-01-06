@@ -15,17 +15,53 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Return all booked dates
+    // Return all booked dates with claim details
     const result = await query(
-      `SELECT appointment_date::date AS date, COUNT(*) AS count
-       FROM claims
-       WHERE appointment_date IS NOT NULL AND approval_status = 'accepted'
-       GROUP BY appointment_date::date
-       ORDER BY appointment_date::date`
+      `SELECT 
+        c.id,
+        c.appointment_date::date AS date,
+        c.description,
+        c.client_id,
+        u.name AS client_name,
+        v.brand,
+        v.model,
+        v.plate
+       FROM claims c
+       JOIN users u ON c.client_id = u.id
+       JOIN vehicles v ON c.vehicle_id = v.id
+       WHERE c.appointment_date IS NOT NULL AND c.approval_status = 'accepted'
+       ORDER BY c.appointment_date::date`
     );
 
-    const bookedDates = result.rows.map(r => ({ date: r.date, count: Number(r.count) }));
-    return NextResponse.json({ bookedDates });
+    // Group by date and create work orders with two-day blocks
+    const workOrders = result.rows.map((row) => ({
+      id: row.id,
+      date: typeof row.date === 'string' ? row.date : new Date(row.date).toISOString().split('T')[0],
+      clientName: row.client_name,
+      description: row.description,
+      vehicle: `${row.brand} ${row.model}`,
+      plate: row.plate,
+    }));
+
+    // For booked dates, each appointment blocks two days starting from appointment_date
+    const bookedDates = new Set();
+    workOrders.forEach((order) => {
+      // order.date es string en formato 'YYYY-MM-DD'
+      bookedDates.add(order.date);
+      
+      // Sumar un día al string
+      const dateParts = order.date.split('-');
+      const nextDayDate = new Date(Number(dateParts[0]), Number(dateParts[1]) - 1, Number(dateParts[2]) + 1);
+      const year = nextDayDate.getFullYear();
+      const month = String(nextDayDate.getMonth() + 1).padStart(2, '0');
+      const day = String(nextDayDate.getDate()).padStart(2, '0');
+      bookedDates.add(`${year}-${month}-${day}`);
+    });
+
+    return NextResponse.json({ 
+      bookedDates: Array.from(bookedDates),
+      workOrders 
+    });
   } catch (error) {
     console.error('Error fetching calendar dates:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

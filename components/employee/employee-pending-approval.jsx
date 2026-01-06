@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Eye } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Eye, Search, Filter } from "lucide-react";
 import Swal from "sweetalert2";
 
 export function EmployeePendingApproval() {
@@ -15,6 +18,11 @@ export function EmployeePendingApproval() {
   const [selectedClaim, setSelectedClaim] = useState(null);
   const [showDetail, setShowDetail] = useState(false);
   const [loading, setLoading] = useState(false);
+  
+  // Estados para búsqueda y filtrado
+  const [searchTerm, setSearchTerm] = useState("");
+  const [approvalFilter, setApprovalFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("date-desc");
 
   useEffect(() => {
     if (user) {
@@ -69,6 +77,7 @@ export function EmployeePendingApproval() {
 
   const loadClaims = async () => {
     try {
+      setLoading(true);
       const response = await fetch("/api/claims", { credentials: "include" });
       if (response.ok) {
         const data = await response.json();
@@ -83,8 +92,52 @@ export function EmployeePendingApproval() {
         icon: "error",
         confirmButtonColor: "#1a4d6d",
       });
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Filtrar y buscar claims
+  const filteredClaims = useMemo(() => {
+    let result = claims;
+
+    // Filtro por estado de aprobación
+    if (approvalFilter !== "all") {
+      result = result.filter((c) => c.approval_status === approvalFilter);
+    }
+
+    // Búsqueda
+    if (searchTerm.trim()) {
+      const search = searchTerm.toLowerCase();
+      result = result.filter((c) =>
+        c.client?.name.toLowerCase().includes(search) ||
+        c.vehicle?.brand.toLowerCase().includes(search) ||
+        c.vehicle?.model.toLowerCase().includes(search) ||
+        c.vehicle?.plate.toLowerCase().includes(search) ||
+        c.id.toLowerCase().includes(search)
+      );
+    }
+
+    // Ordenamiento
+    result = result.sort((a, b) => {
+      switch (sortBy) {
+        case "date-desc":
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        case "date-asc":
+          return new Date(a.createdAt) - new Date(b.createdAt);
+        case "amount-desc":
+          return (Number(b.estimatedCost) || 0) - (Number(a.estimatedCost) || 0);
+        case "amount-asc":
+          return (Number(a.estimatedCost) || 0) - (Number(b.estimatedCost) || 0);
+        case "client-asc":
+          return (a.client?.name || "").localeCompare(b.client?.name || "");
+        default:
+          return 0;
+      }
+    });
+
+    return result;
+  }, [claims, searchTerm, approvalFilter, sortBy]);
 
   const getStatusColor = (status) => {
     const colors = {
@@ -113,8 +166,73 @@ export function EmployeePendingApproval() {
         </p>
       </div>
 
+      {/* Controles de búsqueda y filtrado */}
+      <Card>
+        <CardContent className="pt-6 space-y-4">
+          <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-3">
+            {/* Búsqueda */}
+            <div className="space-y-2">
+              <Label htmlFor="search" className="flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Buscar
+              </Label>
+              <Input
+                id="search"
+                placeholder="Cliente, vehículo, patente..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            {/* Filtro por estado */}
+            <div className="space-y-2">
+              <Label htmlFor="approval-filter" className="flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                Estado
+              </Label>
+              <Select value={approvalFilter} onValueChange={setApprovalFilter}>
+                <SelectTrigger id="approval-filter">
+                  <SelectValue placeholder="Selecciona estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos los estados</SelectItem>
+                  <SelectItem value="pending">Pendiente</SelectItem>
+                  <SelectItem value="accepted">Aceptado</SelectItem>
+                  <SelectItem value="rejected">Rechazado</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Ordenamiento */}
+            <div className="space-y-2">
+              <Label htmlFor="sort-by">Ordenar por</Label>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger id="sort-by">
+                  <SelectValue placeholder="Selecciona orden" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="date-desc">Más reciente</SelectItem>
+                  <SelectItem value="date-asc">Más antiguo</SelectItem>
+                  <SelectItem value="amount-desc">Monto (mayor)</SelectItem>
+                  <SelectItem value="amount-asc">Monto (menor)</SelectItem>
+                  <SelectItem value="client-asc">Cliente (A-Z)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Indicador de resultados */}
+          {searchTerm || approvalFilter !== "all" ? (
+            <p className="text-sm text-muted-foreground">
+              {filteredClaims.length} resultado(s) encontrado(s)
+            </p>
+          ) : null}
+        </CardContent>
+      </Card>
+
+      {/* Lista de presupuestos */}
       <div className="grid gap-4">
-        {claims.map((claim) => {
+        {filteredClaims.map((claim) => {
           const estimatedValue = Number.parseFloat(claim.estimatedCost);
           const hasEstimate = Number.isFinite(estimatedValue);
           const approvalStatus = claim.approval_status || "pending";
@@ -190,10 +308,12 @@ export function EmployeePendingApproval() {
           );
         })}
 
-        {claims.length === 0 && (
+        {filteredClaims.length === 0 && (
           <Card>
             <CardContent className="flex h-32 items-center justify-center text-muted-foreground">
-              No hay presupuestos pendientes de aprobación
+              {claims.length === 0
+                ? "No hay presupuestos pendientes de aprobación"
+                : "No se encontraron presupuestos con los filtros especificados"}
             </CardContent>
           </Card>
         )}

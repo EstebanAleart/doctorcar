@@ -29,7 +29,7 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
         const res = await fetch('/api/calendar', { credentials: 'include' });
         if (res.ok) {
           const data = await res.json();
-          const dates = (data.bookedDates || []).map((d) => d.date);
+          const dates = data.bookedDates || [];
           if (isMounted) setBookedDates(dates);
         }
       } catch (e) {
@@ -148,10 +148,15 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
                 booked: (date) => {
                   const ymd = formatLocalYMD(date);
                   return bookedDates.includes(ymd);
+                },
+                selected: (date) => {
+                  const ymd = formatLocalYMD(date);
+                  return ymd === approvalData.appointmentDate;
                 }
               }}
               modifiersClassNames={{
-                booked: "bg-red-100 text-red-900 line-through opacity-50 cursor-not-allowed"
+                booked: "bg-red-200 text-red-900 line-through",
+                selected: "bg-[#1a4d6d] text-white font-bold"
               }}
             />
           </div>

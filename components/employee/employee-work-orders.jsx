@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Eye, FileText, Plus, Trash2, Download } from "lucide-react";
+import { Eye, FileText, Plus, Trash2, Download, Search, Filter } from "lucide-react";
 import { downloadPDF } from "@/lib/pdf-generator";
 import Swal from "sweetalert2";
 
@@ -27,6 +27,12 @@ export function EmployeeWorkOrders() {
     quantity: 1,
     unitPrice: 0,
   });
+
+  // Estados para búsqueda y filtrado
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [approvalFilter, setApprovalFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("date-desc");
 
   useEffect(() => {
     if (user) {
@@ -97,6 +103,53 @@ export function EmployeeWorkOrders() {
       });
     }
   };
+
+  // Filtrar y ordenar claims
+  const filteredClaims = useMemo(() => {
+    let result = claims;
+
+    // Filtro por estado de trabajo
+    if (statusFilter !== "all") {
+      result = result.filter((c) => c.status === statusFilter);
+    }
+
+    // Filtro por estado de aprobación
+    if (approvalFilter !== "all") {
+      result = result.filter((c) => c.approval_status === approvalFilter);
+    }
+
+    // Búsqueda
+    if (searchTerm.trim()) {
+      const search = searchTerm.toLowerCase();
+      result = result.filter((c) =>
+        c.client?.name.toLowerCase().includes(search) ||
+        c.vehicle?.brand.toLowerCase().includes(search) ||
+        c.vehicle?.model.toLowerCase().includes(search) ||
+        c.vehicle?.plate.toLowerCase().includes(search) ||
+        c.id.toLowerCase().includes(search)
+      );
+    }
+
+    // Ordenamiento
+    result = result.sort((a, b) => {
+      switch (sortBy) {
+        case "date-desc":
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        case "date-asc":
+          return new Date(a.createdAt) - new Date(b.createdAt);
+        case "amount-desc":
+          return (Number(b.estimatedCost) || 0) - (Number(a.estimatedCost) || 0);
+        case "amount-asc":
+          return (Number(a.estimatedCost) || 0) - (Number(b.estimatedCost) || 0);
+        case "client-asc":
+          return (a.client?.name || "").localeCompare(b.client?.name || "");
+        default:
+          return 0;
+      }
+    });
+
+    return result;
+  }, [claims, searchTerm, statusFilter, approvalFilter, sortBy]);
 
   const updateStatus = async (claimId, status) => {
     try {
@@ -259,8 +312,88 @@ export function EmployeeWorkOrders() {
         <p className="text-muted-foreground">Gestiona los trabajos asignados a ti</p>
       </div>
 
+      {/* Controles de búsqueda y filtrado */}
+      <Card>
+        <CardContent className="pt-6 space-y-4">
+          <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-4">
+            {/* Búsqueda */}
+            <div className="space-y-2">
+              <Label htmlFor="search" className="flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Buscar
+              </Label>
+              <Input
+                id="search"
+                placeholder="Cliente, vehículo, patente..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            {/* Filtro por estado de trabajo */}
+            <div className="space-y-2">
+              <Label htmlFor="status-filter" className="flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                Estado del Trabajo
+              </Label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger id="status-filter">
+                  <SelectValue placeholder="Selecciona estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos los estados</SelectItem>
+                  <SelectItem value="pending">Pendiente</SelectItem>
+                  <SelectItem value="in_progress">En Progreso</SelectItem>
+                  <SelectItem value="completed">Completado</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Filtro por aprobación */}
+            <div className="space-y-2">
+              <Label htmlFor="approval-filter">Aprobación</Label>
+              <Select value={approvalFilter} onValueChange={setApprovalFilter}>
+                <SelectTrigger id="approval-filter">
+                  <SelectValue placeholder="Selecciona estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="pending">Pendiente</SelectItem>
+                  <SelectItem value="accepted">Aceptado</SelectItem>
+                  <SelectItem value="rejected">Rechazado</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Ordenamiento */}
+            <div className="space-y-2">
+              <Label htmlFor="sort-by">Ordenar por</Label>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger id="sort-by">
+                  <SelectValue placeholder="Selecciona orden" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="date-desc">Más reciente</SelectItem>
+                  <SelectItem value="date-asc">Más antiguo</SelectItem>
+                  <SelectItem value="amount-desc">Monto (mayor)</SelectItem>
+                  <SelectItem value="amount-asc">Monto (menor)</SelectItem>
+                  <SelectItem value="client-asc">Cliente (A-Z)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Indicador de resultados */}
+          {searchTerm || statusFilter !== "all" || approvalFilter !== "all" ? (
+            <p className="text-sm text-muted-foreground">
+              {filteredClaims.length} resultado(s) encontrado(s)
+            </p>
+          ) : null}
+        </CardContent>
+      </Card>
+
       <div className="grid gap-4">
-        {claims.map((claim) => {
+        {filteredClaims.map((claim) => {
           const client = getClientInfo(claim);
           const estimatedValue = Number.parseFloat(claim.estimatedCost);
           const hasEstimate = Number.isFinite(estimatedValue);
@@ -365,10 +498,12 @@ export function EmployeeWorkOrders() {
           );
         })}
 
-        {claims.length === 0 && (
+        {filteredClaims.length === 0 && (
           <Card>
             <CardContent className="flex h-32 items-center justify-center text-muted-foreground">
-              No tienes órdenes de trabajo asignadas
+              {claims.length === 0
+                ? "No tienes órdenes de trabajo asignadas"
+                : "No se encontraron órdenes con los filtros especificados"}
             </CardContent>
           </Card>
         )}
