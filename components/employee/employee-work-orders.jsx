@@ -81,6 +81,7 @@ export function EmployeeWorkOrders() {
         model: claim.model,
         plate: claim.plate,
         year: claim.year,
+        color: claim.color,
       },
     };
   };

@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS claims (
   photos TEXT,
   approval_status TEXT DEFAULT 'pending' CHECK(approval_status IN ('pending','accepted','rejected')),
   payment_method TEXT,
-  appointment_date DATE,
+  appointment_id TEXT REFERENCES appointments(id) ON DELETE SET NULL,
   workshop_id INTEGER DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -87,7 +87,25 @@ ALTER TABLE claims ADD COLUMN IF NOT EXISTS workshop_id INTEGER DEFAULT 1;
 ALTER TABLE claims ADD COLUMN IF NOT EXISTS photos TEXT;
 ALTER TABLE claims ADD COLUMN IF NOT EXISTS approval_status TEXT DEFAULT 'pending' CHECK(approval_status IN ('pending','accepted','rejected'));
 ALTER TABLE claims ADD COLUMN IF NOT EXISTS payment_method TEXT;
-ALTER TABLE claims ADD COLUMN IF NOT EXISTS appointment_date DATE;
+ALTER TABLE claims ADD COLUMN IF NOT EXISTS appointment_id TEXT;
+
+-- Drop old appointment_date column if exists and add appointment_id FK
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name='claims' AND column_name='appointment_date'
+  ) THEN
+    ALTER TABLE claims DROP COLUMN appointment_date;
+  END IF;
+  
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE table_name='claims' AND constraint_name='fk_claims_appointment_id'
+  ) THEN
+    ALTER TABLE claims ADD CONSTRAINT fk_claims_appointment_id FOREIGN KEY (appointment_id) REFERENCES appointments(id) ON DELETE SET NULL;
+  END IF;
+END $$;
 
 -- Budget Items
 CREATE TABLE IF NOT EXISTS budget_items (

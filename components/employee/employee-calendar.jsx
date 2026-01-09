@@ -19,7 +19,13 @@ export function EmployeeCalendar() {
 
   const loadCalendarData = async () => {
     try {
-      // Get all appointments
+      // Get booked dates from calendar endpoint (already correctly processed)
+      const calendarResponse = await fetch("/api/calendar");
+      const calendarData = await calendarResponse.json();
+      const bookedDates = calendarData.bookedDates || [];
+      setBookedDates(bookedDates);
+      
+      // Get all appointments for the list
       const response = await fetch("/api/appointments");
       const allAppointments = await response.json();
 
@@ -39,28 +45,6 @@ export function EmployeeCalendar() {
         plate: apt.plate,
       }));
 
-      // For each appointment, mark the date and the next day (48h minimum)
-      const bookedDatesSet = new Set();
-      workOrders.forEach((order) => {
-        // Extract YYYY-MM-DD from order.date (which might be a timestamp)
-        const dateOnly = order.date.split('T')[0];
-        console.log('[EmployeeCalendar] Processing order date:', dateOnly);
-        bookedDatesSet.add(dateOnly);
-        
-        // Add next day as well (48h)
-        const currentDate = new Date(dateOnly + 'T00:00:00');
-        currentDate.setDate(currentDate.getDate() + 1);
-        const year = currentDate.getFullYear();
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-        const day = String(currentDate.getDate()).padStart(2, '0');
-        const nextDayStr = `${year}-${month}-${day}`;
-        console.log('[EmployeeCalendar] Adding next day:', nextDayStr);
-        bookedDatesSet.add(nextDayStr);
-      });
-
-      const bookedDatesArray = Array.from(bookedDatesSet);
-      console.log('[EmployeeCalendar] Final booked dates:', bookedDatesArray);
-      setBookedDates(bookedDatesArray);
       setAppointments(workOrders);
     } catch (error) {
       console.error("Error fetching calendar dates:", error);

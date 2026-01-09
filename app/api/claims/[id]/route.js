@@ -201,11 +201,11 @@ export async function PUT(request, { params }) {
         if (appointment_date !== undefined) {
           try {
             const appointmentId = nanoid();
-            console.log('[PUT /api/claims] Creating appointment:', { appointmentId, claimId: id, scheduledDate: appointment_date });
+            console.log('[PUT /api/claims] Creating appointment with date:', appointment_date, 'type:', typeof appointment_date);
             
             await query(
               `INSERT INTO appointments (id, claim_id, scheduled_date, appointment_type, status, duration_minutes)
-               VALUES ($1, $2, $3, 'inspection', 'scheduled', 1440)
+               VALUES ($1, $2, $3::DATE, 'inspection', 'scheduled', 1440)
                RETURNING *`,
               [appointmentId, id, appointment_date]
             );
