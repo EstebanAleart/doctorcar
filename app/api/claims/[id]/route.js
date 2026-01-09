@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { query, billingDb, billingItemDb } from '@/lib/database';
 import pool from '@/lib/database';
 import { uploadMultipleImages, deleteMultipleImages } from '@/lib/cloudinary';
+import { generatePDFContent } from '@/lib/pdf-generator';
 import { nanoid } from 'nanoid';
 
 // GET /api/claims/[id] - Obtener un reclamo específico
@@ -210,6 +211,10 @@ export async function PUT(request, { params }) {
               [appointmentId, id, appointment_date]
             );
             console.log('[PUT /api/claims] Appointment created successfully');
+            
+            // Actualizar claims.appointment_id para establecer la relación
+            updates.push(`appointment_id = $${paramIndex++}`);
+            values.push(appointmentId);
           } catch (appointmentError) {
             console.error('[PUT /api/claims] Error creating appointment:', appointmentError);
             return NextResponse.json({ error: 'Failed to create appointment', details: appointmentError.message }, { status: 500 });
@@ -303,6 +308,11 @@ export async function PUT(request, { params }) {
               unitPrice: -developmentFee,
               itemType: 'other'
             });
+
+            // Nota: El PDF se genera on-the-fly cuando el cliente lo solicita
+            // No necesitamos guardarlo en Cloudinary ni en la base de datos
+            // El endpoint /api/pdf/download genera el PDF dinámicamente
+            console.log('Budget items updated for claim:', id);
           } catch (billingError) {
             console.error('Error updating billing:', billingError);
             // Continue even if billing update fails

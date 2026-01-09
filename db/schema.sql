@@ -63,6 +63,21 @@ CREATE TABLE IF NOT EXISTS vehicles (
 
 ALTER TABLE vehicles ADD COLUMN IF NOT EXISTS workshop_id INTEGER DEFAULT 1;
 
+-- Appointments (citas) - Definir antes de claims para la FK
+CREATE TABLE IF NOT EXISTS appointments (
+  id TEXT PRIMARY KEY,
+  claim_id TEXT,
+  scheduled_date DATE NOT NULL,
+  scheduled_time TIME,
+  duration_minutes INTEGER DEFAULT 60,
+  status TEXT NOT NULL DEFAULT 'scheduled' CHECK(status IN ('scheduled','confirmed','in_progress','completed','cancelled','rescheduled')),
+  appointment_type TEXT NOT NULL DEFAULT 'inspection' CHECK(appointment_type IN ('inspection','repair','delivery','follow_up')),
+  notes TEXT,
+  workshop_id INTEGER DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Claims
 CREATE TABLE IF NOT EXISTS claims (
   id TEXT PRIMARY KEY,
@@ -78,6 +93,7 @@ CREATE TABLE IF NOT EXISTS claims (
   approval_status TEXT DEFAULT 'pending' CHECK(approval_status IN ('pending','accepted','rejected')),
   payment_method TEXT,
   appointment_id TEXT REFERENCES appointments(id) ON DELETE SET NULL,
+  pdf_url TEXT,
   workshop_id INTEGER DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -88,6 +104,7 @@ ALTER TABLE claims ADD COLUMN IF NOT EXISTS photos TEXT;
 ALTER TABLE claims ADD COLUMN IF NOT EXISTS approval_status TEXT DEFAULT 'pending' CHECK(approval_status IN ('pending','accepted','rejected'));
 ALTER TABLE claims ADD COLUMN IF NOT EXISTS payment_method TEXT;
 ALTER TABLE claims ADD COLUMN IF NOT EXISTS appointment_id TEXT;
+ALTER TABLE claims ADD COLUMN IF NOT EXISTS pdf_url TEXT;
 
 -- Drop old appointment_date column if exists and add appointment_id FK
 DO $$
@@ -175,20 +192,16 @@ CREATE INDEX IF NOT EXISTS idx_claims_employee_id ON claims(employee_id);
 CREATE INDEX IF NOT EXISTS idx_claims_status ON claims(status);
 CREATE INDEX IF NOT EXISTS idx_budget_items_claim_id ON budget_items(claim_id);
 
--- Appointments (citas)
-CREATE TABLE IF NOT EXISTS appointments (
-  id TEXT PRIMARY KEY,
-  claim_id TEXT NOT NULL REFERENCES claims(id) ON DELETE CASCADE,
-  scheduled_date DATE NOT NULL,
-  scheduled_time TIME,
-  duration_minutes INTEGER DEFAULT 60,
-  status TEXT NOT NULL DEFAULT 'scheduled' CHECK(status IN ('scheduled','confirmed','in_progress','completed','cancelled','rescheduled')),
-  appointment_type TEXT NOT NULL DEFAULT 'inspection' CHECK(appointment_type IN ('inspection','repair','delivery','follow_up')),
-  notes TEXT,
-  workshop_id INTEGER DEFAULT 1,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+-- Add FK from appointments to claims (now that both tables exist)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE table_name='appointments' AND constraint_name='fk_appointments_claim_id'
+  ) THEN
+    ALTER TABLE appointments ADD CONSTRAINT fk_appointments_claim_id FOREIGN KEY (claim_id) REFERENCES claims(id) ON DELETE CASCADE;
+  END IF;
+END $$;
 
 -- Insurance Companies
 CREATE TABLE IF NOT EXISTS insurance_companies (
@@ -216,6 +229,7 @@ CREATE TABLE IF NOT EXISTS billing (
   tax_amount DECIMAL(10,2) DEFAULT 0,
   discount_percentage DECIMAL(5,2) DEFAULT 0,
   discount_amount DECIMAL(10,2) DEFAULT 0,
+  development_fee DECIMAL(10,2),
   total_amount DECIMAL(10,2) NOT NULL,
   paid_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
   balance DECIMAL(10,2) NOT NULL,
@@ -226,6 +240,23 @@ CREATE TABLE IF NOT EXISTS billing (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Add development_fee column if not exists
+ALTER TABLE billing ADD COLUMN IF NOT EXISTS development_fee DECIMAL(10,2);
+
+-- Develop (10% fee calculation)
+CREATE TABLE IF NOT EXISTS develop (
+  id TEXT PRIMARY KEY,
+  billing_id TEXT NOT NULL REFERENCES billing(id) ON DELETE CASCADE,
+  percentage DECIMAL(5,2) NOT NULL DEFAULT 10.00,
+  amount DECIMAL(10,2),
+  workshop_id INTEGER DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_develop_billing_id ON develop(billing_id);
+
+ALTER TABLE develop ADD COLUMN IF NOT EXISTS workshop_id INTEGER DEFAULT 1;
 
 -- Billing Items
 CREATE TABLE IF NOT EXISTS billing_items (
@@ -307,6 +338,12 @@ BEGIN
     WHERE table_name='billing' AND constraint_name='fk_billing_workshop_id'
   ) THEN
     ALTER TABLE billing ADD CONSTRAINT fk_billing_workshop_id FOREIGN KEY (workshop_id) REFERENCES workshop_config(id);
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE table_name='develop' AND constraint_name='fk_develop_workshop_id'
+  ) THEN
+    ALTER TABLE develop ADD CONSTRAINT fk_develop_workshop_id FOREIGN KEY (workshop_id) REFERENCES workshop_config(id);
   END IF;
   IF NOT EXISTS (
     SELECT 1 FROM information_schema.table_constraints

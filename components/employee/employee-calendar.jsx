@@ -29,6 +29,13 @@ export function EmployeeCalendar() {
       const response = await fetch("/api/appointments");
       const allAppointments = await response.json();
 
+      // Validar que sea un array
+      if (!Array.isArray(allAppointments)) {
+        console.error("Appointments data is not an array:", allAppointments);
+        setAppointments([]);
+        return;
+      }
+
       const workOrders = allAppointments.map((apt) => ({
         id: apt.id,
         date:

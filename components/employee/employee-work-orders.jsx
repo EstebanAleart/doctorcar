@@ -469,7 +469,7 @@ export function EmployeeWorkOrders() {
                     }}
                   >
                     <Eye className="h-4 w-4 mr-2" />
-                    Ver Fotos
+                    Ver Detalle
                   </Button>
 
                   <Button variant="outline" size="sm" onClick={() => openEstimateDialog(claim)}>

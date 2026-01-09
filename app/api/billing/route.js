@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { billingDb, billingItemDb, paymentDb, claimDb, budgetItemDb } from '@/lib/database';
+import { billingDb, billingItemDb, paymentDb, claimDb, budgetItemDb, developDb } from '@/lib/database';
 
 // GET all billing records with related data
 export async function GET() {
@@ -74,6 +74,13 @@ export async function POST(request) {
       subtotal,
       totalAmount,
       balance: totalAmount
+    });
+
+    // Create develop record with 10% calculation
+    await developDb.create({
+      billingId: billing.id,
+      percentage: 10.00,
+      amount: developmentFee
     });
 
     // Create billing items from budget items

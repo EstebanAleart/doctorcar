@@ -69,8 +69,31 @@ export function EmployeePayments() {
         fetch("/api/billing")
       ]);
       
+      // Verificar respuestas exitosas
+      if (!claimsRes.ok) {
+        console.error("Claims API error:", claimsRes.status);
+        setClaims([]);
+        setBillings([]);
+        return;
+      }
+      
+      if (!billingsRes.ok) {
+        console.error("Billing API error:", billingsRes.status);
+        setClaims([]);
+        setBillings([]);
+        return;
+      }
+      
       const claimsData = await claimsRes.json();
       const billingsData = await billingsRes.json();
+      
+      // Validar que sean arrays
+      if (!Array.isArray(claimsData)) {
+        console.error("Claims data is not an array:", claimsData);
+        setClaims([]);
+        setBillings(Array.isArray(billingsData) ? billingsData : []);
+        return;
+      }
       
       // Solo reclamos con presupuesto aceptado
       const acceptedClaims = claimsData.filter(
@@ -78,9 +101,11 @@ export function EmployeePayments() {
       );
       
       setClaims(acceptedClaims);
-      setBillings(billingsData);
+      setBillings(Array.isArray(billingsData) ? billingsData : []);
     } catch (error) {
       console.error("Error loading data:", error);
+      setClaims([]);
+      setBillings([]);
     } finally {
       setLoading(false);
     }

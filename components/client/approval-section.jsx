@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertCircle, AlertTriangle, Check, X } from "lucide-react";
+import { AlertCircle, AlertTriangle, Check, X, Download } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
@@ -184,6 +184,30 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
               }}
             />
           </div>
+
+          <Button
+            onClick={async () => {
+              try {
+                // Descargar el PDF generado on-the-fly
+                const downloadUrl = `/api/pdf/download?id=${encodeURIComponent(claim.id)}`;
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = `Presupuesto_${claim.id.slice(-8)}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              } catch (error) {
+                console.error('Error downloading PDF:', error);
+                alert('Error al descargar el PDF');
+              }
+            }}
+            variant="outline"
+            className="w-full mb-2"
+            disabled={loading}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Descargar Presupuesto (PDF)
+          </Button>
 
           <div className="flex gap-2">
             <Button
