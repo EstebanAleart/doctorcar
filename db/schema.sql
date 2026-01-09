@@ -358,3 +358,34 @@ BEGIN
     ALTER TABLE payments ADD CONSTRAINT fk_payments_workshop_id FOREIGN KEY (workshop_id) REFERENCES workshop_config(id);
   END IF;
 END $$;
+
+-- Payment Installments (desglose de cuotas)
+CREATE TABLE IF NOT EXISTS payment_installments (
+  id TEXT PRIMARY KEY,
+  payment_id TEXT NOT NULL REFERENCES payments(id) ON DELETE CASCADE,
+  installment_number INTEGER NOT NULL,
+  installment_amount DECIMAL(10,2) NOT NULL,
+  due_date DATE,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','paid','overdue','cancelled')),
+  workshop_id INTEGER DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_payment_installments_payment_id ON payment_installments(payment_id);
+CREATE INDEX IF NOT EXISTS idx_payment_installments_status ON payment_installments(status);
+
+ALTER TABLE payment_installments ADD COLUMN IF NOT EXISTS workshop_id INTEGER DEFAULT 1;
+ALTER TABLE payment_installments ADD COLUMN IF NOT EXISTS receipt_url TEXT;
+ALTER TABLE payment_installments ADD COLUMN IF NOT EXISTS payment_date TIMESTAMP;
+ALTER TABLE payment_installments ADD COLUMN IF NOT EXISTS notes TEXT;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE table_name='payment_installments' AND constraint_name='fk_payment_installments_workshop_id'
+  ) THEN
+    ALTER TABLE payment_installments ADD CONSTRAINT fk_payment_installments_workshop_id FOREIGN KEY (workshop_id) REFERENCES workshop_config(id);
+  END IF;
+END $$;

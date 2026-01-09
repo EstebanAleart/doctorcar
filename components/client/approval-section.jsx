@@ -7,6 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertCircle, AlertTriangle, Check, X, Download } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
   const [approvalData, setApprovalData] = useState({
@@ -17,6 +27,7 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
   const [bookedDates, setBookedDates] = useState([]);
   const [errors, setErrors] = useState([]);
   const [dateError, setDateError] = useState("");
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   
   const formatLocalYMD = (d) => {
     const y = d.getFullYear();
@@ -81,15 +92,12 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
   };
 
   const handleSubmitReject = async () => {
-    const confirmed = window.confirm(
-      "¿Rechazar Presupuesto?\n\nSi rechazas este presupuesto, tendrás que crear un nuevo reclamo"
-    );
-    
-    if (confirmed) {
-      await onApprovalUpdate({
-        approval_status: "rejected",
-      });
-    }
+    setRejectDialogOpen(true);
+  };
+
+  const handleConfirmReject = async () => {
+    await onApprovalUpdate({ approval_status: "rejected" });
+    setRejectDialogOpen(false);
   };
 
   return (
@@ -226,6 +234,27 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
               Rechazar
             </Button>
           </div>
+
+          <AlertDialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>¿Rechazar este presupuesto?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Si rechazas el presupuesto deberás crear un nuevo reclamo para continuar con el proceso.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={loading}>Volver</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleConfirmReject}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                  disabled={loading}
+                >
+                  Rechazar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       )}
 
