@@ -62,7 +62,8 @@ export function ClientClaims() {
             createdAt: claim.createdAt ?? claim.created_at,
             approval_status: claim.approval_status || "pending",
             payment_method: claim.payment_method || null,
-            appointment_date: claim.appointment_date || null,
+            appointment_date: null, // Now stored in appointments table
+            appointments: claim.appointments || [],
             photos: claim.photos
               ? typeof claim.photos === "string"
                 ? (() => {

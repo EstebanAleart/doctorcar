@@ -26,15 +26,17 @@ export async function GET(request, { params }) {
     const { id } = await params;
 
     const claim = await query(
-      `SELECT c.*, v.brand, v.model, v.plate, v.year,
+      `SELECT c.*, v.brand, v.model, v.plate, v.year, v.color,
               u.name as client_name, u.email as client_email, u.phone as client_phone,
-              COALESCE(json_agg(b.*) FILTER (WHERE b.id IS NOT NULL), '[]') AS items
+              COALESCE(json_agg(b.*) FILTER (WHERE b.id IS NOT NULL), '[]') AS items,
+              COALESCE(json_agg(a.*) FILTER (WHERE a.id IS NOT NULL), '[]') AS appointments
        FROM claims c
        JOIN vehicles v ON c.vehicle_id = v.id
        JOIN users u ON c.client_id = u.id
        LEFT JOIN budget_items b ON b.claim_id = c.id
+       LEFT JOIN appointments a ON a.claim_id = c.id AND a.status != 'cancelled'
        WHERE c.id = $1
-       GROUP BY c.id, v.brand, v.model, v.plate, v.year, u.name, u.email, u.phone`,
+       GROUP BY c.id, v.brand, v.model, v.plate, v.year, v.color, u.name, u.email, u.phone`,
       [id]
     );
 
@@ -112,9 +114,10 @@ export async function PUT(request, { params }) {
         return NextResponse.json({ error: 'No se puede seleccionar una fecha pasada' }, { status: 400 });
       }
       
+      // Check if date is already booked in appointments table
       const existing = await query(
-        'SELECT 1 FROM claims WHERE appointment_date = $1 AND approval_status = $2 AND id <> $3 LIMIT 1',
-        [appointment_date, 'accepted', id]
+        'SELECT 1 FROM appointments WHERE scheduled_date = $1 AND status NOT IN (\'cancelled\', \'rescheduled\') LIMIT 1',
+        [appointment_date]
       );
       if (existing.rows.length > 0) {
         return NextResponse.json({ error: 'La fecha seleccionada ya está ocupada' }, { status: 400 });
@@ -194,9 +197,23 @@ export async function PUT(request, { params }) {
           updates.push(`payment_method = $${paramIndex++}`);
           values.push(payment_method);
         }
+        // Crear appointment en tabla appointments en lugar de guardar appointment_date en claims
         if (appointment_date !== undefined) {
-          updates.push(`appointment_date = $${paramIndex++}`);
-          values.push(appointment_date);
+          try {
+            const appointmentId = nanoid();
+            console.log('[PUT /api/claims] Creating appointment:', { appointmentId, claimId: id, scheduledDate: appointment_date });
+            
+            await query(
+              `INSERT INTO appointments (id, claim_id, scheduled_date, appointment_type, status, duration_minutes)
+               VALUES ($1, $2, $3, 'inspection', 'scheduled', 1440)
+               RETURNING *`,
+              [appointmentId, id, appointment_date]
+            );
+            console.log('[PUT /api/claims] Appointment created successfully');
+          } catch (appointmentError) {
+            console.error('[PUT /api/claims] Error creating appointment:', appointmentError);
+            return NextResponse.json({ error: 'Failed to create appointment', details: appointmentError.message }, { status: 500 });
+          }
         }
       }
     }
@@ -251,15 +268,15 @@ export async function PUT(request, { params }) {
               });
             }
 
-            // Calcular 10% desarrollo
+            // Calcular 10% desarrollo (se descuenta del total)
             const developmentFee = total * 0.10;
-            const totalWithFee = total + developmentFee;
+            const totalAfterFee = total - developmentFee;
 
             // Actualizar billing con los nuevos montos
             await billingDb.update(billing.id, {
               subtotal: total,
-                totalAmount: totalWithFee,
-              balance: totalWithFee
+              totalAmount: totalAfterFee,
+              balance: totalAfterFee
             });
 
             // Recrear billing_items
@@ -277,13 +294,13 @@ export async function PUT(request, { params }) {
               });
             }
 
-            // Añadir item de comisión desarrollo
+            // Añadir item de descuento por desarrollo
             await billingItemDb.create({
               billingId: billing.id,
               budgetItemId: null,
-              description: 'Comisión por desarrollo (10%)',
+              description: 'Descuento desarrollo (10%)',
               quantity: 1,
-              unitPrice: developmentFee,
+              unitPrice: -developmentFee,
               itemType: 'other'
             });
           } catch (billingError) {

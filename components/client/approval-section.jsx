@@ -5,14 +5,14 @@ import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertCircle, Check, X } from "lucide-react";
+import { AlertCircle, AlertTriangle, Check, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
   const [approvalData, setApprovalData] = useState({
     approval: claim.approval_status || "pending",
     paymentMethod: claim.payment_method || "",
-    appointmentDate: claim.appointment_date || "",
+    appointmentDate: "",
   });
   const [bookedDates, setBookedDates] = useState([]);
   const [errors, setErrors] = useState([]);
@@ -23,6 +23,17 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
     const m = String(d.getMonth() + 1).padStart(2, "0");
     const day = String(d.getDate()).padStart(2, "0");
     return `${y}-${m}-${day}`;
+  };
+
+  // Obtener fecha del primer appointment aceptado si existe
+  const getFirstAppointmentDate = () => {
+    if (claim.appointments && Array.isArray(claim.appointments) && claim.appointments.length > 0) {
+      const validAppointments = claim.appointments.filter(a => a && a.scheduled_date);
+      if (validAppointments.length > 0) {
+        return validAppointments[0].scheduled_date;
+      }
+    }
+    return null;
   };
 
   useEffect(() => {
@@ -64,7 +75,7 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
     setErrors([]);
     await onApprovalUpdate({
       approval_status: "accepted",
-      payment_method: isParticular ? approvalData.paymentMethod : null,
+      payment_method: isParticular ? approvalData.paymentMethod : "insurance",
       appointment_date: approvalData.appointmentDate,
     });
   };
@@ -126,6 +137,9 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
 
           <div className="space-y-2">
             <Label>Fecha de Turno</Label>
+            <div className="text-xs text-amber-600 font-medium mb-2 p-2 bg-amber-50 rounded">
+              ⚠️ Tenga en cuenta que el arreglo puede demorar un mínimo de 48 horas
+            </div>
             <div className="text-xs text-muted-foreground mb-2 flex gap-3">
               <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[#1a4d6d]"></span> Seleccionada</span>
               <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-500"></span> Ocupada</span>
@@ -194,8 +208,15 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
 
       {claim.approval_status === "accepted" && (
         <div className="space-y-2 p-3 bg-green-50 rounded-md">
-          <p className="text-sm"><strong>Fecha de Turno:</strong> {claim.appointment_date ? new Date(claim.appointment_date).toLocaleDateString("es-AR") : "N/A"}</p>
-          {isParticular && <p className="text-sm"><strong>Método de Pago:</strong> {claim.payment_method || "N/A"}</p>}
+          {(() => {
+            const appointmentDate = getFirstAppointmentDate();
+            return (
+              <>
+                <p className="text-sm"><strong>Fecha de Turno:</strong> {appointmentDate ? new Date(appointmentDate + 'T00:00:00').toLocaleDateString("es-AR") : "N/A"}</p>
+                {isParticular && <p className="text-sm"><strong>Método de Pago:</strong> {claim.payment_method || "N/A"}</p>}
+              </>
+            );
+          })()}
         </div>
       )}
 

@@ -85,7 +85,7 @@ export async function POST(request) {
         claimId,
         scheduledDate,
         scheduledTime || null,
-        duration || 60,
+        duration || 1440,
         type || 'inspection',
         notes || null,
       ]

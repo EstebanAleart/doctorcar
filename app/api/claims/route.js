@@ -29,26 +29,30 @@ export async function GET(request) {
     let claims;
     if (user.role === 'client') {
       claims = await query(
-        `SELECT c.*, v.brand, v.model, v.plate, v.year,
-                COALESCE(json_agg(b.*) FILTER (WHERE b.id IS NOT NULL), '[]') AS items
+        `SELECT c.*, v.brand, v.model, v.plate, v.year, v.color,
+                COALESCE(json_agg(b.*) FILTER (WHERE b.id IS NOT NULL), '[]') AS items,
+                COALESCE(json_agg(a.*) FILTER (WHERE a.id IS NOT NULL), '[]') AS appointments
          FROM claims c
          JOIN vehicles v ON c.vehicle_id = v.id
          LEFT JOIN budget_items b ON b.claim_id = c.id
+         LEFT JOIN appointments a ON a.claim_id = c.id AND a.status != 'cancelled'
          WHERE c.client_id = $1
-         GROUP BY c.id, v.brand, v.model, v.plate, v.year
+         GROUP BY c.id, v.brand, v.model, v.plate, v.year, v.color
          ORDER BY c.created_at DESC`,
         [user.id]
       );
     } else {
       claims = await query(
-        `SELECT c.*, v.brand, v.model, v.plate, v.year,
+        `SELECT c.*, v.brand, v.model, v.plate, v.year, v.color,
                 u.name as client_name, u.email as client_email, u.phone as client_phone,
-                COALESCE(json_agg(b.*) FILTER (WHERE b.id IS NOT NULL), '[]') AS items
+                COALESCE(json_agg(b.*) FILTER (WHERE b.id IS NOT NULL), '[]') AS items,
+                COALESCE(json_agg(a.*) FILTER (WHERE a.id IS NOT NULL), '[]') AS appointments
          FROM claims c
          JOIN vehicles v ON c.vehicle_id = v.id
          JOIN users u ON c.client_id = u.id
          LEFT JOIN budget_items b ON b.claim_id = c.id
-         GROUP BY c.id, v.brand, v.model, v.plate, v.year, u.name, u.email, u.phone
+         LEFT JOIN appointments a ON a.claim_id = c.id AND a.status != 'cancelled'
+         GROUP BY c.id, v.brand, v.model, v.plate, v.year, v.color, u.name, u.email, u.phone
          ORDER BY c.created_at DESC`
       );
     }

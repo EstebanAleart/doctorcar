@@ -401,9 +401,9 @@ export function EmployeePendingApproval() {
                         <strong>Método de Pago:</strong> {selectedClaim.payment_method}
                       </p>
                     )}
-                    {selectedClaim.appointment_date && (
+                    {selectedClaim.appointments && selectedClaim.appointments.length > 0 && selectedClaim.appointments[0].scheduled_date && (
                       <p className="text-sm text-muted-foreground">
-                        <strong>Fecha de Turno:</strong> {new Date(selectedClaim.appointment_date).toLocaleDateString("es-AR")}
+                        <strong>Fecha de Turno:</strong> {new Date(selectedClaim.appointments[0].scheduled_date + 'T00:00:00').toLocaleDateString("es-AR")}
                       </p>
                     )}
                   </>
