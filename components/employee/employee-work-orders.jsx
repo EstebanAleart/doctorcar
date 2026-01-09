@@ -95,7 +95,6 @@ export function EmployeeWorkOrders() {
         setClaims(normalized);
       }
     } catch (error) {
-      console.error("Error loading claims:", error);
       Swal.fire({
         title: "Error",
         text: "No se pudieron cargar las órdenes",
@@ -172,7 +171,6 @@ export function EmployeeWorkOrders() {
         });
       }
     } catch (error) {
-      console.error("Error updating status:", error);
     }
   };
 

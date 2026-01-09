@@ -38,7 +38,7 @@ export function AdminCalendar() {
       setBookedDates(bookedDates);
       setWorkOrders(workOrders);
     } catch (error) {
-      console.error("Error fetching calendar dates:", error);
+      // Error fetching calendar dates
     }
   };
 

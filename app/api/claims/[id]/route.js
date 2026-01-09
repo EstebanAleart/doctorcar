@@ -52,7 +52,6 @@ export async function GET(request, { params }) {
 
     return NextResponse.json(claim.rows[0]);
   } catch (error) {
-    console.error('Error fetching claim:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -134,7 +133,7 @@ export async function PUT(request, { params }) {
         await deleteMultipleImages(photosToDelete);
         currentPhotos = currentPhotos.filter((photo) => !photosToDelete.includes(photo.publicId));
       } catch (error) {
-        console.error('Error deleting photos:', error);
+        // Photo deletion failed, continue
       }
     }
 
@@ -146,7 +145,6 @@ export async function PUT(request, { params }) {
         });
         currentPhotos = [...currentPhotos, ...uploadedPhotos];
       } catch (error) {
-        console.error('Error uploading photos:', error);
         return NextResponse.json({ error: 'Failed to upload photos' }, { status: 500 });
       }
     }
@@ -202,7 +200,6 @@ export async function PUT(request, { params }) {
         if (appointment_date !== undefined) {
           try {
             const appointmentId = nanoid();
-            console.log('[PUT /api/claims] Creating appointment with date:', appointment_date, 'type:', typeof appointment_date);
             
             await query(
               `INSERT INTO appointments (id, claim_id, scheduled_date, appointment_type, status, duration_minutes)
@@ -210,13 +207,11 @@ export async function PUT(request, { params }) {
                RETURNING *`,
               [appointmentId, id, appointment_date]
             );
-            console.log('[PUT /api/claims] Appointment created successfully');
             
             // Actualizar claims.appointment_id para establecer la relación
             updates.push(`appointment_id = $${paramIndex++}`);
             values.push(appointmentId);
           } catch (appointmentError) {
-            console.error('[PUT /api/claims] Error creating appointment:', appointmentError);
             return NextResponse.json({ error: 'Failed to create appointment', details: appointmentError.message }, { status: 500 });
           }
         }
@@ -312,9 +307,7 @@ export async function PUT(request, { params }) {
             // Nota: El PDF se genera on-the-fly cuando el cliente lo solicita
             // No necesitamos guardarlo en Cloudinary ni en la base de datos
             // El endpoint /api/pdf/download genera el PDF dinámicamente
-            console.log('Budget items updated for claim:', id);
           } catch (billingError) {
-            console.error('Error updating billing:', billingError);
             // Continue even if billing update fails
           }
 
@@ -337,7 +330,6 @@ export async function PUT(request, { params }) {
         }
       } catch (error) {
         await client.query('ROLLBACK');
-        console.error('Error saving budget items:', error);
         return NextResponse.json({ error: 'Failed to save budget items' }, { status: 500 });
       } finally {
         client.release();
@@ -357,7 +349,6 @@ export async function PUT(request, { params }) {
 
     return NextResponse.json(result.rows[0]);
   } catch (error) {
-    console.error('Error updating claim:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -411,7 +402,7 @@ export async function DELETE(request, { params }) {
         const publicIds = photos.map((photo) => photo.publicId);
         await deleteMultipleImages(publicIds);
       } catch (error) {
-        console.error('Error deleting photos from Cloudinary:', error);
+        // Photo deletion from Cloudinary failed
       }
     }
 
@@ -419,7 +410,6 @@ export async function DELETE(request, { params }) {
 
     return NextResponse.json({ message: 'Claim deleted successfully' });
   } catch (error) {
-    console.error('Error deleting claim:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

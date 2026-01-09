@@ -17,7 +17,6 @@ export async function GET() {
 
     return NextResponse.json(billingsWithDetails);
   } catch (error) {
-    console.error('Error loading billing:', error);
     return NextResponse.json({ error: 'Failed to load billing' }, { status: 500 });
   }
 }
@@ -110,7 +109,6 @@ export async function POST(request) {
 
     return NextResponse.json({ ...billing, items });
   } catch (error) {
-    console.error('Error creating billing:', error);
     return NextResponse.json({ error: 'Failed to create billing' }, { status: 500 });
   }
 }

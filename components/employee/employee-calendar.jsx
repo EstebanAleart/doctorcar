@@ -31,7 +31,6 @@ export function EmployeeCalendar() {
 
       // Validar que sea un array
       if (!Array.isArray(allAppointments)) {
-        console.error("Appointments data is not an array:", allAppointments);
         setAppointments([]);
         return;
       }
@@ -54,7 +53,7 @@ export function EmployeeCalendar() {
 
       setAppointments(workOrders);
     } catch (error) {
-      console.error("Error fetching calendar dates:", error);
+      // Error fetching calendar dates
     }
   };
 

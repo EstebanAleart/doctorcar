@@ -20,7 +20,6 @@ export async function GET(request, { params }) {
       payments
     });
   } catch (error) {
-    console.error('Error loading billing:', error);
     return NextResponse.json({ error: 'Failed to load billing' }, { status: 500 });
   }
 }
@@ -45,7 +44,6 @@ export async function PUT(request, { params }) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error updating billing:', error);
     return NextResponse.json({ error: 'Failed to update billing' }, { status: 500 });
   }
 }

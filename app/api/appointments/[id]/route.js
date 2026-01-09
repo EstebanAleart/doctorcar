@@ -13,7 +13,6 @@ export async function GET(request, { params }) {
 
     return NextResponse.json(result.rows[0]);
   } catch (error) {
-    console.error('Error fetching appointment:', error);
     return NextResponse.json({ error: 'Failed to fetch appointment' }, { status: 500 });
   }
 }
@@ -81,7 +80,6 @@ export async function PUT(request, { params }) {
 
     return NextResponse.json(result.rows[0]);
   } catch (error) {
-    console.error('Error updating appointment:', error);
     return NextResponse.json({ error: 'Failed to update appointment' }, { status: 500 });
   }
 }
@@ -102,7 +100,6 @@ export async function DELETE(request, { params }) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting appointment:', error);
     return NextResponse.json({ error: 'Failed to delete appointment' }, { status: 500 });
   }
 }

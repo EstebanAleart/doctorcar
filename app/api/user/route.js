@@ -24,7 +24,6 @@ export async function GET(request) {
 
     return NextResponse.json(user);
   } catch (error) {
-    console.error('Error fetching user:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -53,7 +52,6 @@ export async function PATCH(request) {
     const updated = await userDb.update(user.id, body);
     return NextResponse.json(updated);
   } catch (error) {
-    console.error('Error updating user:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

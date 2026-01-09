@@ -16,7 +16,6 @@ async function fetchImageAsBase64(imageUrl) {
     });
     
     if (!response.ok) {
-      console.warn('Failed to fetch image, status:', response.status, imageUrl);
       return null;
     }
     
@@ -29,22 +28,16 @@ async function fetchImageAsBase64(imageUrl) {
       type: contentType
     };
   } catch (e) {
-    console.log('Could not fetch image:', imageUrl, e.message);
     return null;
   }
 }
 
 export async function GET(request) {
-  console.log('=== PDF Download endpoint called ===');
-  
   try {
     const url = new URL(request.url);
     const claimId = url.searchParams.get('id');
-    
-    console.log('Claim ID:', claimId);
 
     if (!claimId) {
-      console.log('No claim ID provided');
       return new NextResponse(JSON.stringify({ error: 'Claim ID is required' }), { 
         status: 400,
         headers: { 'Content-Type': 'application/json' }
@@ -52,7 +45,6 @@ export async function GET(request) {
     }
 
     // Obtener los datos del claim con todos los detalles necesarios
-    console.log('Fetching claim data from database...');
     const claimData = await query(
       `SELECT c.*, v.brand, v.model, v.plate, v.year, v.color,
               u.name as client_name, u.email as client_email, u.phone as client_phone,
@@ -69,7 +61,6 @@ export async function GET(request) {
     );
 
     if (claimData.rows.length === 0) {
-      console.log('Claim not found:', claimId);
       return new NextResponse(JSON.stringify({ error: 'Claim not found' }), { 
         status: 404,
         headers: { 'Content-Type': 'application/json' }
@@ -77,7 +68,6 @@ export async function GET(request) {
     }
 
     const claimInfo = claimData.rows[0];
-    console.log('Claim found, fetching photos...');
 
     // Procesar las fotos: hacer fetch de cada una y convertir a base64
     let photosArray = [];
@@ -90,10 +80,8 @@ export async function GET(request) {
         photosArray = Array.isArray(parsed) ? parsed : [];
       }
     } catch (e) {
-      console.log('Could not parse photos:', e);
+      // No hacer nada si no se pueden parsear las fotos
     }
-
-    console.log('Found', photosArray.length, 'photos, fetching them...');
     
     // Hacer fetch de las imágenes en paralelo
     const photosWithBase64 = await Promise.all(
@@ -115,12 +103,10 @@ export async function GET(request) {
     // Actualizar el claim con las fotos convertidas a base64
     claimInfo.photos = photosWithBase64;
     
-    console.log('Generating PDF...');
     // Generar el PDF
     const doc = generatePDFContent(claimInfo);
     
     if (!doc) {
-      console.error('Failed to generate PDF');
       return new NextResponse(JSON.stringify({ error: 'Failed to generate PDF' }), { 
         status: 500,
         headers: { 'Content-Type': 'application/json' }
@@ -128,10 +114,7 @@ export async function GET(request) {
     }
 
     const pdfBuffer = Buffer.from(doc.output('arraybuffer'));
-    console.log('PDF generated, size:', pdfBuffer.length, 'bytes');
-
     const fileName = `Presupuesto_${claimId.slice(-8)}_${claimInfo.client_name || 'Cliente'}.pdf`;
-    console.log('Sending PDF with filename:', fileName);
 
     return new NextResponse(pdfBuffer, {
       status: 200,
@@ -142,9 +125,7 @@ export async function GET(request) {
       },
     });
   } catch (error) {
-    console.error('CAUGHT ERROR:', error instanceof Error ? error.message : String(error));
-    console.error('Error stack:', error instanceof Error ? error.stack : 'no stack');
-    return new NextResponse(JSON.stringify({ error: 'Server error: ' + (error instanceof Error ? error.message : String(error)) }), { 
+    return new NextResponse(JSON.stringify({ error: 'Server error' }), { 
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });

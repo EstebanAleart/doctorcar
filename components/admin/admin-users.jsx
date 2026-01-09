@@ -42,10 +42,8 @@ export function AdminUsers() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log("Usuarios cargados:", data);
       setUsers(data);
-    } catch (error) {
-      console.error("Error loading users:", error);
+
     } finally {
       setLoading(false);
     }
@@ -70,7 +68,6 @@ export function AdminUsers() {
       );
     }
 
-    console.log("Usuarios filtrados:", filtered.length, "de", users.length);
     setFilteredUsers(filtered);
   };
 

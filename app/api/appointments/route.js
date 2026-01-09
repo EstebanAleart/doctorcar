@@ -31,7 +31,6 @@ export async function GET(request) {
     );
     return NextResponse.json(result.rows);
   } catch (error) {
-    console.error('Error fetching appointments:', error);
     return NextResponse.json({ error: 'Failed to fetch appointments' }, { status: 500 });
   }
 }
@@ -54,10 +53,7 @@ export async function POST(request) {
       notes,
     } = body;
 
-    console.log('[POST /api/appointments] Received:', { claimId, scheduledDate, scheduledTime, duration, type, notes });
-
     if (!claimId || !scheduledDate) {
-      console.log('[POST /api/appointments] Missing required fields');
       return NextResponse.json(
         { error: 'Missing required fields: claimId, scheduledDate' },
         { status: 400 }
@@ -67,12 +63,10 @@ export async function POST(request) {
     // Verify claim exists
     const claimCheck = await query('SELECT id FROM claims WHERE id = $1', [claimId]);
     if (claimCheck.rows.length === 0) {
-      console.log('[POST /api/appointments] Claim not found:', claimId);
       return NextResponse.json({ error: 'Claim not found' }, { status: 404 });
     }
 
     const appointmentId = nanoid();
-    console.log('[POST /api/appointments] Creating appointment:', appointmentId);
     
     const result = await query(
       `INSERT INTO appointments (
@@ -91,10 +85,8 @@ export async function POST(request) {
       ]
     );
 
-    console.log('[POST /api/appointments] Success, inserted:', result.rows[0]);
     return NextResponse.json(result.rows[0], { status: 201 });
   } catch (error) {
-    console.error('[POST /api/appointments] Error:', error);
     return NextResponse.json({ error: 'Failed to create appointment', details: error.message }, { status: 500 });
   }
 }

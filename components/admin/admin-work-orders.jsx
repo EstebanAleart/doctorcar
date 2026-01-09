@@ -54,7 +54,7 @@ export function AdminWorkOrders() {
       const data = await response.json();
       setClaims(data);
     } catch (error) {
-      console.error("Error loading claims:", error);
+      // Error loading claims
     }
   };
 
@@ -162,7 +162,6 @@ export function AdminWorkOrders() {
         loadClaims();
       }
     } catch (error) {
-      console.error("Error saving estimate:", error);
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -248,7 +247,7 @@ export function AdminWorkOrders() {
         setBookedDates(data.bookedDates || []);
       }
     } catch (e) {
-      console.error('Error loading booked dates', e);
+      // Error loading booked dates
     }
     
     setShowScheduleAppointment(true);
@@ -288,7 +287,6 @@ export function AdminWorkOrders() {
         throw new Error("Error al guardar cita");
       }
     } catch (error) {
-      console.error("Error saving appointment:", error);
       setAppointmentError("No se pudo guardar la cita. Intenta de nuevo.");
     }
   };

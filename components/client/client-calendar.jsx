@@ -54,7 +54,7 @@ export function ClientCalendar() {
       setBookedDates(bookedDatesSet);
       setAppointments(workOrders);
     } catch (error) {
-      console.error("Error fetching calendar dates:", error);
+      // Error fetching calendar dates
     }
   };
 

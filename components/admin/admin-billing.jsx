@@ -57,7 +57,7 @@ export function AdminBilling() {
       const data = await response.json();
       setBillings(data);
     } catch (error) {
-      console.error("Error loading billings:", error);
+
       Swal.fire("Error", "No se pudieron cargar las facturas", "error");
     } finally {
       setLoading(false);
@@ -201,7 +201,6 @@ export function AdminBilling() {
         loadBillings();
       }
     } catch (error) {
-      console.error("Error saving:", error);
       Swal.fire("Error", "No se pudo guardar la información", "error");
     }
   };

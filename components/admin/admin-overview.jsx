@@ -82,7 +82,7 @@ export function AdminOverview() {
           .slice(0, 5)
       );
     } catch (error) {
-      console.error("Error loading stats:", error);
+      // Error loading stats
     } finally {
       setLoading(false);
     }

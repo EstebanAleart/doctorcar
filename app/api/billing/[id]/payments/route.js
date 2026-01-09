@@ -52,7 +52,7 @@ export async function POST(request, { params }) {
 
     return NextResponse.json(payment);
   } catch (error) {
-    console.error('Error creating payment:', error);
+    return NextResponse.json({ error: 'Failed to create payment' }, { status: 500 });
     return NextResponse.json({ error: 'Failed to create payment' }, { status: 500 });
   }
 }
@@ -64,7 +64,6 @@ export async function GET(request, { params }) {
     const payments = await paymentDb.getByBillingId(billingId);
     return NextResponse.json(payments);
   } catch (error) {
-    console.error('Error loading payments:', error);
     return NextResponse.json({ error: 'Failed to load payments' }, { status: 500 });
   }
 }

@@ -47,7 +47,7 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
           if (isMounted) setBookedDates(dates);
         }
       } catch (e) {
-        console.error('Error loading booked dates', e);
+        // Failed to load booked dates
       }
     })();
     return () => { isMounted = false; };
@@ -197,7 +197,6 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
                 link.click();
                 document.body.removeChild(link);
               } catch (error) {
-                console.error('Error downloading PDF:', error);
                 alert('Error al descargar el PDF');
               }
             }}

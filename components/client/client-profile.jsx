@@ -47,7 +47,6 @@ export function ClientProfile() {
           dispatch(updateUser(data));
           setIsEditing(false);
         })
-        .catch((err) => console.error("Error saving profile:", err));
     }
   };
 

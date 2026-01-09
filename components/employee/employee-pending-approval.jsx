@@ -85,7 +85,6 @@ export function EmployeePendingApproval() {
         setClaims(inProgress);
       }
     } catch (error) {
-      console.error("Error loading claims:", error);
       Swal.fire({
         title: "Error",
         text: "No se pudieron cargar los presupuestos pendientes",

@@ -87,7 +87,7 @@ export function ClientClaims() {
         setClaims(normalized);
       }
     } catch (error) {
-      console.error("Error loading claims:", error);
+      // Error loading claims
     }
   };
 
@@ -157,7 +157,7 @@ export function ClientClaims() {
           });
         }
       } catch (error) {
-        console.error('Error deleting claim:', error);
+
         await Swal.fire({
           title: 'Error',
           text: 'Error al conectar con el servidor',
@@ -204,7 +204,6 @@ export function ClientClaims() {
         });
       }
     } catch (error) {
-      console.error("Error updating approval:", error);
       await Swal.fire({
         title: "Error",
         text: "Error al conectar con el servidor",
@@ -302,7 +301,6 @@ export function ClientClaims() {
         });
       }
     } catch (error) {
-      console.error("Error updating claim:", error);
       await Swal.fire({
         title: "Error",
         text: "Error al conectar con el servidor",

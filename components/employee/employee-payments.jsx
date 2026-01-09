@@ -71,14 +71,12 @@ export function EmployeePayments() {
       
       // Verificar respuestas exitosas
       if (!claimsRes.ok) {
-        console.error("Claims API error:", claimsRes.status);
         setClaims([]);
         setBillings([]);
         return;
       }
       
       if (!billingsRes.ok) {
-        console.error("Billing API error:", billingsRes.status);
         setClaims([]);
         setBillings([]);
         return;
@@ -89,8 +87,6 @@ export function EmployeePayments() {
       
       // Validar que sean arrays
       if (!Array.isArray(claimsData)) {
-        console.error("Claims data is not an array:", claimsData);
-        setClaims([]);
         setBillings(Array.isArray(billingsData) ? billingsData : []);
         return;
       }
@@ -103,7 +99,6 @@ export function EmployeePayments() {
       setClaims(acceptedClaims);
       setBillings(Array.isArray(billingsData) ? billingsData : []);
     } catch (error) {
-      console.error("Error loading data:", error);
       setClaims([]);
       setBillings([]);
     } finally {
@@ -264,7 +259,6 @@ export function EmployeePayments() {
           billing = await createBillingResponse.json();
         }
       } catch (error) {
-        console.error("Error managing billing:", error);
         throw error;
       }
 
@@ -299,9 +293,7 @@ export function EmployeePayments() {
         throw new Error("Error al registrar el pago");
       }
     } catch (error) {
-      console.error("Error saving payment:", error);
       Swal.fire({
-        icon: "error",
         title: "Error",
         text: error.message || "No se pudo registrar el pago",
       });

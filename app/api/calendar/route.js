@@ -42,7 +42,6 @@ export async function GET(request) {
       bookedDates: Array.from(bookedDatesSet)
     });
   } catch (error) {
-    console.error('Error fetching calendar dates:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

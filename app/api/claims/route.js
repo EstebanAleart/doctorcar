@@ -59,7 +59,6 @@ export async function GET(request) {
 
     return NextResponse.json(claims.rows);
   } catch (error) {
-    console.error('Error fetching claims:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -112,7 +111,6 @@ export async function POST(request) {
           folder: 'doctorcar/claims',
         });
       } catch (error) {
-        console.error('Error uploading photos:', error);
         return NextResponse.json({ error: 'Failed to upload photos' }, { status: 500 });
       }
     }
@@ -144,13 +142,11 @@ export async function POST(request) {
           balance: 0
         });
       } catch (billingError) {
-        console.error('Error creating billing:', billingError);
         // Continue even if billing creation fails
       }
 
       return NextResponse.json(result.rows[0], { status: 201 });
   } catch (error) {
-    console.error('Error creating claim:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
