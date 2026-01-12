@@ -233,7 +233,7 @@ CREATE TABLE IF NOT EXISTS billing (
   total_amount DECIMAL(10,2) NOT NULL,
   paid_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
   balance DECIMAL(10,2) NOT NULL,
-  status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','partial','paid','overdue','cancelled')),
+  status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','partial','paid','overdue','cancelled','rejected')),
   notes TEXT,
   internal_notes TEXT,
   workshop_id INTEGER DEFAULT 1,
@@ -250,13 +250,17 @@ CREATE TABLE IF NOT EXISTS develop (
   billing_id TEXT NOT NULL REFERENCES billing(id) ON DELETE CASCADE,
   percentage DECIMAL(5,2) NOT NULL DEFAULT 10.00,
   amount DECIMAL(10,2),
+  paid_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
   workshop_id INTEGER DEFAULT 1,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_develop_billing_id ON develop(billing_id);
 
 ALTER TABLE develop ADD COLUMN IF NOT EXISTS workshop_id INTEGER DEFAULT 1;
+ALTER TABLE develop ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE develop ADD COLUMN IF NOT EXISTS paid_amount DECIMAL(10,2) NOT NULL DEFAULT 0;
 
 -- Billing Items
 CREATE TABLE IF NOT EXISTS billing_items (

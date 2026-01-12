@@ -17,10 +17,7 @@ export function AdminCalendar() {
   const [claimDetail, setClaimDetail] = useState(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
 
-  console.log("[ADMIN CALENDAR] Component rendered, current appointments:", appointments);
-
   useEffect(() => {
-    console.log("[ADMIN CALENDAR] useEffect mounted, calling loadCalendarData");
     loadCalendarData();
   }, []);
 
@@ -30,16 +27,13 @@ export function AdminCalendar() {
       const calendarResponse = await fetch("/api/calendar", { credentials: "include" });
       const calendarData = await calendarResponse.json();
       const bookedDates = calendarData.bookedDates || [];
-      console.log("[ADMIN CALENDAR] Booked dates:", bookedDates);
       setBookedDates(bookedDates);
 
       // Obtener todas las citas
       const appointmentsResponse = await fetch("/api/appointments", { credentials: "include" });
       const allAppointments = await appointmentsResponse.json();
-      console.log("[ADMIN CALENDAR] Raw appointments response:", allAppointments);
 
       if (!Array.isArray(allAppointments)) {
-        console.error("[ADMIN CALENDAR] Appointments is not an array:", typeof allAppointments);
         setAppointments([]);
         return;
       }
@@ -60,10 +54,9 @@ export function AdminCalendar() {
         plate: apt.plate,
       }));
 
-      console.log("[ADMIN CALENDAR] Mapped appointments:", workOrders);
       setAppointments(workOrders);
     } catch (error) {
-      console.error("[ADMIN CALENDAR] Error fetching calendar data:", error);
+      console.error("Error fetching calendar data:", error);
     }
   };
 
@@ -100,32 +93,27 @@ export function AdminCalendar() {
 
   const loadClaimDetail = async (claimId) => {
     try {
-      console.log("[ADMIN CALENDAR] Loading claim detail for claimId:", claimId);
       setLoadingDetail(true);
       const response = await fetch(`/api/claims/${claimId}/full`, {
         credentials: "include",
       });
-      console.log("[ADMIN CALENDAR] Claim response status:", response.status);
       if (response.ok) {
         const data = await response.json();
-        console.log("[ADMIN CALENDAR] Claim detail loaded:", data);
         setClaimDetail(data);
       } else {
-        console.error("[ADMIN CALENDAR] Claim response not OK:", response.status);
+        console.error("Error loading claim - response not OK:", response.status);
       }
     } catch (error) {
-      console.error("[ADMIN CALENDAR] Error loading claim details:", error);
+      console.error("Error loading claim details:", error);
     } finally {
       setLoadingDetail(false);
     }
   };
 
   const handleViewDetail = (workOrder) => {
-    console.log("[ADMIN CALENDAR] handleViewDetail called with:", workOrder);
     setSelectedWorkOrder(workOrder);
     setShowDetailModal(true);
     if (workOrder.claimId) {
-      console.log("[ADMIN CALENDAR] Loading claim detail...");
       loadClaimDetail(workOrder.claimId);
     }
   };

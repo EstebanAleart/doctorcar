@@ -128,21 +128,25 @@ export function AdminBilling() {
     let cancelledPendingAmount = 0;
 
     filteredBillings.forEach((billing) => {
-      const billingTotal = parseFloat(billing.total_amount) || 0;
-      const billingSubtotal = parseFloat(billing.subtotal) || 0;
-      const fee = billingTotal - billingSubtotal; // The 10% fee
+      const subtotal = parseFloat(billing.subtotal) || 0;
+      const totalAmount = parseFloat(billing.total_amount) || 0;
       const paid = parseFloat(billing.paid_amount) || 0;
       
-      // Separar cancelados/rechazados de los activos
-      if (billing.status === 'cancelled' || billing.status === 'rejected') {
-        cancelledTotal += billingTotal;
+      // Separar rechazados/cancelados de los activos
+      if (billing.status === 'rejected' || billing.status === 'cancelled') {
+        // Para rechazados/cancelados: usar subtotal
+        cancelledTotal += subtotal;
         cancelledPaidAmount += paid;
-        cancelledPendingAmount += (billingTotal - paid);
+        cancelledPendingAmount += (subtotal - paid);
       } else {
-        total += billingTotal;
-        developmentFee += fee;
+        // Para activos
+        // Total: subtotal (sin intereses)
+        total += subtotal;
+        // Pending: total_amount - paid (incluye intereses de installments)
+        pendingAmount += (totalAmount - paid);
+        // Development fee es el 10% de TODO lo que se va a facturar (total_amount)
+        developmentFee += (totalAmount * 0.1);
         paidAmount += paid;
-        pendingAmount += (billingTotal - paid);
       }
     });
 
@@ -566,7 +570,7 @@ export function AdminBilling() {
                 </TableHeader>
                 <TableBody>
                   {filteredBillings.map((billing) => {
-                    const totalAmount = parseFloat(billing.total_amount) || 0;
+                    const subtotal = parseFloat(billing.subtotal) || 0;
                     const paidAmount = parseFloat(billing.paid_amount) || 0;
                     const balance = parseFloat(billing.balance) || 0;
 
@@ -590,7 +594,7 @@ export function AdminBilling() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right font-medium">
-                          ${totalAmount.toFixed(2)}
+                          ${subtotal.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-right text-green-600 font-medium">
                           ${paidAmount.toFixed(2)}
@@ -610,9 +614,16 @@ export function AdminBilling() {
                         </TableCell>
                         <TableCell className="text-sm">
                           {billing.payments && billing.payments.length > 0 ? (
-                            <span className="text-blue-600">
-                              {billing.payments.length} pago{billing.payments.length !== 1 ? "s" : ""}
-                            </span>
+                            <div className="text-blue-600">
+                              {(() => {
+                                const paymentWithInstallments = billing.payments.find(p => parseInt(p.card_installments) > 1);
+                                const installments = paymentWithInstallments ? parseInt(paymentWithInstallments.card_installments) : null;
+                                
+                                return installments 
+                                  ? `${billing.payments.length} pago${billing.payments.length !== 1 ? 's' : ''} (${installments} cuotas)`
+                                  : `${billing.payments.length} pago${billing.payments.length !== 1 ? 's' : ''}`;
+                              })()}
+                            </div>
                           ) : (
                             <span className="text-muted-foreground">Sin pagos</span>
                           )}
@@ -801,9 +812,27 @@ export function AdminBilling() {
                       {selectedBilling.payments.map((payment) => (
                         <div key={payment.id} className="border rounded-lg p-3 bg-green-50">
                           <div className="flex justify-between items-start">
-                            <div>
-                              <p className="font-bold text-green-700">${parseFloat(payment.amount).toFixed(2)}</p>
-                              <p className="text-xs text-muted-foreground">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <p className="font-bold text-green-700">${parseFloat(payment.amount).toFixed(2)}</p>
+                                {payment.card_installments && payment.card_installments > 1 && (
+                                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                                    {payment.card_installments} cuotas
+                                  </span>
+                                )}
+                                {payment.status && payment.status !== 'completed' && (
+                                  <span className={`text-xs px-2 py-1 rounded font-medium ${
+                                    payment.status === 'rejected' 
+                                      ? 'bg-red-100 text-red-700' 
+                                      : payment.status === 'failed'
+                                      ? 'bg-orange-100 text-orange-700'
+                                      : 'bg-yellow-100 text-yellow-700'
+                                  }`}>
+                                    {payment.status === 'rejected' ? 'Rechazado' : payment.status === 'failed' ? 'Fallido' : 'Pendiente'}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">
                                 {new Date(payment.payment_date).toLocaleDateString("es-AR")} - {payment.payment_method}
                               </p>
                               {payment.notes && (
