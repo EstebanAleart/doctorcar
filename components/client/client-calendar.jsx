@@ -47,11 +47,20 @@ export function ClientCalendar() {
         plate: apt.plate,
       }));
 
-      const bookedDatesSet = Array.from(
-        new Set(workOrders.map((order) => order.date))
-      );
+      // Calcular fechas ocupadas incluyendo 48 horas (2 días)
+      const bookedDatesSet = new Set();
+      workOrders.forEach((order) => {
+        const appointmentDate = new Date(order.date);
+        // Agregar día de la cita
+        bookedDatesSet.add(order.date);
+        // Agregar día siguiente (48 horas mínimo)
+        const nextDay = new Date(appointmentDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+        const nextDayStr = nextDay.toISOString().split("T")[0];
+        bookedDatesSet.add(nextDayStr);
+      });
 
-      setBookedDates(bookedDatesSet);
+      setBookedDates(Array.from(bookedDatesSet));
       setAppointments(workOrders);
     } catch (error) {
       // Error fetching calendar dates

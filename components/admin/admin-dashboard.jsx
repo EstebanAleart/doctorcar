@@ -17,16 +17,16 @@ export function AdminDashboard() {
   return (
     <div className="min-h-screen bg-background">
       <AdminHeader />
-      <div className="container mx-auto p-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7 lg:w-auto lg:inline-grid">
-            <TabsTrigger value="overview">Panel General</TabsTrigger>
-            <TabsTrigger value="claims">Reclamos</TabsTrigger>
-            <TabsTrigger value="work-orders">Órdenes</TabsTrigger>
-            <TabsTrigger value="calendar">Calendario</TabsTrigger>
-            <TabsTrigger value="billing">Facturación</TabsTrigger>
-            <TabsTrigger value="users">Usuarios</TabsTrigger>
-            <TabsTrigger value="workshop">Taller</TabsTrigger>
+      <div className="container mx-auto p-4 md:p-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 md:space-y-6">
+          <TabsList className="grid w-full grid-cols-2 gap-2 h-auto md:grid-cols-4 lg:grid-cols-7 lg:w-auto lg:inline-grid">
+            <TabsTrigger value="overview" className="text-xs md:text-sm">Panel General</TabsTrigger>
+            <TabsTrigger value="claims" className="text-xs md:text-sm">Reclamos</TabsTrigger>
+            <TabsTrigger value="work-orders" className="text-xs md:text-sm">Órdenes</TabsTrigger>
+            <TabsTrigger value="calendar" className="text-xs md:text-sm">Calendario</TabsTrigger>
+            <TabsTrigger value="billing" className="text-xs md:text-sm">Facturación</TabsTrigger>
+            <TabsTrigger value="users" className="text-xs md:text-sm">Usuarios</TabsTrigger>
+            <TabsTrigger value="workshop" className="text-xs md:text-sm">Taller</TabsTrigger>
           </TabsList>
           <TabsContent value="overview" className="space-y-6">
             <AdminOverview />
