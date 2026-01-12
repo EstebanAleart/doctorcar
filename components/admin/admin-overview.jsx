@@ -34,19 +34,20 @@ export function AdminOverview() {
 
   const loadStats = async () => {
     try {
+      setLoading(true);
       // Fetch users
-      const usersResponse = await fetch("/api/users");
+      const usersResponse = await fetch("/api/users", { credentials: "include" });
       const users = await usersResponse.json();
 
       // Fetch claims
-      const claimsResponse = await fetch("/api/claims");
+      const claimsResponse = await fetch("/api/claims", { credentials: "include" });
       const claims = await claimsResponse.json();
 
       // Calculate revenue from claims with items
       const totalRevenue = claims.reduce((sum, claim) => {
         if (claim.items && Array.isArray(claim.items) && claim.approval_status === "accepted") {
           const claimTotal = claim.items.reduce((itemSum, item) => {
-            return itemSum + (parseFloat(item.quantity) || 0) * (parseFloat(item.unitPrice) || 0);
+            return itemSum + (parseFloat(item.quantity) || 0) * (parseFloat(item.unit_price) || 0);
           }, 0);
           return sum + claimTotal;
         }
@@ -57,7 +58,7 @@ export function AdminOverview() {
       const pendingRevenue = claims.reduce((sum, claim) => {
         if (claim.items && Array.isArray(claim.items) && claim.approval_status === "pending") {
           const claimTotal = claim.items.reduce((itemSum, item) => {
-            return itemSum + (parseFloat(item.quantity) || 0) * (parseFloat(item.unitPrice) || 0);
+            return itemSum + (parseFloat(item.quantity) || 0) * (parseFloat(item.unit_price) || 0);
           }, 0);
           return sum + claimTotal;
         }
@@ -75,14 +76,14 @@ export function AdminOverview() {
         pendingRevenue,
       });
 
-      // Get 5 most recent claims
+      // Get 5 most recent claims with proper field mapping
       setRecentClaims(
         claims
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
           .slice(0, 5)
       );
     } catch (error) {
-      // Error loading stats
+      console.error("Error loading stats:", error);
     } finally {
       setLoading(false);
     }
@@ -238,13 +239,13 @@ export function AdminOverview() {
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="font-medium text-sm">{claim.clientName || "Sin cliente"}</p>
+                      <p className="font-medium text-sm">{claim.client_name || "Sin cliente"}</p>
                       <Badge className={getStatusBadge(claim.status).className}>
                         {getStatusBadge(claim.status).label}
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {claim.vehicleBrand} {claim.vehicleModel} - {claim.vehiclePlate}
+                      {claim.brand} {claim.model} - {claim.plate}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
                       {claim.description}
@@ -252,7 +253,7 @@ export function AdminOverview() {
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-muted-foreground">
-                      {new Date(claim.createdAt).toLocaleDateString("es-AR")}
+                      {new Date(claim.created_at).toLocaleDateString("es-AR")}
                     </p>
                     {claim.items && claim.items.length > 0 && (
                       <p className="text-sm font-medium text-green-600 mt-1">
@@ -262,7 +263,7 @@ export function AdminOverview() {
                             (sum, item) =>
                               sum +
                               (parseFloat(item.quantity) || 0) *
-                                (parseFloat(item.unitPrice) || 0),
+                                (parseFloat(item.unit_price) || 0),
                             0
                           )
                           .toFixed(2)}

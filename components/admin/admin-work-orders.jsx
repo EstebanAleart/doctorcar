@@ -50,11 +50,11 @@ export function AdminWorkOrders() {
 
   const loadClaims = async () => {
     try {
-      const response = await fetch("/api/claims");
+      const response = await fetch("/api/claims", { credentials: "include" });
       const data = await response.json();
       setClaims(data);
     } catch (error) {
-      // Error loading claims
+      console.error("Error loading claims:", error);
     }
   };
 
@@ -77,10 +77,10 @@ export function AdminWorkOrders() {
       result = result.filter(
         (claim) =>
           claim.id?.toLowerCase().includes(term) ||
-          claim.clientName?.toLowerCase().includes(term) ||
-          claim.vehicleBrand?.toLowerCase().includes(term) ||
-          claim.vehicleModel?.toLowerCase().includes(term) ||
-          claim.vehiclePlate?.toLowerCase().includes(term)
+          claim.client_name?.toLowerCase().includes(term) ||
+          claim.brand?.toLowerCase().includes(term) ||
+          claim.model?.toLowerCase().includes(term) ||
+          claim.plate?.toLowerCase().includes(term)
       );
     }
 
@@ -88,15 +88,15 @@ export function AdminWorkOrders() {
     result.sort((a, b) => {
       switch (sortBy) {
         case "date-desc":
-          return new Date(b.createdAt) - new Date(a.createdAt);
+          return new Date(b.created_at) - new Date(a.created_at);
         case "date-asc":
-          return new Date(a.createdAt) - new Date(b.createdAt);
+          return new Date(a.created_at) - new Date(b.created_at);
         case "amount-desc":
           return calculateTotal(b.items) - calculateTotal(a.items);
         case "amount-asc":
           return calculateTotal(a.items) - calculateTotal(b.items);
         case "client-asc":
-          return (a.clientName || "").localeCompare(b.clientName || "");
+          return (a.client_name || "").localeCompare(b.client_name || "");
         default:
           return 0;
       }
@@ -109,7 +109,7 @@ export function AdminWorkOrders() {
     if (!items || !Array.isArray(items)) return 0;
     return items.reduce((sum, item) => {
       const quantity = parseFloat(item.quantity) || 0;
-      const unitPrice = parseFloat(item.unitPrice) || 0;
+      const unitPrice = parseFloat(item.unit_price) || 0;
       return sum + quantity * unitPrice;
     }, 0);
   };
@@ -148,6 +148,7 @@ export function AdminWorkOrders() {
       const response = await fetch(`/api/claims/${selectedClaim.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ items }),
       });
 
@@ -181,9 +182,9 @@ export function AdminWorkOrders() {
     // Claim details
     doc.setFontSize(10);
     doc.text(`ID: ${claim.id}`, 20, 40);
-    doc.text(`Cliente: ${claim.clientName}`, 20, 50);
-    doc.text(`Vehículo: ${claim.vehicleBrand} ${claim.vehicleModel}`, 20, 60);
-    doc.text(`Patente: ${claim.vehiclePlate}`, 20, 70);
+    doc.text(`Cliente: ${claim.client_name}`, 20, 50);
+    doc.text(`Vehículo: ${claim.brand} ${claim.model}`, 20, 60);
+    doc.text(`Patente: ${claim.plate}`, 20, 70);
 
     // Items table
     let y = 90;
@@ -192,10 +193,10 @@ export function AdminWorkOrders() {
     y += 10;
 
     claim.items?.forEach((item) => {
-      const itemTotal = item.quantity * item.unitPrice;
+      const itemTotal = item.quantity * item.unit_price;
       doc.setFontSize(10);
       doc.text(`${item.description}`, 20, y);
-      doc.text(`${item.quantity} x $${item.unitPrice}`, 150, y, {
+      doc.text(`${item.quantity} x $${item.unit_price}`, 150, y, {
         align: "right",
       });
       doc.text(`$${itemTotal.toFixed(2)}`, 190, y, { align: "right" });
@@ -270,6 +271,7 @@ export function AdminWorkOrders() {
       const response = await fetch("/api/appointments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           claimId: selectedClaim.id,
           scheduledDate: appointmentData.scheduledDate,
@@ -378,13 +380,13 @@ export function AdminWorkOrders() {
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <CardTitle className="text-lg">
-                      {claim.vehicleBrand} {claim.vehicleModel}
+                      {claim.brand} {claim.model}
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      Cliente: {claim.clientName}
+                      Cliente: {claim.client_name}
                     </p>
                     <p className="text-sm text-muted-foreground font-mono">
-                      {claim.vehiclePlate}
+                      {claim.plate}
                     </p>
                   </div>
                   <div className="flex flex-col gap-2">
@@ -572,12 +574,12 @@ export function AdminWorkOrders() {
               <div className="grid grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
                 <div>
                   <p className="text-sm text-muted-foreground">Cliente</p>
-                  <p className="font-medium">{selectedClaim.clientName}</p>
+                  <p className="font-medium">{selectedClaim.client_name}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Vehículo</p>
                   <p className="font-medium">
-                    {selectedClaim.vehicleBrand} {selectedClaim.vehicleModel}
+                    {selectedClaim.brand} {selectedClaim.model}
                   </p>
                 </div>
               </div>
@@ -621,9 +623,9 @@ export function AdminWorkOrders() {
                           <Label>Precio Unit.</Label>
                           <Input
                             type="number"
-                            value={item.unitPrice}
+                            value={item.unit_price || item.unitPrice}
                             onChange={(e) =>
-                              updateItem(index, "unitPrice", e.target.value)
+                              updateItem(index, "unit_price", e.target.value)
                             }
                             min="0"
                             step="0.01"
