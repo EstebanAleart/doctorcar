@@ -81,6 +81,7 @@ export function EmployeeWorkOrders() {
         model: claim.model,
         plate: claim.plate,
         year: claim.year,
+        color: claim.color,
       },
     };
   };
@@ -94,7 +95,6 @@ export function EmployeeWorkOrders() {
         setClaims(normalized);
       }
     } catch (error) {
-      console.error("Error loading claims:", error);
       Swal.fire({
         title: "Error",
         text: "No se pudieron cargar las órdenes",
@@ -171,7 +171,6 @@ export function EmployeeWorkOrders() {
         });
       }
     } catch (error) {
-      console.error("Error updating status:", error);
     }
   };
 
@@ -468,7 +467,7 @@ export function EmployeeWorkOrders() {
                     }}
                   >
                     <Eye className="h-4 w-4 mr-2" />
-                    Ver Fotos
+                    Ver Detalle
                   </Button>
 
                   <Button variant="outline" size="sm" onClick={() => openEstimateDialog(claim)}>

@@ -1,0 +1,125 @@
+import { NextResponse } from "next/server";
+import { billingDb, billingItemDb, paymentDb, paymentInstallmentDb, query } from "@/lib/database";
+
+const decodeSession = (cookie) => {
+  try {
+    return JSON.parse(Buffer.from(cookie, "base64url").toString());
+  } catch (error) {
+    return null;
+  }
+};
+
+export async function GET(request, context) {
+  try {
+    const session = request.cookies.get("auth_session");
+    if (!session?.value) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const decoded = decodeSession(session.value);
+    if (!decoded?.sub) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const userResult = await query("SELECT id, role FROM users WHERE auth0_id = $1", [decoded.sub]);
+    if (userResult.rows.length === 0) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const user = userResult.rows[0];
+    const { id: claimId } = await context.params;
+
+    const claimResult = await query("SELECT id, client_id FROM claims WHERE id = $1", [claimId]);
+    if (claimResult.rows.length === 0) {
+      return NextResponse.json({
+        billing: null,
+        items: [],
+        payments: [],
+        totals: {
+          totalAmount: 0,
+          paidAmount: 0,
+          balance: 0,
+          progress: 0,
+        },
+      });
+    }
+
+    if (user.role === "client" && claimResult.rows[0].client_id !== user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const billing = await billingDb.findByClaimId(claimId);
+    
+    if (!billing) {
+      return NextResponse.json({
+        billing: null,
+        items: [],
+        payments: [],
+        totals: {
+          totalAmount: 0,
+          paidAmount: 0,
+          balance: 0,
+          progress: 0,
+        },
+      });
+    }
+
+    const [items, payments] = await Promise.all([
+      billingItemDb.getByBillingId(billing.id),
+      paymentDb.getByBillingId(billing.id),
+    ]);
+
+    const paymentsWithInstallments = await Promise.all(
+      payments.map(async (payment) => {
+        const installments = await paymentInstallmentDb.getByPaymentId(payment.id);
+        return { ...payment, installments };
+      })
+    );
+
+    const paidFromInstallments = paymentsWithInstallments.reduce((total, payment) => {
+      const installmentPaid = (payment.installments || []).reduce((acc, installment) => {
+        if (installment.status === "paid") {
+          const amount = parseFloat(installment.installment_amount || 0);
+          return acc + (Number.isFinite(amount) ? amount : 0);
+        }
+        return acc;
+      }, 0);
+      return total + installmentPaid;
+    }, 0);
+
+    const totalAmountRaw = parseFloat(billing.total_amount ?? billing.totalAmount ?? 0);
+    const totalAmount = Number.isFinite(totalAmountRaw) ? totalAmountRaw : 0;
+
+    const paidAmountRaw = parseFloat(billing.paid_amount ?? billing.paidAmount ?? paidFromInstallments);
+    const paidAmount = Number.isFinite(paidAmountRaw) ? paidAmountRaw : 0;
+
+    const balanceRaw = billing.balance ?? totalAmount - paidAmount;
+    const balance = Number.isFinite(parseFloat(balanceRaw)) ? parseFloat(balanceRaw) : totalAmount - paidAmount;
+
+    let status = billing.status;
+    if (!status) {
+      status = balance <= 0 ? "paid" : paidAmount > 0 ? "partial" : "pending";
+    }
+
+    const progress = totalAmount > 0 ? Math.min(100, Math.round((paidAmount / totalAmount) * 100)) : 0;
+
+    return NextResponse.json({
+      ...billing,
+      status,
+      total_amount: totalAmount,
+      paid_amount: paidAmount,
+      balance,
+      items,
+      payments: paymentsWithInstallments,
+      totals: {
+        totalAmount,
+        paidAmount,
+        balance,
+        progress,
+      },
+    });
+  } catch (error) {
+    console.error("Error loading billing for claim", error);
+    return NextResponse.json({ error: "Failed to load billing for claim" }, { status: 500 });
+  }
+}

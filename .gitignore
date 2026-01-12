@@ -32,4 +32,7 @@ yarn-error.log*
 next-env.d.ts
 
 # documentation (temporal)
-README.md
+*.md
+TASKS.md
+ARCHITECTURE.md
+DEBUGGING.md

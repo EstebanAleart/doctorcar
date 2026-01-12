@@ -39,11 +39,8 @@ export function ClientVehicles() {
       if (response.ok) {
         const data = await response.json();
         setVehicles(data);
-      } else {
-        console.error('Error loading vehicles');
       }
     } catch (error) {
-      console.error('Error loading vehicles:', error);
     }
   };
 
@@ -88,7 +85,6 @@ export function ClientVehicles() {
         });
       }
     } catch (error) {
-      console.error('Error saving vehicle:', error);
       resetForm(); // Cerrar dialog primero
       await Swal.fire({
         title: 'Error',
@@ -153,7 +149,7 @@ export function ClientVehicles() {
           });
         }
       } catch (error) {
-        console.error('Error deleting vehicle:', error);
+
         await Swal.fire({
           title: 'Error',
           text: 'Error al conectar con el servidor',

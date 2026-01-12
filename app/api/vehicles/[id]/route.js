@@ -34,7 +34,7 @@ export async function GET(request, { params }) {
 
     return NextResponse.json(vehicle.rows[0]);
   } catch (error) {
-    console.error('Error fetching vehicle:', error);
+
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -99,7 +99,7 @@ export async function PUT(request, { params }) {
 
     return NextResponse.json(result.rows[0]);
   } catch (error) {
-    console.error('Error updating vehicle:', error);
+
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -139,7 +139,6 @@ export async function DELETE(request, { params }) {
 
     return NextResponse.json({ message: 'Vehicle deleted successfully' });
   } catch (error) {
-    console.error('Error deleting vehicle:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

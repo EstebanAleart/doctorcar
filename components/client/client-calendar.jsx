@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
 import { Calendar as CalendarIcon, Clock } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
-export function EmployeeCalendar() {
+export function ClientCalendar() {
   const { user } = useAuth();
   const [bookedDates, setBookedDates] = useState([]);
   const [appointments, setAppointments] = useState([]);
@@ -19,23 +19,20 @@ export function EmployeeCalendar() {
 
   const loadCalendarData = async () => {
     try {
-      // Get booked dates from calendar endpoint (already correctly processed)
-      const calendarResponse = await fetch("/api/calendar");
-      const calendarData = await calendarResponse.json();
-      const bookedDates = calendarData.bookedDates || [];
-      setBookedDates(bookedDates);
-      
-      // Get all appointments for the list
+      // Get all appointments for this client's claims
       const response = await fetch("/api/appointments");
       const allAppointments = await response.json();
 
-      // Validar que sea un array
-      if (!Array.isArray(allAppointments)) {
-        setAppointments([]);
-        return;
-      }
+      // Filter by client claims (from user's claims)
+      const claimsRes = await fetch("/api/claims");
+      const claims = await claimsRes.json();
+      const clientClaimIds = new Set(claims.map((c) => c.id));
 
-      const workOrders = allAppointments.map((apt) => ({
+      const clientAppointments = allAppointments.filter((apt) =>
+        clientClaimIds.has(apt.claim_id)
+      );
+
+      const workOrders = clientAppointments.map((apt) => ({
         id: apt.id,
         date:
           typeof apt.scheduled_date === "string"
@@ -45,12 +42,25 @@ export function EmployeeCalendar() {
         status: apt.status,
         type: apt.appointment_type,
         duration: apt.duration_minutes,
-        clientName: apt.client_name,
         description: apt.notes || apt.claim_description,
         vehicle: `${apt.brand} ${apt.model}`,
         plate: apt.plate,
       }));
 
+      // Calcular fechas ocupadas incluyendo 48 horas (2 días)
+      const bookedDatesSet = new Set();
+      workOrders.forEach((order) => {
+        const appointmentDate = new Date(order.date);
+        // Agregar día de la cita
+        bookedDatesSet.add(order.date);
+        // Agregar día siguiente (48 horas mínimo)
+        const nextDay = new Date(appointmentDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+        const nextDayStr = nextDay.toISOString().split("T")[0];
+        bookedDatesSet.add(nextDayStr);
+      });
+
+      setBookedDates(Array.from(bookedDatesSet));
       setAppointments(workOrders);
     } catch (error) {
       // Error fetching calendar dates
@@ -91,9 +101,9 @@ export function EmployeeCalendar() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold">Mi Calendario</h2>
+        <h2 className="text-3xl font-bold">Mis Citas</h2>
         <p className="text-muted-foreground">
-          Vista de todas tus citas y trabajos programados
+          Calendario de tus citas de reparación programadas
         </p>
       </div>
 
@@ -120,7 +130,7 @@ export function EmployeeCalendar() {
             <div className="flex gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div>
-                <span>Días con Citas</span>
+                <span>Citas Programadas</span>
               </div>
             </div>
           </CardContent>
@@ -144,9 +154,9 @@ export function EmployeeCalendar() {
                       <div className="space-y-3">
                         <div className="flex items-start justify-between">
                           <div>
-                            <p className="font-medium">{apt.clientName}</p>
+                            <p className="font-medium">{apt.vehicle}</p>
                             <p className="text-sm text-muted-foreground">
-                              {apt.vehicle}
+                              Patente: <span className="font-mono">{apt.plate}</span>
                             </p>
                           </div>
                           <div className="flex flex-col items-end gap-2">
@@ -175,9 +185,6 @@ export function EmployeeCalendar() {
                           ) : null}
                         </div>
 
-                        <p className="text-sm text-muted-foreground">
-                          Patente: <span className="font-mono">{apt.plate}</span>
-                        </p>
                         {apt.description && (
                           <p className="text-sm">{apt.description}</p>
                         )}
@@ -192,7 +199,7 @@ export function EmployeeCalendar() {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -201,17 +208,6 @@ export function EmployeeCalendar() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{appointments.length}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Días Ocupados
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{bookedDates.length}</div>
           </CardContent>
         </Card>
 

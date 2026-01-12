@@ -9,9 +9,10 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Progress } from "@/components/ui/progress";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Eye, FileText, Download, Pencil, Trash2, XCircle, Upload, X } from "lucide-react";
+import { Eye, FileText, Download, Pencil, Trash2, XCircle, Upload, X, Loader2, CreditCard, AlertCircle } from "lucide-react";
 import { downloadPDF } from "@/lib/pdf-generator";
 import { ApprovalSection } from "./approval-section";
 import Swal from "sweetalert2";
@@ -22,6 +23,12 @@ export function ClientClaims() {
   const [selectedClaim, setSelectedClaim] = useState(null);
   const [showDetail, setShowDetail] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [billingLoading, setBillingLoading] = useState(false);
+  const [billingError, setBillingError] = useState("");
+  const [billingByClaim, setBillingByClaim] = useState({});
+  const [receiptModalOpen, setReceiptModalOpen] = useState(false);
+  const [selectedReceipt, setSelectedReceipt] = useState(null);
+  const [receiptZoom, setReceiptZoom] = useState(1);
   const [editMode, setEditMode] = useState(false);
   const [editDescription, setEditDescription] = useState("");
   const [editType, setEditType] = useState("");
@@ -62,7 +69,8 @@ export function ClientClaims() {
             createdAt: claim.createdAt ?? claim.created_at,
             approval_status: claim.approval_status || "pending",
             payment_method: claim.payment_method || null,
-            appointment_date: claim.appointment_date || null,
+            appointment_date: null, // Now stored in appointments table
+            appointments: claim.appointments || [],
             photos: claim.photos
               ? typeof claim.photos === "string"
                 ? (() => {
@@ -86,7 +94,7 @@ export function ClientClaims() {
         setClaims(normalized);
       }
     } catch (error) {
-      console.error("Error loading claims:", error);
+      // Error loading claims
     }
   };
 
@@ -104,6 +112,90 @@ export function ClientClaims() {
       cancelled: "Cancelado",
     };
     return <Badge className={variants[status]}>{labels[status]}</Badge>;
+  };
+
+  const getBillingStatusBadge = (status) => {
+    const variants = {
+      paid: "bg-green-100 text-green-800",
+      partial: "bg-blue-100 text-blue-800",
+      pending: "bg-yellow-100 text-yellow-800",
+      overdue: "bg-red-100 text-red-800",
+      cancelled: "bg-gray-100 text-gray-800",
+    };
+    const labels = {
+      paid: "Pagado",
+      partial: "Pago parcial",
+      pending: "Pendiente",
+      overdue: "Vencido",
+      cancelled: "Cancelado",
+    };
+    const badgeClass = variants[status] || variants.pending;
+    const text = labels[status] || labels.pending;
+    return <Badge className={badgeClass}>{text}</Badge>;
+  };
+
+  const getInstallmentStatusBadge = (status) => {
+    const variants = {
+      paid: "bg-green-100 text-green-800",
+      pending: "bg-yellow-100 text-yellow-800",
+      overdue: "bg-red-100 text-red-800",
+    };
+    const labels = {
+      paid: "Pagada",
+      pending: "Pendiente",
+      overdue: "Vencida",
+    };
+    const badgeClass = variants[status] || variants.pending;
+    const text = labels[status] || labels.pending;
+    return <Badge className={badgeClass}>{text}</Badge>;
+  };
+
+  const formatCurrency = (value) => {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return "$0.00";
+    return `$${number.toFixed(2)}`;
+  };
+
+  const getReceiptDisplayUrl = (url) => {
+    if (!url) return null;
+    
+    // Check if it's a PDF
+    const isPdf = url.toLowerCase().includes('.pdf') || url.toLowerCase().includes('image/upload/') && url.toLowerCase().includes('.pdf');
+    
+    if (isPdf && url.includes('cloudinary.com')) {
+      // Convert Cloudinary PDF to JPG image (first page)
+      // Replace /upload/ with /upload/f_jpg,pg_1/ to get first page as image
+      return url.replace('/upload/', '/upload/f_jpg,pg_1/');
+    }
+    
+    return url;
+  };
+
+  const isReceiptPdf = (url) => {
+    if (!url) return false;
+    return url.toLowerCase().includes('.pdf');
+  };
+
+  const loadBilling = async (claimId) => {
+    if (!claimId) return;
+    setBillingLoading(true);
+    setBillingError("");
+    try {
+      const response = await fetch(`/api/claims/${claimId}/billing`, {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        setBillingError(error.error || "No se pudo cargar la facturación");
+        return;
+      }
+      const data = await response.json();
+      setBillingByClaim((prev) => ({ ...prev, [claimId]: data }));
+    } catch (error) {
+      setBillingError("No se pudo cargar la información de pagos");
+    } finally {
+      setBillingLoading(false);
+    }
   };
 
   const getVehicleInfo = (claim) => {
@@ -156,7 +248,7 @@ export function ClientClaims() {
           });
         }
       } catch (error) {
-        console.error('Error deleting claim:', error);
+
         await Swal.fire({
           title: 'Error',
           text: 'Error al conectar con el servidor',
@@ -203,7 +295,6 @@ export function ClientClaims() {
         });
       }
     } catch (error) {
-      console.error("Error updating approval:", error);
       await Swal.fire({
         title: "Error",
         text: "Error al conectar con el servidor",
@@ -301,7 +392,6 @@ export function ClientClaims() {
         });
       }
     } catch (error) {
-      console.error("Error updating claim:", error);
       await Swal.fire({
         title: "Error",
         text: "Error al conectar con el servidor",
@@ -362,6 +452,9 @@ export function ClientClaims() {
                   onClick={() => {
                     setSelectedClaim(claim);
                     setShowDetail(true);
+                    if (!billingByClaim[claim.id]) {
+                      loadBilling(claim.id);
+                    }
                   }}
                   className="flex-1"
                 >
@@ -647,6 +740,53 @@ export function ClientClaims() {
                   </div>
                 </div>
               )}
+              <div className="rounded-lg border p-4 bg-muted/30 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Pagos y progreso</h4>
+                    <p className="text-sm text-muted-foreground">Estado de facturación e instalaciones</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => loadBilling(selectedClaim.id)}
+                    disabled={billingLoading}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Actualizar
+                  </Button>
+                </div>
+                {billingLoading && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Cargando pagos...
+                  </div>
+                )}
+                {billingError && !billingLoading && (
+                  <div className="flex items-start gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+                    <AlertCircle className="h-4 w-4 mt-0.5" />
+                    <div className="space-y-1">
+                      <p>{billingError}</p>
+                      <Button variant="outline" size="sm" onClick={() => loadBilling(selectedClaim.id)}>
+                        Reintentar
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                {!billingLoading && !billingError && (
+                  <BillingSection
+                    billing={billingByClaim[selectedClaim.id]}
+                    formatCurrency={formatCurrency}
+                    getBillingStatusBadge={getBillingStatusBadge}
+                    getInstallmentStatusBadge={getInstallmentStatusBadge}
+                    onViewReceipt={(url) => {
+                      setSelectedReceipt(url);
+                      setReceiptZoom(1);
+                      setReceiptModalOpen(true);
+                    }}
+                  />
+                )}
+              </div>
               {selectedClaim.status === "in_progress" && (
                 <ApprovalSection 
                   claim={selectedClaim} 
@@ -716,6 +856,188 @@ export function ClientClaims() {
           )}
         </DialogContent>
       </Dialog>
+      
+      <Dialog open={receiptModalOpen} onOpenChange={(open) => {
+        setReceiptModalOpen(open);
+        if (!open) setReceiptZoom(1);
+      }}>
+        <DialogContent className="max-w-4xl max-h-[90vh]">
+          <DialogHeader>
+            <DialogTitle>Comprobante de Pago</DialogTitle>
+            {selectedReceipt && isReceiptPdf(selectedReceipt) && (
+              <p className="text-xs text-muted-foreground">Vista previa del PDF convertido a imagen</p>
+            )}
+          </DialogHeader>
+          {selectedReceipt && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setReceiptZoom(Math.max(0.5, receiptZoom - 0.25))}
+                  disabled={receiptZoom <= 0.5}
+                >
+                  -
+                </Button>
+                <span className="text-sm text-muted-foreground min-w-[60px] text-center">
+                  {Math.round(receiptZoom * 100)}%
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setReceiptZoom(Math.min(3, receiptZoom + 0.25))}
+                  disabled={receiptZoom >= 3}
+                >
+                  +
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setReceiptZoom(1)}
+                >
+                  Restablecer
+                </Button>
+              </div>
+              <div className="overflow-auto max-h-[60vh] border rounded-lg bg-muted/30 p-4">
+                <img
+                  src={getReceiptDisplayUrl(selectedReceipt)}
+                  alt="Comprobante"
+                  style={{ transform: `scale(${receiptZoom})`, transformOrigin: 'top center', transition: 'transform 0.2s' }}
+                  className="w-full h-auto object-contain rounded-lg bg-white mx-auto"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    const iframe = document.createElement('iframe');
+                    iframe.src = selectedReceipt;
+                    iframe.className = 'w-full h-[60vh] rounded-lg border';
+                    e.target.parentElement.insertBefore(iframe, e.target);
+                  }}
+                />
+              </div>
+              <div className="flex justify-end">
+                <Button
+                  onClick={() => setReceiptModalOpen(false)}
+                >
+                  Cerrar
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+function BillingSection({ billing, formatCurrency, getBillingStatusBadge, getInstallmentStatusBadge, onViewReceipt }) {
+  // Check if billing is actually null (not just the wrapper object)
+  if (!billing || billing.billing === null) {
+    return (
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground">La facturación se generará una vez que se hayan agregado ítems al presupuesto y el presupuesto sea aprobado.</p>
+        <p className="text-xs text-muted-foreground">Por ahora no hay datos de facturación disponibles para este reclamo.</p>
+      </div>
+    );
+  }
+
+  const totals = billing.totals || {
+    totalAmount: billing.total_amount,
+    paidAmount: billing.paid_amount,
+    balance: billing.balance,
+    progress: 0,
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="rounded-lg border p-3 bg-white">
+          <p className="text-xs text-muted-foreground">Total</p>
+          <p className="text-lg font-semibold">{`$${(Number(totals.totalAmount) || 0).toFixed(2)}`}</p>
+        </div>
+        <div className="rounded-lg border p-3 bg-white">
+          <p className="text-xs text-muted-foreground">Pagado</p>
+          <p className="text-lg font-semibold text-green-700">{`$${(Number(totals.paidAmount) || 0).toFixed(2)}`}</p>
+        </div>
+        <div className="rounded-lg border p-3 bg-white">
+          <p className="text-xs text-muted-foreground">Saldo</p>
+          <p className="text-lg font-semibold text-amber-700">{`$${(Number(totals.balance) || 0).toFixed(2)}`}</p>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <span className="text-muted-foreground">Avance de pago</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            {billing.status && getBillingStatusBadge(billing.status)}
+            <span>{totals.progress || 0}%</span>
+          </div>
+        </div>
+        <Progress value={totals.progress || 0} />
+      </div>
+
+      <div className="space-y-3">
+        <h5 className="font-medium">Cuotas y comprobantes</h5>
+        {(billing.payments || []).length === 0 && (
+          <p className="text-sm text-muted-foreground">No hay pagos registrados aún.</p>
+        )}
+        {(billing.payments || []).map((payment) => (
+          <div key={payment.id} className="rounded-lg border bg-white p-3 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p className="text-sm font-semibold">{formatCurrency(payment.amount)}</p>
+                <p className="text-xs text-muted-foreground">
+                  {payment.payment_method || "Método no especificado"}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span>
+                  {payment.payment_date
+                    ? format(new Date(payment.payment_date), "PPP", { locale: es })
+                    : "Sin fecha"}
+                </span>
+                {getBillingStatusBadge(payment.status || "pending")}
+              </div>
+            </div>
+
+            {(payment.installments || []).length > 0 ? (
+              <div className="space-y-2">
+                {payment.installments.map((inst) => (
+                  <div key={inst.id} className="flex flex-wrap items-center justify-between rounded-md border bg-muted/30 px-3 py-2 gap-3">
+                    <div>
+                      <p className="text-sm font-semibold">{formatCurrency(inst.installment_amount)}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Cuota #{inst.installment_number}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      <span>
+                        {inst.status === 'paid' && inst.updated_at
+                          ? format(new Date(inst.updated_at), "PPP", { locale: es })
+                          : inst.due_date
+                          ? format(new Date(inst.due_date), "PPP", { locale: es })
+                          : "Sin fecha"}
+                      </span>
+                      {getInstallmentStatusBadge(inst.status || "pending")}
+                      {inst.receipt_url && (
+                        <button
+                          onClick={() => onViewReceipt(inst.receipt_url)}
+                          className="underline text-primary hover:text-primary/80 text-xs"
+                        >
+                          Ver comprobante
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">Este pago no tiene cuotas registradas.</p>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

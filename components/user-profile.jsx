@@ -73,7 +73,6 @@ export function UserProfile() {
         });
       }
     } catch (err) {
-      console.error("Error saving profile:", err);
       await Swal.fire({
         title: "Error",
         text: "Error al conectar con el servidor",

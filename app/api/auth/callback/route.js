@@ -14,7 +14,7 @@ export async function GET(request) {
         returnTo = parsed.returnTo;
       }
     } catch (e) {
-      console.warn('Invalid state param', e);
+      // Invalid state param, continue without it
     }
   }
 
@@ -38,7 +38,6 @@ export async function GET(request) {
 
     if (!tokenResponse.ok) {
       const body = await tokenResponse.text();
-      console.error('Token exchange failed', tokenResponse.status, body);
       throw new Error('Token exchange failed');
     }
 
@@ -46,7 +45,6 @@ export async function GET(request) {
     const accessToken = tokens.access_token;
 
     if (!accessToken) {
-      console.error('No access token in Auth0 response', tokens);
       throw new Error('Missing access token');
     }
 
@@ -59,7 +57,6 @@ export async function GET(request) {
 
     if (!profileRes.ok) {
       const body = await profileRes.text();
-      console.error('Failed to fetch user profile', profileRes.status, body);
       throw new Error('Failed to fetch user profile');
     }
 
@@ -89,7 +86,6 @@ export async function GET(request) {
 
     return response;
   } catch (error) {
-    console.error('Auth callback error:', error);
     return NextResponse.json({ error: 'Authentication failed' }, { status: 500 });
   }
 }

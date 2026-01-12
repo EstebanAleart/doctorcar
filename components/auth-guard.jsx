@@ -8,15 +8,10 @@ export function AuthGuard({ children, allowedRoles }) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
-  console.log("[AuthGuard] Render - user:", user, "loading:", loading);
-
   useEffect(() => {
-    console.log("[AuthGuard] Effect - loading:", loading, "user:", user);
-    
     if (loading) return; // Wait for auth check to complete
     
     if (!user) {
-      console.log("[AuthGuard] No user, redirecting to /login");
       router.push("/login");
     } else if (allowedRoles && !allowedRoles.includes(user.role)) {
       const roleRedirects = {
@@ -25,10 +20,8 @@ export function AuthGuard({ children, allowedRoles }) {
         client: "/client",
       };
       const target = roleRedirects[user.role];
-      console.log("[AuthGuard] Wrong role, redirecting to", target || "/unauthorized");
       router.replace(target || "/unauthorized");
     } else {
-      console.log("[AuthGuard] Auth OK, user:", user.email);
     }
   }, [user, loading, allowedRoles, router]);
 

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-import { query } from '@/lib/database';
+import { query, billingDb, billingItemDb } from '@/lib/database';
 import pool from '@/lib/database';
 import { uploadMultipleImages, deleteMultipleImages } from '@/lib/cloudinary';
+import { generatePDFContent } from '@/lib/pdf-generator';
 import { nanoid } from 'nanoid';
 
 // GET /api/claims/[id] - Obtener un reclamo específico
@@ -26,15 +27,17 @@ export async function GET(request, { params }) {
     const { id } = await params;
 
     const claim = await query(
-      `SELECT c.*, v.brand, v.model, v.plate, v.year,
+      `SELECT c.*, v.brand, v.model, v.plate, v.year, v.color,
               u.name as client_name, u.email as client_email, u.phone as client_phone,
-              COALESCE(json_agg(b.*) FILTER (WHERE b.id IS NOT NULL), '[]') AS items
+              COALESCE(json_agg(b.*) FILTER (WHERE b.id IS NOT NULL), '[]') AS items,
+              COALESCE(json_agg(a.*) FILTER (WHERE a.id IS NOT NULL), '[]') AS appointments
        FROM claims c
        JOIN vehicles v ON c.vehicle_id = v.id
        JOIN users u ON c.client_id = u.id
        LEFT JOIN budget_items b ON b.claim_id = c.id
+       LEFT JOIN appointments a ON a.claim_id = c.id AND a.status != 'cancelled'
        WHERE c.id = $1
-       GROUP BY c.id, v.brand, v.model, v.plate, v.year, u.name, u.email, u.phone`,
+       GROUP BY c.id, v.brand, v.model, v.plate, v.year, v.color, u.name, u.email, u.phone`,
       [id]
     );
 
@@ -49,7 +52,6 @@ export async function GET(request, { params }) {
 
     return NextResponse.json(claim.rows[0]);
   } catch (error) {
-    console.error('Error fetching claim:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -112,9 +114,10 @@ export async function PUT(request, { params }) {
         return NextResponse.json({ error: 'No se puede seleccionar una fecha pasada' }, { status: 400 });
       }
       
+      // Check if date is already booked in appointments table
       const existing = await query(
-        'SELECT 1 FROM claims WHERE appointment_date = $1 AND approval_status = $2 AND id <> $3 LIMIT 1',
-        [appointment_date, 'accepted', id]
+        'SELECT 1 FROM appointments WHERE scheduled_date = $1 AND status NOT IN (\'cancelled\', \'rescheduled\') LIMIT 1',
+        [appointment_date]
       );
       if (existing.rows.length > 0) {
         return NextResponse.json({ error: 'La fecha seleccionada ya está ocupada' }, { status: 400 });
@@ -130,7 +133,7 @@ export async function PUT(request, { params }) {
         await deleteMultipleImages(photosToDelete);
         currentPhotos = currentPhotos.filter((photo) => !photosToDelete.includes(photo.publicId));
       } catch (error) {
-        console.error('Error deleting photos:', error);
+        // Photo deletion failed, continue
       }
     }
 
@@ -142,7 +145,6 @@ export async function PUT(request, { params }) {
         });
         currentPhotos = [...currentPhotos, ...uploadedPhotos];
       } catch (error) {
-        console.error('Error uploading photos:', error);
         return NextResponse.json({ error: 'Failed to upload photos' }, { status: 500 });
       }
     }
@@ -194,9 +196,24 @@ export async function PUT(request, { params }) {
           updates.push(`payment_method = $${paramIndex++}`);
           values.push(payment_method);
         }
+        // Crear appointment en tabla appointments en lugar de guardar appointment_date en claims
         if (appointment_date !== undefined) {
-          updates.push(`appointment_date = $${paramIndex++}`);
-          values.push(appointment_date);
+          try {
+            const appointmentId = nanoid();
+            
+            await query(
+              `INSERT INTO appointments (id, claim_id, scheduled_date, appointment_type, status, duration_minutes)
+               VALUES ($1, $2, $3::DATE, 'inspection', 'scheduled', 1440)
+               RETURNING *`,
+              [appointmentId, id, appointment_date]
+            );
+            
+            // Actualizar claims.appointment_id para establecer la relación
+            updates.push(`appointment_id = $${paramIndex++}`);
+            values.push(appointmentId);
+          } catch (appointmentError) {
+            return NextResponse.json({ error: 'Failed to create appointment', details: appointmentError.message }, { status: 500 });
+          }
         }
       }
     }
@@ -221,17 +238,78 @@ export async function PUT(request, { params }) {
         await client.query('DELETE FROM budget_items WHERE claim_id = $1', [id]);
 
         let total = 0;
+          const budgetItemIds = [];
         for (const item of sanitizedItems) {
           const totalItem = Number(item.quantity) * Number(item.unitPrice);
           total += totalItem;
+            const itemId = nanoid();
+            budgetItemIds.push({ id: itemId, ...item, totalItem });
           await client.query(
             `INSERT INTO budget_items (id, claim_id, description, quantity, unit_price, total)
              VALUES ($1, $2, $3, $4, $5, $6)`,
-            [nanoid(), id, item.description, item.quantity, item.unitPrice, totalItem]
+              [itemId, id, item.description, item.quantity, item.unitPrice, totalItem]
           );
         }
 
         await client.query('COMMIT');
+
+          // Actualizar billing y billing_items
+          try {
+            // Buscar o crear billing para este claim
+            let billing = await billingDb.findByClaimId(id);
+            if (!billing) {
+              billing = await billingDb.create({
+                claimId: id,
+                billingDate: new Date(),
+                customerType: 'individual',
+                subtotal: 0,
+                totalAmount: 0,
+                balance: 0
+              });
+            }
+
+            // Calcular 10% desarrollo (se descuenta del total)
+            const developmentFee = total * 0.10;
+            const totalAfterFee = total - developmentFee;
+
+            // Actualizar billing con los nuevos montos
+            await billingDb.update(billing.id, {
+              subtotal: total,
+              totalAmount: totalAfterFee,
+              balance: totalAfterFee
+            });
+
+            // Recrear billing_items
+            await client.query('DELETE FROM billing_items WHERE billing_id = $1', [billing.id]);
+          
+            // Crear billing_items desde budget_items
+            for (const budgetItem of budgetItemIds) {
+              await billingItemDb.create({
+                billingId: billing.id,
+                budgetItemId: budgetItem.id,
+                description: budgetItem.description,
+                quantity: budgetItem.quantity,
+                  unitPrice: budgetItem.unitPrice,
+                itemType: 'labor'
+              });
+            }
+
+            // Añadir item de descuento por desarrollo
+            await billingItemDb.create({
+              billingId: billing.id,
+              budgetItemId: null,
+              description: 'Descuento desarrollo (10%)',
+              quantity: 1,
+              unitPrice: -developmentFee,
+              itemType: 'other'
+            });
+
+            // Nota: El PDF se genera on-the-fly cuando el cliente lo solicita
+            // No necesitamos guardarlo en Cloudinary ni en la base de datos
+            // El endpoint /api/pdf/download genera el PDF dinámicamente
+          } catch (billingError) {
+            // Continue even if billing update fails
+          }
 
         // Si no se envía estimatedCost, lo calculamos
         if (!values.includes(total) && (items.length > 0)) {
@@ -252,7 +330,6 @@ export async function PUT(request, { params }) {
         }
       } catch (error) {
         await client.query('ROLLBACK');
-        console.error('Error saving budget items:', error);
         return NextResponse.json({ error: 'Failed to save budget items' }, { status: 500 });
       } finally {
         client.release();
@@ -272,7 +349,6 @@ export async function PUT(request, { params }) {
 
     return NextResponse.json(result.rows[0]);
   } catch (error) {
-    console.error('Error updating claim:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -326,7 +402,7 @@ export async function DELETE(request, { params }) {
         const publicIds = photos.map((photo) => photo.publicId);
         await deleteMultipleImages(publicIds);
       } catch (error) {
-        console.error('Error deleting photos from Cloudinary:', error);
+        // Photo deletion from Cloudinary failed
       }
     }
 
@@ -334,7 +410,6 @@ export async function DELETE(request, { params }) {
 
     return NextResponse.json({ message: 'Claim deleted successfully' });
   } catch (error) {
-    console.error('Error deleting claim:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
