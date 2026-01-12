@@ -1,70 +1,47 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/database';
 
-// GET /api/calendar - Returns booked dates (accepted appointments)
+// GET /api/calendar - Returns booked dates from appointments table
 export async function GET(request) {
   try {
-    const cookie = request.cookies.get('auth_session');
-    if (!cookie?.value) {
-      // Allow public read? For now, require login
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const decoded = JSON.parse(Buffer.from(cookie.value, 'base64url').toString());
-    if (!decoded?.sub) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Return all booked dates with claim details
+    // Get all booked dates from appointments table
+    // Cast to TEXT to get the date as stored (YYYY-MM-DD)
     const result = await query(
-      `SELECT 
-        c.id,
-        c.appointment_date::date AS date,
-        c.description,
-        c.client_id,
-        u.name AS client_name,
-        v.brand,
-        v.model,
-        v.plate
-       FROM claims c
-       JOIN users u ON c.client_id = u.id
-       JOIN vehicles v ON c.vehicle_id = v.id
-       WHERE c.appointment_date IS NOT NULL AND c.approval_status = 'accepted'
-       ORDER BY c.appointment_date::date`
+      `SELECT DISTINCT scheduled_date::DATE::TEXT as scheduled_date
+       FROM appointments
+       WHERE status NOT IN ('cancelled', 'rescheduled')
+       ORDER BY scheduled_date`
     );
 
-    // Group by date and create work orders with two-day blocks
-    const workOrders = result.rows.map((row) => ({
-      id: row.id,
-      date: typeof row.date === 'string' ? row.date : new Date(row.date).toISOString().split('T')[0],
-      clientName: row.client_name,
-      description: row.description,
-      vehicle: `${row.brand} ${row.model}`,
-      plate: row.plate,
-    }));
-
-    // For booked dates, each appointment blocks two days starting from appointment_date
-    const bookedDates = new Set();
-    workOrders.forEach((order) => {
-      // order.date es string en formato 'YYYY-MM-DD'
-      const dateStr = typeof order.date === 'string' ? order.date : new Date(order.date).toISOString().split('T')[0];
-      bookedDates.add(dateStr);
+    // Convert dates to YYYY-MM-DD format and add next day (48h minimum)
+    const bookedDatesSet = new Set();
+    
+    // Helper function to calculate next day without timezone issues
+    const getNextDay = (dateStr) => {
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      date.setDate(date.getDate() + 1);
+      const nextYear = date.getFullYear();
+      const nextMonth = String(date.getMonth() + 1).padStart(2, '0');
+      const nextDay = String(date.getDate()).padStart(2, '0');
+      return `${nextYear}-${nextMonth}-${nextDay}`;
+    };
+    
+    result.rows.forEach((row) => {
+      // Extract date string directly (already in YYYY-MM-DD format from ::TEXT cast)
+      const dateStr = row.scheduled_date;
       
-      // Sumar un día al string
-      const dateParts = dateStr.split('-');
-      const nextDayDate = new Date(Number(dateParts[0]), Number(dateParts[1]) - 1, Number(dateParts[2]) + 1);
-      const year = nextDayDate.getFullYear();
-      const month = String(nextDayDate.getMonth() + 1).padStart(2, '0');
-      const day = String(nextDayDate.getDate()).padStart(2, '0');
-      bookedDates.add(`${year}-${month}-${day}`);
+      bookedDatesSet.add(dateStr);
+      
+      // Add next day (48h)
+      const nextDay = getNextDay(dateStr);
+      bookedDatesSet.add(nextDay);
     });
 
     return NextResponse.json({ 
-      bookedDates: Array.from(bookedDates),
-      workOrders 
+      bookedDates: Array.from(bookedDatesSet)
     });
   } catch (error) {
-    console.error('Error fetching calendar dates:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

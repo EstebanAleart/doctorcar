@@ -38,11 +38,8 @@ export function ClientNewClaim({ onSuccess }) {
       if (response.ok) {
         const data = await response.json();
         setVehicles(data);
-      } else {
-        console.error('Error loading vehicles');
       }
     } catch (error) {
-      console.error('Error loading vehicles:', error);
     }
   };
 
@@ -147,7 +144,6 @@ export function ClientNewClaim({ onSuccess }) {
         });
       }
     } catch (error) {
-      console.error('Error creating claim:', error);
       await Swal.fire({
         title: 'Error',
         text: 'Error al conectar con el servidor',

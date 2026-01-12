@@ -5,21 +5,46 @@ import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertCircle, Check, X } from "lucide-react";
-import Swal from "sweetalert2";
+import { AlertCircle, AlertTriangle, Check, X, Download } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
   const [approvalData, setApprovalData] = useState({
     approval: claim.approval_status || "pending",
     paymentMethod: claim.payment_method || "",
-    appointmentDate: claim.appointment_date || "",
+    appointmentDate: "",
   });
   const [bookedDates, setBookedDates] = useState([]);
+  const [errors, setErrors] = useState([]);
+  const [dateError, setDateError] = useState("");
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  
   const formatLocalYMD = (d) => {
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, "0");
     const day = String(d.getDate()).padStart(2, "0");
     return `${y}-${m}-${day}`;
+  };
+
+  // Obtener fecha del primer appointment aceptado si existe
+  const getFirstAppointmentDate = () => {
+    if (claim.appointments && Array.isArray(claim.appointments) && claim.appointments.length > 0) {
+      const validAppointments = claim.appointments.filter(a => a && a.scheduled_date);
+      if (validAppointments.length > 0) {
+        return validAppointments[0].scheduled_date;
+      }
+    }
+    return null;
   };
 
   useEffect(() => {
@@ -33,7 +58,7 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
           if (isMounted) setBookedDates(dates);
         }
       } catch (e) {
-        console.error('Error loading booked dates', e);
+        // Failed to load booked dates
       }
     })();
     return () => { isMounted = false; };
@@ -43,50 +68,36 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
   const isAccepted = approvalData.approval === "accepted";
 
   const handleSubmitAccept = async () => {
+    const newErrors = [];
+    
     if (isParticular && !approvalData.paymentMethod) {
-      await Swal.fire({
-        title: "Dato incompleto",
-        text: "Por favor selecciona un método de pago",
-        icon: "warning",
-        confirmButtonColor: "#1a4d6d",
-      });
-      return;
+      newErrors.push("Por favor selecciona un método de pago");
     }
 
     if (!approvalData.appointmentDate) {
-      await Swal.fire({
-        title: "Dato incompleto",
-        text: "Por favor selecciona una fecha para el turno",
-        icon: "warning",
-        confirmButtonColor: "#1a4d6d",
-      });
+      newErrors.push("Por favor selecciona una fecha para el turno");
+    }
+
+    if (newErrors.length > 0) {
+      setErrors(newErrors);
       return;
     }
 
+    setErrors([]);
     await onApprovalUpdate({
       approval_status: "accepted",
-      payment_method: isParticular ? approvalData.paymentMethod : null,
+      payment_method: isParticular ? approvalData.paymentMethod : "insurance",
       appointment_date: approvalData.appointmentDate,
     });
   };
 
   const handleSubmitReject = async () => {
-    const result = await Swal.fire({
-      title: "¿Rechazar Presupuesto?",
-      text: "Si rechazas este presupuesto, tendrás que crear un nuevo reclamo",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#dc2626",
-      cancelButtonColor: "#1a4d6d",
-      confirmButtonText: "Sí, rechazar",
-      cancelButtonText: "Cancelar",
-    });
+    setRejectDialogOpen(true);
+  };
 
-    if (result.isConfirmed) {
-      await onApprovalUpdate({
-        approval_status: "rejected",
-      });
-    }
+  const handleConfirmReject = async () => {
+    await onApprovalUpdate({ approval_status: "rejected" });
+    setRejectDialogOpen(false);
   };
 
   return (
@@ -98,12 +109,28 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
         {claim.approval_status === "rejected" && "Presupuesto rechazado"}
       </div>
 
+      {errors.length > 0 && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            <ul className="list-disc list-inside">
+              {errors.map((error, idx) => (
+                <li key={idx}>{error}</li>
+              ))}
+            </ul>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {claim.approval_status === "pending" && (
         <div className="space-y-4">
           {isParticular && (
             <div className="space-y-2">
               <Label htmlFor="payment-method">Método de Pago</Label>
-              <Select value={approvalData.paymentMethod} onValueChange={(value) => setApprovalData({ ...approvalData, paymentMethod: value })}>
+              <Select value={approvalData.paymentMethod} onValueChange={(value) => {
+                setApprovalData({ ...approvalData, paymentMethod: value });
+                setErrors(errors.filter(e => !e.includes("método de pago")));
+              }}>
                 <SelectTrigger id="payment-method">
                   <SelectValue placeholder="Selecciona un método de pago" />
                 </SelectTrigger>
@@ -118,10 +145,18 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
 
           <div className="space-y-2">
             <Label>Fecha de Turno</Label>
+            <div className="text-xs text-amber-600 font-medium mb-2 p-2 bg-amber-50 rounded">
+              ⚠️ Tenga en cuenta que el arreglo puede demorar un mínimo de 48 horas
+            </div>
             <div className="text-xs text-muted-foreground mb-2 flex gap-3">
               <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[#1a4d6d]"></span> Seleccionada</span>
               <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-500"></span> Ocupada</span>
             </div>
+            
+            {dateError && (
+              <p className="text-sm text-red-600 mb-2">{dateError}</p>
+            )}
+            
             <Calendar
               mode="single"
               selected={approvalData.appointmentDate ? new Date(approvalData.appointmentDate + 'T00:00:00') : undefined}
@@ -129,15 +164,12 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
                 if (!date) return;
                 const ymd = formatLocalYMD(date);
                 if (bookedDates.includes(ymd)) {
-                  Swal.fire({
-                    title: 'Fecha ocupada',
-                    text: 'Esa fecha ya está ocupada. Por favor elige otra.',
-                    icon: 'warning',
-                    confirmButtonColor: '#1a4d6d',
-                  });
+                  setDateError("Esa fecha ya está ocupada. Por favor elige otra.");
                   return;
                 }
+                setDateError("");
                 setApprovalData({ ...approvalData, appointmentDate: ymd });
+                setErrors(errors.filter(e => !e.includes("fecha")));
               }}
               fromDate={new Date()}
               disabled={(date) => {
@@ -161,6 +193,29 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
             />
           </div>
 
+          <Button
+            onClick={async () => {
+              try {
+                // Descargar el PDF generado on-the-fly
+                const downloadUrl = `/api/pdf/download?id=${encodeURIComponent(claim.id)}`;
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = `Presupuesto_${claim.id.slice(-8)}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              } catch (error) {
+                alert('Error al descargar el PDF');
+              }
+            }}
+            variant="outline"
+            className="w-full mb-2"
+            disabled={loading}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Descargar Presupuesto (PDF)
+          </Button>
+
           <div className="flex gap-2">
             <Button
               onClick={handleSubmitAccept}
@@ -179,13 +234,41 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
               Rechazar
             </Button>
           </div>
+
+          <AlertDialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>¿Rechazar este presupuesto?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Si rechazas el presupuesto deberás crear un nuevo reclamo para continuar con el proceso.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={loading}>Volver</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleConfirmReject}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                  disabled={loading}
+                >
+                  Rechazar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       )}
 
       {claim.approval_status === "accepted" && (
         <div className="space-y-2 p-3 bg-green-50 rounded-md">
-          <p className="text-sm"><strong>Fecha de Turno:</strong> {claim.appointment_date ? new Date(claim.appointment_date).toLocaleDateString("es-AR") : "N/A"}</p>
-          {isParticular && <p className="text-sm"><strong>Método de Pago:</strong> {claim.payment_method || "N/A"}</p>}
+          {(() => {
+            const appointmentDate = getFirstAppointmentDate();
+            return (
+              <>
+                <p className="text-sm"><strong>Fecha de Turno:</strong> {appointmentDate ? new Date(appointmentDate + 'T00:00:00').toLocaleDateString("es-AR") : "N/A"}</p>
+                {isParticular && <p className="text-sm"><strong>Método de Pago:</strong> {claim.payment_method || "N/A"}</p>}
+              </>
+            );
+          })()}
         </div>
       )}
 

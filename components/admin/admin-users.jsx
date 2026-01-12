@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useEffect, useState } from "react";
-import { db } from "@/lib/db";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,12 +9,16 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Trash2, Edit, Plus, Users, Briefcase, Shield } from "lucide-react";
+import { Trash2, Edit, Plus, Users, Briefcase, Shield, Search } from "lucide-react";
 
 export function AdminUsers() {
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -28,25 +31,57 @@ export function AdminUsers() {
     loadUsers();
   }, []);
 
-  const loadUsers = () => {
-    setUsers(db.getUsers());
-  };
+  useEffect(() => {
+    filterUsers();
+  }, [users, searchTerm, roleFilter]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (editingUser) {
-      db.updateUser(editingUser.id, formData);
-    } else {
-      db.createUser(formData);
+  const loadUsers = async () => {
+    try {
+      const response = await fetch("/api/users");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setUsers(data);
+
+    } finally {
+      setLoading(false);
     }
-    resetForm();
-    loadUsers();
   };
 
-  const handleDelete = (id) => {
+  const filterUsers = () => {
+    let filtered = [...users];
+
+    // Role filter
+    if (roleFilter !== "all") {
+      filtered = filtered.filter((user) => user.role === roleFilter);
+    }
+
+    // Search filter
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(
+        (user) =>
+          user.name?.toLowerCase().includes(term) ||
+          user.email?.toLowerCase().includes(term) ||
+          user.phone?.toLowerCase().includes(term)
+      );
+    }
+
+    setFilteredUsers(filtered);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // TODO: Implement API calls for user creation/update
+    alert("Funcionalidad de crear/editar usuario pendiente de implementar");
+    resetForm();
+  };
+
+  const handleDelete = async (id) => {
     if (confirm("¿Estás seguro de eliminar este usuario?")) {
-      db.deleteUser(id);
-      loadUsers();
+      // TODO: Implement API call for user deletion
+      alert("Funcionalidad de eliminar usuario pendiente de implementar");
     }
   };
 
@@ -116,36 +151,126 @@ export function AdminUsers() {
           Nuevo Usuario
         </Button>
       </div>
-      <div className="grid gap-4">
-        {users.map((user) => (
-          <Card key={user.id}>
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
-                  <CardTitle className="text-lg">{user.name}</CardTitle>
-                  <CardDescription>{user.email}</CardDescription>
-                </div>
-                {getRoleBadge(user.role)}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">
-                  {user.phone && <span>Tel: {user.phone}</span>}
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => openEdit(user)}>
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleDelete(user.id)}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Usuarios
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{users.length}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Clientes
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {users.filter((u) => u.role === "client").length}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Empleados
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {users.filter((u) => u.role === "employee").length}
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Filters */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-center border rounded-lg px-3 py-2">
+              <Search className="h-4 w-4 text-muted-foreground mr-2" />
+              <Input
+                placeholder="Buscar por nombre, email o teléfono..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+              />
+            </div>
+
+            <Select value={roleFilter} onValueChange={setRoleFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Filtrar por rol" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos los Roles</SelectItem>
+                <SelectItem value="admin">Administradores</SelectItem>
+                <SelectItem value="employee">Empleados</SelectItem>
+                <SelectItem value="client">Clientes</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {searchTerm && (
+            <div className="mt-4 text-sm text-muted-foreground">
+              Mostrando {filteredUsers.length} resultado
+              {filteredUsers.length !== 1 ? "s" : ""} de {users.length}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Users List */}
+      {loading ? (
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">Cargando usuarios...</p>
+        </div>
+      ) : filteredUsers.length === 0 ? (
+        <Card>
+          <CardContent className="py-8 text-center text-muted-foreground">
+            {searchTerm
+              ? "No se encontraron usuarios con los criterios de búsqueda"
+              : "No hay usuarios registrados"}
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-4">
+          {filteredUsers.map((user) => (
+            <Card key={user.id}>
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <CardTitle className="text-lg">{user.name}</CardTitle>
+                    <CardDescription>{user.email}</CardDescription>
+                  </div>
+                  {getRoleBadge(user.role)}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-muted-foreground">
+                    {user.phone && <span>Tel: {user.phone}</span>}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => openEdit(user)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleDelete(user.id)}>
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
       <Dialog open={showDialog} onOpenChange={(open) => !open && resetForm()}>
         <DialogContent>
           <DialogHeader>
