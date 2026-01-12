@@ -29,9 +29,12 @@ export async function GET(request) {
        WHERE a.status NOT IN ('cancelled')
        ORDER BY a.scheduled_date DESC, a.scheduled_time`
     );
+    
+    console.log(`[APPOINTMENTS API] Devolviendo ${result.rows.length} citas`);
     return NextResponse.json(result.rows);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch appointments' }, { status: 500 });
+    console.error("[APPOINTMENTS API] Error:", error);
+    return NextResponse.json({ error: 'Failed to fetch appointments', details: error.message }, { status: 500 });
   }
 }
 

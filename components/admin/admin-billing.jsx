@@ -123,18 +123,27 @@ export function AdminBilling() {
     let paidAmount = 0;
     let pendingAmount = 0;
     let developmentFee = 0;
+    let cancelledTotal = 0;
+    let cancelledPaidAmount = 0;
+    let cancelledPendingAmount = 0;
 
     filteredBillings.forEach((billing) => {
       const billingTotal = parseFloat(billing.total_amount) || 0;
       const billingSubtotal = parseFloat(billing.subtotal) || 0;
       const fee = billingTotal - billingSubtotal; // The 10% fee
-      
-      total += billingTotal;
-      developmentFee += fee;
-      
       const paid = parseFloat(billing.paid_amount) || 0;
-      paidAmount += paid;
-      pendingAmount += (billingTotal - paid);
+      
+      // Separar cancelados/rechazados de los activos
+      if (billing.status === 'cancelled' || billing.status === 'rejected') {
+        cancelledTotal += billingTotal;
+        cancelledPaidAmount += paid;
+        cancelledPendingAmount += (billingTotal - paid);
+      } else {
+        total += billingTotal;
+        developmentFee += fee;
+        paidAmount += paid;
+        pendingAmount += (billingTotal - paid);
+      }
     });
 
     return {
@@ -142,6 +151,9 @@ export function AdminBilling() {
       paidAmount,
       pendingAmount,
       developmentFee,
+      cancelledTotal,
+      cancelledPaidAmount,
+      cancelledPendingAmount,
     };
   };
 
@@ -409,7 +421,7 @@ export function AdminBilling() {
               ${totals.total.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              {filteredBillings.length} facturas
+              {filteredBillings.filter(b => b.status !== 'cancelled' && b.status !== 'rejected').length} facturas
             </p>
           </CardContent>
         </Card>
@@ -463,6 +475,59 @@ export function AdminBilling() {
         </Card>
       </div>
 
+      {/* Cancelled/Rejected Summary */}
+      {totals.cancelledTotal > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <Card className="border-red-200 bg-red-50">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-red-700">
+                Cancelados/Rechazados - Total
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-600">
+                ${totals.cancelledTotal.toFixed(2)}
+              </div>
+              <p className="text-xs text-red-600 mt-2">
+                {filteredBillings.filter(b => b.status === 'cancelled' || b.status === 'rejected').length} facturas
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-red-200 bg-red-50">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-red-700">
+                Cancelados - Cobrado
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-600">
+                ${totals.cancelledPaidAmount.toFixed(2)}
+              </div>
+              <p className="text-xs text-red-600 mt-2">
+                Ya cobrado
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-red-200 bg-red-50">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-red-700">
+                Cancelados - Pendiente
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-600">
+                ${totals.cancelledPendingAmount.toFixed(2)}
+              </div>
+              <p className="text-xs text-red-600 mt-2">
+                Por cobrar antes de cancelar
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {/* Billing Table */}
       <Card>
         <CardHeader>
@@ -493,9 +558,10 @@ export function AdminBilling() {
                     <TableHead className="text-right">Total</TableHead>
                     <TableHead className="text-right">Pagado</TableHead>
                     <TableHead className="text-right">Saldo</TableHead>
-                    <TableHead>Fecha</TableHead>
+                    <TableHead>Creada</TableHead>
+                    <TableHead>Actualizada</TableHead>
                     <TableHead>Pagos</TableHead>
-                      <TableHead>Acciones</TableHead>
+                    <TableHead>Acciones</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -533,7 +599,14 @@ export function AdminBilling() {
                           ${balance.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-xs text-muted-foreground">
-                          {new Date(billing.billing_date).toLocaleDateString("es-AR")}
+                          {billing.billing_date 
+                            ? new Date(billing.billing_date).toLocaleDateString("es-AR")
+                            : "-"}
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground">
+                          {billing.updated_at
+                            ? new Date(billing.updated_at).toLocaleDateString("es-AR")
+                            : "-"}
                         </TableCell>
                         <TableCell className="text-sm">
                           {billing.payments && billing.payments.length > 0 ? (
@@ -683,31 +756,70 @@ export function AdminBilling() {
                   </div>
                 )}
 
+                {/* Registrar nuevo pago */}
+                <div className="border rounded-lg p-4 bg-blue-50">
+                  <Label className="text-sm font-medium mb-3 block">Registrar nuevo pago</Label>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="payment-amount" className="text-xs">Monto a registrar</Label>
+                        <Input
+                          id="payment-amount"
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="payment-method" className="text-xs">Método de pago</Label>
+                        <Select defaultValue="cash">
+                          <SelectTrigger id="payment-method" className="mt-1">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="cash">Efectivo</SelectItem>
+                            <SelectItem value="transfer">Transferencia</SelectItem>
+                            <SelectItem value="check">Cheque</SelectItem>
+                            <SelectItem value="credit_card">Tarjeta de Crédito</SelectItem>
+                            <SelectItem value="other">Otro</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                      + Registrar pago
+                    </Button>
+                  </div>
+                </div>
+
                 {/* Historial de pagos */}
                 {selectedBilling.payments && selectedBilling.payments.length > 0 && (
                   <div>
-                    <Label className="text-sm text-muted-foreground mb-2 block">Historial de pagos</Label>
+                    <Label className="text-sm font-medium mb-3 block">Historial de pagos ({selectedBilling.payments.length})</Label>
                     <div className="space-y-2">
                       {selectedBilling.payments.map((payment) => (
-                        <div key={payment.id} className="border rounded-lg p-3 flex justify-between items-center">
-                          <div>
-                            <p className="font-medium">${parseFloat(payment.amount).toFixed(2)}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(payment.payment_date).toLocaleDateString("es-AR")} - {payment.payment_method}
-                            </p>
-                            {payment.notes && (
-                              <p className="text-xs text-muted-foreground mt-1">{payment.notes}</p>
+                        <div key={payment.id} className="border rounded-lg p-3 bg-green-50">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <p className="font-bold text-green-700">${parseFloat(payment.amount).toFixed(2)}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {new Date(payment.payment_date).toLocaleDateString("es-AR")} - {payment.payment_method}
+                              </p>
+                              {payment.notes && (
+                                <p className="text-xs text-muted-foreground mt-1">Nota: {payment.notes}</p>
+                              )}
+                            </div>
+                            {payment.receipt_url && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => window.open(payment.receipt_url, '_blank')}
+                              >
+                                Comprobante
+                              </Button>
                             )}
                           </div>
-                          {payment.receipt_url && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => window.open(payment.receipt_url, '_blank')}
-                            >
-                              Ver comprobante
-                            </Button>
-                          )}
                         </div>
                       ))}
                     </div>
