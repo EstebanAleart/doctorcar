@@ -73,8 +73,8 @@ export async function GET(request) {
 
     response.cookies.set('auth_session', sessionToken, {
       httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.AUTH0_BASE_URL.startsWith('https'),
+      sameSite: 'none',
+      secure: true,
       path: '/',
       maxAge: 60 * 60 * 8, // 8 hours
     });
@@ -82,8 +82,8 @@ export async function GET(request) {
     // Optional: keep access token for future server-side calls
     response.cookies.set('auth_token', tokens.access_token, {
       httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.AUTH0_BASE_URL.startsWith('https'),
+      sameSite: 'none',
+      secure: true,
       path: '/',
       maxAge: tokens.expires_in || 86400,
     });
