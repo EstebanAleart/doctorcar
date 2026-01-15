@@ -6,25 +6,23 @@ export async function GET(request) {
   const code = searchParams.get('code');
   const stateParam = searchParams.get('state');
 
+  if (!code) {
+    return NextResponse.json({ error: 'No code provided' }, { status: 400 });
+  }
+
   let returnTo = '/client';
   if (stateParam) {
     try {
-      const parsed = JSON.parse(Buffer.from(stateParam, 'base64url').toString());
-      if (parsed?.returnTo && typeof parsed.returnTo === 'string') {
-        returnTo = parsed.returnTo;
-      }
+      const decoded = JSON.parse(Buffer.from(stateParam, 'base64url').toString());
+      returnTo = decoded.returnTo || '/client';
     } catch (e) {
-      // Invalid state param, continue without it
+      // Invalid state, use default
     }
-  }
-
-  if (!code) {
-    return NextResponse.json({ error: 'No authorization code' }, { status: 400 });
   }
 
   try {
     // Exchange code for tokens
-    const tokenResponse = await fetch(`https://${process.env.AUTH0_DOMAIN}/oauth/token`, {
+    const tokenRes = await fetch(`${process.env.AUTH0_ISSUER_BASE_URL}/oauth/token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -32,50 +30,47 @@ export async function GET(request) {
         client_secret: process.env.AUTH0_CLIENT_SECRET,
         code,
         grant_type: 'authorization_code',
-        redirect_uri: process.env.AUTH0_BASE_URL + '/api/auth/callback',
+        redirect_uri: `${process.env.AUTH0_BASE_URL}/api/auth/callback`,
       }),
     });
 
-    if (!tokenResponse.ok) {
-      const body = await tokenResponse.text();
-      throw new Error('Token exchange failed');
+    if (!tokenRes.ok) {
+      const error = await tokenRes.json();
+      console.error('Token exchange failed:', error);
+      throw new Error(`Token exchange failed: ${error.error_description}`);
     }
 
-    const tokens = await tokenResponse.json();
-    const accessToken = tokens.access_token;
+    const tokens = await tokenRes.json();
 
-    if (!accessToken) {
-      throw new Error('Missing access token');
+    // Decode id_token to get user info (it's a JWT)
+    let userInfo;
+    try {
+      const idTokenParts = tokens.id_token.split('.');
+      const userPayload = JSON.parse(Buffer.from(idTokenParts[1], 'base64').toString());
+      userInfo = {
+        sub: userPayload.sub,
+        email: userPayload.email,
+        name: userPayload.name || userPayload.email,
+      };
+    } catch (e) {
+      console.error('Failed to decode id_token:', e);
+      throw new Error('Invalid id_token');
     }
 
-    // Fetch user profile from Auth0
-    const profileRes = await fetch(`https://${process.env.AUTH0_DOMAIN}/userinfo`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+    // Ensure user exists in DB with default client role
+    await userDb.upsertFromAuth0({
+      sub: userInfo.sub,
+      email: userInfo.email,
+      name: userInfo.name,
     });
 
-    if (!profileRes.ok) {
-      const body = await profileRes.text();
-      throw new Error('Failed to fetch user profile');
-    }
-
-    const profile = await profileRes.json();
-    const authUser = {
-      sub: profile.sub,
-      email: profile.email,
-      name: profile.name || profile.nickname || profile.email,
-    };
-
-    // Upsert in DB with default role client
-    const dbUser = await userDb.upsertFromAuth0(authUser);
-
-    // Store ONLY session token in httpOnly cookie (no user data)
+    // Create session cookie expected by /api/user
     const sessionToken = Buffer.from(
-      JSON.stringify({ sub: authUser.sub, iat: Date.now() })
+      JSON.stringify({ sub: userInfo.sub, iat: Date.now() })
     ).toString('base64url');
 
     const response = NextResponse.redirect(new URL(returnTo, process.env.AUTH0_BASE_URL));
+
     response.cookies.set('auth_session', sessionToken, {
       httpOnly: true,
       sameSite: 'lax',
@@ -84,12 +79,21 @@ export async function GET(request) {
       maxAge: 60 * 60 * 8, // 8 hours
     });
 
+    // Optional: keep access token for future server-side calls
+    response.cookies.set('auth_token', tokens.access_token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.AUTH0_BASE_URL.startsWith('https'),
+      path: '/',
+      maxAge: tokens.expires_in || 86400,
+    });
+
     return response;
   } catch (error) {
-    return NextResponse.json({ error: 'Authentication failed' }, { status: 500 });
+    console.error('Callback error:', error);
+    return NextResponse.json(
+      { error: 'Authentication failed', details: error.message, code: error.code, detail: error.detail },
+      { status: 500 }
+    );
   }
-}
-
-export async function POST(request) {
-  return GET(request);
 }
