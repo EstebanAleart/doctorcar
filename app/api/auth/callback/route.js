@@ -24,7 +24,7 @@ export async function GET(request) {
 
   try {
     // Exchange code for tokens
-    const tokenResponse = await fetch(`https://${process.env.AUTH0_DOMAIN}/oauth/token`, {
+    const tokenResponse = await fetch(`${process.env.AUTH0_ISSUER_BASE_URL}/oauth/token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -49,7 +49,7 @@ export async function GET(request) {
     }
 
     // Fetch user profile from Auth0
-    const profileRes = await fetch(`https://${process.env.AUTH0_DOMAIN}/userinfo`, {
+    const profileRes = await fetch(`${process.env.AUTH0_ISSUER_BASE_URL}/userinfo`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
