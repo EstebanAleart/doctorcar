@@ -3,6 +3,7 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ReduxProvider } from "@/components/redux-provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthInitializer } from "@/components/auth-initializer";
 
 const geist = Geist({ subsets: ["latin"] });
 const geistMono = Geist_Mono({ subsets: ["latin"] });
@@ -35,6 +36,7 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <ReduxProvider>
+          <AuthInitializer />
           <ThemeProvider 
             attribute="class" 
             defaultTheme="light" 
