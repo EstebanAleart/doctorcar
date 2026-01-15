@@ -92,7 +92,7 @@ export async function GET(request) {
   } catch (error) {
     console.error('Callback error:', error);
     return NextResponse.json(
-      { error: 'Authentication failed', details: error.message },
+      { error: 'Authentication failed', details: error.message, code: error.code, detail: error.detail },
       { status: 500 }
     );
   }

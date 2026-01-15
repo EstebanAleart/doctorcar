@@ -7,6 +7,11 @@ export async function GET() {
     const users = await userDb.getAll();
     return NextResponse.json({ ok: true, usersCount: users.length });
   } catch (e) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 500 });
+    return NextResponse.json({
+      ok: false,
+      error: e.message,
+      code: e.code,
+      detail: e.detail,
+    }, { status: 500 });
   }
 }
