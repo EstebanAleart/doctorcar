@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { userDb } from '@/lib/database';
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -40,42 +41,49 @@ export async function GET(request) {
     }
 
     const tokens = await tokenRes.json();
-    
-    // Fetch user info from Auth0
-    const userRes = await fetch(`${process.env.AUTH0_ISSUER_BASE_URL}/userinfo`, {
-      headers: {
-        Authorization: `Bearer ${tokens.access_token}`,
-      },
-    });
 
-    if (!userRes.ok) {
-      throw new Error('Failed to fetch user info');
+    // Decode id_token to get user info (it's a JWT)
+    let userInfo;
+    try {
+      const idTokenParts = tokens.id_token.split('.');
+      const userPayload = JSON.parse(Buffer.from(idTokenParts[1], 'base64').toString());
+      userInfo = {
+        sub: userPayload.sub,
+        email: userPayload.email,
+        name: userPayload.name || userPayload.email,
+      };
+    } catch (e) {
+      console.error('Failed to decode id_token:', e);
+      throw new Error('Invalid id_token');
     }
 
-    const userInfo = await userRes.json();
-    
-    // Store user data in cookie
-    const userData = JSON.stringify({
-      id: userInfo.sub,
+    // Ensure user exists in DB with default client role
+    await userDb.upsertFromAuth0({
+      sub: userInfo.sub,
       email: userInfo.email,
-      name: userInfo.name || userInfo.email,
+      name: userInfo.name,
     });
 
+    // Create session cookie expected by /api/user
+    const sessionToken = Buffer.from(
+      JSON.stringify({ sub: userInfo.sub, iat: Date.now() })
+    ).toString('base64url');
+
     const response = NextResponse.redirect(new URL(returnTo, process.env.AUTH0_BASE_URL));
-    
-    // Set session cookie with user data
-    response.cookies.set('auth_user', userData, {
+
+    response.cookies.set('auth_session', sessionToken, {
       httpOnly: true,
-      secure: true,
       sameSite: 'lax',
+      secure: process.env.AUTH0_BASE_URL.startsWith('https'),
       path: '/',
-      maxAge: 86400 * 7, // 7 days
+      maxAge: 60 * 60 * 8, // 8 hours
     });
-    
+
+    // Optional: keep access token for future server-side calls
     response.cookies.set('auth_token', tokens.access_token, {
       httpOnly: true,
-      secure: true,
       sameSite: 'lax',
+      secure: process.env.AUTH0_BASE_URL.startsWith('https'),
       path: '/',
       maxAge: tokens.expires_in || 86400,
     });
