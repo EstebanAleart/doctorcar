@@ -741,7 +741,7 @@ export function EmployeePayments() {
                       <Button 
                         size="sm" 
                         onClick={() => handleOpenPaymentFromBilling(b)}
-                        disabled={hasInstallments(b.id)}
+                        disabled={hasInstallments(b.id) || b.claim_approval_status === 'rejected'}
                       >
                         Forma de Pago
                       </Button>
