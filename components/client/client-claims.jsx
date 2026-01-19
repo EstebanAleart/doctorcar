@@ -286,22 +286,12 @@ export function ClientClaims() {
         loadClaims();
       } else {
         const error = await response.json();
-        await Swal.fire({
-          title: "Error",
-          text: error.error || "Error al actualizar el presupuesto",
-          icon: "error",
-          confirmButtonColor: "#1a4d6d",
-          confirmButtonText: "Aceptar",
-        });
+        // No usar Swal, devolver error para mostrarlo en el componente
+        throw new Error(error.error || "Error al actualizar el presupuesto");
       }
     } catch (error) {
-      await Swal.fire({
-        title: "Error",
-        text: "Error al conectar con el servidor",
-        icon: "error",
-        confirmButtonColor: "#1a4d6d",
-        confirmButtonText: "Aceptar",
-      });
+      // Re-lanzar el error para que ApprovalSection lo maneje
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -507,7 +497,7 @@ export function ClientClaims() {
         )}
       </div>
       <Dialog open={showDetail} onOpenChange={setShowDetail}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-[95vw] md:max-w-4xl lg:max-w-5xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Detalles del Reclamo</DialogTitle>
             <DialogDescription>Información completa de tu solicitud</DialogDescription>

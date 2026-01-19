@@ -84,11 +84,16 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
     }
 
     setErrors([]);
-    await onApprovalUpdate({
-      approval_status: "accepted",
-      payment_method: isParticular ? approvalData.paymentMethod : "insurance",
-      appointment_date: approvalData.appointmentDate,
-    });
+    try {
+      await onApprovalUpdate({
+        approval_status: "accepted",
+        payment_method: isParticular ? approvalData.paymentMethod : "insurance",
+        appointment_date: approvalData.appointmentDate,
+      });
+    } catch (error) {
+      // Mostrar error en el formulario
+      setErrors([error.message || "Error al actualizar el presupuesto"]);
+    }
   };
 
   const handleSubmitReject = async () => {
@@ -96,8 +101,13 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
   };
 
   const handleConfirmReject = async () => {
-    await onApprovalUpdate({ approval_status: "rejected" });
-    setRejectDialogOpen(false);
+    try {
+      await onApprovalUpdate({ approval_status: "rejected" });
+      setRejectDialogOpen(false);
+    } catch (error) {
+      setErrors([error.message || "Error al rechazar el presupuesto"]);
+      setRejectDialogOpen(false);
+    }
   };
 
   return (
