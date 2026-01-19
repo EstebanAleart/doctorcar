@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 
-export function RoleRedirect() {
+function RoleRedirectInner() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -15,9 +15,9 @@ export function RoleRedirect() {
     if (status === "loading" || hasRedirected) return;
     
     // Only redirect after Auth0 callback or if there's a callbackUrl param
-    const isCallback = pathname.includes("/api/auth/callback") || 
-                       pathname.includes("/auth/callback") ||
-                       searchParams.get("callbackUrl");
+    const isCallback = pathname?.includes("/api/auth/callback") || 
+                       pathname?.includes("/auth/callback") ||
+                       searchParams?.get("callbackUrl");
     
     if (session?.user && isCallback) {
       fetchUserAndRedirect();
@@ -56,4 +56,12 @@ export function RoleRedirect() {
   };
 
   return null;
+}
+
+export function RoleRedirect() {
+  return (
+    <Suspense fallback={null}>
+      <RoleRedirectInner />
+    </Suspense>
+  );
 }
