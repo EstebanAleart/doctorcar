@@ -5,35 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-// Simulación de API temporal
+
 const fetchDevelopmentPayments = async () => {
-  // Aquí deberías hacer fetch a tu API real
-  return [
-    {
-      id: 1,
-      trabajo: "Integración API de facturación",
-      monto: 120000,
-      pagado: true,
-      fechaPago: "2026-01-10",
-    },
-    {
-      id: 2,
-      trabajo: "Refactor módulo claims",
-      monto: 80000,
-      pagado: false,
-      fechaPago: null,
-    },
-  ];
+  const res = await fetch("/api/develop");
+  return await res.json();
 };
 
 const registerPayment = async (data) => {
-  // Aquí deberías hacer POST a tu API real
-  return { success: true };
+  const res = await fetch("/api/develop", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return await res.json();
 };
 
 export function DesarrolloPayments() {
   const [payments, setPayments] = useState([]);
-  const [form, setForm] = useState({ trabajo: "", monto: "" });
+  const [form, setForm] = useState({ billingId: "", percentage: 10, amount: "" });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -47,8 +36,8 @@ export function DesarrolloPayments() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await registerPayment({ ...form, monto: Number(form.monto) });
-    setForm({ trabajo: "", monto: "" });
+    await registerPayment({ ...form, amount: Number(form.amount) });
+    setForm({ billingId: "", percentage: 10, amount: "" });
     fetchDevelopmentPayments().then(setPayments);
     setLoading(false);
   };
@@ -61,17 +50,28 @@ export function DesarrolloPayments() {
       <CardContent>
         <form className="flex gap-4 mb-6" onSubmit={handleSubmit}>
           <Input
-            name="trabajo"
-            value={form.trabajo}
+            name="billingId"
+            value={form.billingId}
             onChange={handleChange}
-            placeholder="Trabajo realizado"
+            placeholder="ID de Billing"
             required
-            className="w-1/2"
+            className="w-1/3"
           />
           <Input
-            name="monto"
+            name="percentage"
             type="number"
-            value={form.monto}
+            value={form.percentage}
+            onChange={handleChange}
+            placeholder="% Desarrollo"
+            required
+            className="w-1/6"
+            min={0}
+            max={100}
+          />
+          <Input
+            name="amount"
+            type="number"
+            value={form.amount}
             onChange={handleChange}
             placeholder="Monto ($)"
             required
@@ -85,19 +85,23 @@ export function DesarrolloPayments() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Trabajo</TableHead>
+              <TableHead>ID Billing</TableHead>
+              <TableHead>Claim</TableHead>
+              <TableHead>Cliente</TableHead>
               <TableHead>Monto</TableHead>
-              <TableHead>Pagado</TableHead>
-              <TableHead>Fecha de Pago</TableHead>
+              <TableHead>% Desarrollo</TableHead>
+              <TableHead>Fecha</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {payments.map((p) => (
               <TableRow key={p.id}>
-                <TableCell>{p.trabajo}</TableCell>
-                <TableCell>${p.monto.toLocaleString()}</TableCell>
-                <TableCell>{p.pagado ? "Sí" : "No"}</TableCell>
-                <TableCell>{p.fechaPago ? p.fechaPago : "Pendiente"}</TableCell>
+                <TableCell>{p.billingId}</TableCell>
+                <TableCell>{p.billing?.claim_id}</TableCell>
+                <TableCell>{p.billing?.client_name || p.billing?.client_id}</TableCell>
+                <TableCell>${p.amount?.toLocaleString()}</TableCell>
+                <TableCell>{p.percentage}%</TableCell>
+                <TableCell>{p.created_at?.slice(0,10)}</TableCell>
               </TableRow>
             ))}
           </TableBody>
