@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth';
 import Auth0Provider from 'next-auth/providers/auth0';
-import pool from '@/lib/database';
+import { userDb } from '@/lib/database';
 
 export const authOptions = {
   providers: [
@@ -17,26 +17,19 @@ export const authOptions = {
         token.accessToken = account.access_token;
         token.idToken = account.id_token;
         token.email = user.email;
-        
-        // Get or create user role on first login
+
+        // Construir objeto seguro para upsert
+        const auth0User = {
+          sub: account.sub || user.id,
+          email: user.email,
+          name: user.name,
+          picture: user.image,
+        };
         try {
-          let result = await pool.query(
-            "SELECT id, role FROM users WHERE email = $1",
-            [user.email]
-          );
-          
-          if (result.rows.length === 0) {
-            // Create user with client role
-            result = await pool.query(
-              "INSERT INTO users (name, email, role) VALUES ($1, $2, $3) RETURNING id, role",
-              [user.name, user.email, "client"]
-            );
-            console.log(`New user created: ${user.email} with role 'client'`);
-          }
-          
-          // Store role in token
-          token.role = result.rows[0].role;
-          token.userId = result.rows[0].id;
+          // Upsert user en DB usando Auth0 data
+          const dbUser = await userDb.upsertFromAuth0(auth0User);
+          token.role = dbUser.role;
+          token.userId = dbUser.id;
         } catch (error) {
           console.error("Error in jwt callback:", error);
           token.role = "client"; // default fallback
