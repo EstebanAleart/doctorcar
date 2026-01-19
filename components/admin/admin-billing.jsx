@@ -140,12 +140,12 @@ export function AdminBilling() {
         cancelledPendingAmount += (subtotal - paid);
       } else {
         // Para activos
-        // Total: subtotal (sin intereses)
+        // Total: subtotal (sin develop fee)
         total += subtotal;
-        // Pending: total_amount - paid (incluye intereses de installments)
-        pendingAmount += (totalAmount - paid);
-        // Development fee es el 10% de TODO lo que se va a facturar (total_amount)
-        developmentFee += (totalAmount * 0.1);
+        // Pending: subtotal - paid (develop fee es ingresos de la empresa, no pendiente)
+        pendingAmount += (subtotal - paid);
+        // Development fee es el 10% del subtotal
+        developmentFee += (subtotal * 0.1);
         paidAmount += paid;
       }
     });

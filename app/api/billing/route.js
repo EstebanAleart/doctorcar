@@ -72,7 +72,8 @@ export async function POST(request) {
       customerType: 'individual',
       subtotal,
       totalAmount,
-      balance: totalAmount
+      paidAmount: 0,
+      balance: 0
     });
 
     // Create develop record with 10% calculation
