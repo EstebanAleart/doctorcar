@@ -22,7 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Trash2, Download, Search, Filter } from "lucide-react";
 import Swal from "sweetalert2";
-import jsPDF from "jspdf";
+import { downloadPDF } from "@/lib/pdf-generator";
 
 export function AdminWorkOrders() {
   const [claims, setClaims] = useState([]);
@@ -173,44 +173,12 @@ export function AdminWorkOrders() {
     }
   };
 
-  const downloadPDF = (claim) => {
-    const doc = new jsPDF();
-    const total = calculateTotal(claim.items);
-
-    // Header
-    doc.setFontSize(18);
-    doc.text("Presupuesto de Reparación", 105, 20, { align: "center" });
-
-    // Claim details
-    doc.setFontSize(10);
-    doc.text(`ID: ${claim.id}`, 20, 40);
-    doc.text(`Cliente: ${claim.client_name}`, 20, 50);
-    doc.text(`Vehículo: ${claim.brand} ${claim.model}`, 20, 60);
-    doc.text(`Patente: ${claim.plate}`, 20, 70);
-
-    // Items table
-    let y = 90;
-    doc.setFontSize(12);
-    doc.text("Items:", 20, y);
-    y += 10;
-
-    claim.items?.forEach((item) => {
-      const itemTotal = item.quantity * item.unit_price;
-      doc.setFontSize(10);
-      doc.text(`${item.description}`, 20, y);
-      doc.text(`${item.quantity} x $${item.unit_price}`, 150, y, {
-        align: "right",
-      });
-      doc.text(`$${itemTotal.toFixed(2)}`, 190, y, { align: "right" });
-      y += 7;
-    });
-
-    // Total
-    y += 10;
-    doc.setFontSize(14);
-    doc.text(`TOTAL: $${total.toFixed(2)}`, 190, y, { align: "right" });
-
-    doc.save(`presupuesto_${claim.id}.pdf`);
+  const handleDownloadPDF = (claim) => {
+    const claimData = {
+      ...claim,
+      estimatedCost: calculateTotal(claim.items),
+    };
+    downloadPDF(claimData);
   };
 
   const getStatusBadge = (status) => {
@@ -428,7 +396,7 @@ export function AdminWorkOrders() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => downloadPDF(claim)}
+                        onClick={() => handleDownloadPDF(claim)}
                       >
                         <Download className="h-4 w-4 mr-2" />
                         PDF
