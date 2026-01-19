@@ -18,8 +18,6 @@ export default function CallbackPage() {
         
         if (res.ok) {
           const userData = await res.json();
-          console.log("User authenticated:", userData);
-          
           const role = userData?.user?.role;
           
           // Redirect based on role

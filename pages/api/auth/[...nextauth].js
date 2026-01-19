@@ -54,31 +54,25 @@ export const authOptions = {
       return session;
     },
     async signIn({ user }) {
-      console.log('User signing in:', user.email);
+      // Allow sign in
       return true;
     },
     async redirect({ url, baseUrl }) {
-      console.log('NextAuth redirect callback:', { url, baseUrl });
-      
       // After Auth0 callback, always redirect to our callback page
       if (url.includes('/api/auth/callback/auth0') || url === baseUrl || url === `${baseUrl}/`) {
-        console.log('Redirecting to /auth/callback for role-based redirect');
         return `${baseUrl}/auth/callback`;
       }
       
       // Allow relative callback URLs
       if (url.startsWith("/")) {
-        console.log('Relative URL redirect:', url);
         return `${baseUrl}${url}`;
       }
       
       // Allow callback URLs on the same origin
       if (url.startsWith(baseUrl)) {
-        console.log('Same origin redirect:', url);
         return url;
       }
       
-      console.log('Default redirect to /auth/callback');
       return `${baseUrl}/auth/callback`;
     },
   },
@@ -88,7 +82,7 @@ export const authOptions = {
   },
   events: {
     async signIn({ user }) {
-      console.log('User signed in:', user.email);
+      // User signed in
     },
   },
 };

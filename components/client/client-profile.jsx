@@ -71,13 +71,15 @@ export function ClientProfile() {
           {isEditing ? (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="flex justify-center mb-4">
-                <Image
-                  src={getGmailAvatar(user?.email)}
-                  alt="Foto de perfil"
-                  width={80}
-                  height={80}
-                  className="rounded-full"
-                />
+                {user?.email && (
+                  <Image
+                    src={getGmailAvatar(user?.email)}
+                    alt="Foto de perfil"
+                    width={80}
+                    height={80}
+                    className="rounded-full"
+                  />
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="name">Nombre completo</Label>
@@ -130,13 +132,15 @@ export function ClientProfile() {
           ) : (
             <div className="space-y-4">
               <div className="flex justify-center mb-4">
-                <Image
-                  src={getGmailAvatar(user?.email)}
-                  alt="Foto de perfil"
-                  width={100}
-                  height={100}
-                  className="rounded-full"
-                />
+                {user?.email && (
+                  <Image
+                    src={getGmailAvatar(user?.email)}
+                    alt="Foto de perfil"
+                    width={100}
+                    height={100}
+                    className="rounded-full"
+                  />
+                )}
               </div>
               <div className="flex items-start gap-3">
                 <User className="h-5 w-5 text-muted-foreground mt-0.5" />

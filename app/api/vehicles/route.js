@@ -1,22 +1,19 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { query } from '@/lib/database';
 import { nanoid } from 'nanoid';
 
 // GET /api/vehicles - Listar vehículos del usuario autenticado
 export async function GET(request) {
   try {
-    const cookie = request.cookies.get('auth_session');
-    if (!cookie?.value) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const decoded = JSON.parse(Buffer.from(cookie.value, 'base64url').toString());
-    if (!decoded?.sub) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Obtener el user_id desde auth0_id
-    const userResult = await query('SELECT id, role FROM users WHERE auth0_id = $1', [decoded.sub]);
+    // Obtener el user_id desde email (usando NextAuth session)
+    const userResult = await query('SELECT id, role FROM users WHERE email = $1', [session.user.email]);
     if (userResult.rows.length === 0) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -43,18 +40,13 @@ export async function GET(request) {
 // POST /api/vehicles - Crear nuevo vehículo
 export async function POST(request) {
   try {
-    const cookie = request.cookies.get('auth_session');
-    if (!cookie?.value) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const decoded = JSON.parse(Buffer.from(cookie.value, 'base64url').toString());
-    if (!decoded?.sub) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Obtener el user_id desde auth0_id
-    const userResult = await query('SELECT id, role FROM users WHERE auth0_id = $1', [decoded.sub]);
+    // Obtener el user_id desde email (usando NextAuth session)
+    const userResult = await query('SELECT id, role FROM users WHERE email = $1', [session.user.email]);
     if (userResult.rows.length === 0) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
