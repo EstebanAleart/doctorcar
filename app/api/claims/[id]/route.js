@@ -208,6 +208,22 @@ export async function PUT(request, { params }) {
           }
         }
       }
+
+      // Si el cliente rechaza el presupuesto, cancelar claim y billing
+      if (approval_status === 'rejected') {
+        updates.push(`status = $${paramIndex++}`);
+        values.push('cancelled');
+        
+        // Actualizar status de billing a cancelled
+        try {
+          await query(
+            'UPDATE billing SET status = $1 WHERE claim_id = $2',
+            ['cancelled', id]
+          );
+        } catch (billingError) {
+          // Si no hay billing, continuar
+        }
+      }
     }
 
     // Manejo de items de presupuesto (solo employee/admin)
