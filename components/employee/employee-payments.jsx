@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Banknote, Building, CreditCard } from "lucide-react";
+import { Banknote, Building, CreditCard, Shield } from "lucide-react";
 import Swal from "sweetalert2";
 
 export function EmployeePayments() {
@@ -360,21 +360,25 @@ export function EmployeePayments() {
   };
 
   const handleOpenPaymentFromBilling = (billing) => {
-    const claim = claims.find((c) => c.id === billing.claim_id) || {
+    // Los billings YA tienen toda la info del JOIN: client, vehicle, insurance
+    const claim = {
       id: billing.claim_id,
       clientName: billing.client_name,
       vehicleBrand: billing.vehicle_brand,
       vehicleModel: billing.vehicle_model,
       vehiclePlate: billing.vehicle_plate,
       items: [],
-      approval_status: billing.status,
+      approval_status: billing.claim_approval_status,
+      payment_method: billing.payment_method,
+      type: billing.customer_type === 'insurance_company' ? 'insurance' : 'particular',
+      companyName: billing.insurance_company_name,
     };
 
     setSelectedClaim(claim);
     setSelectedBilling(billing);
     setEditingPaymentId(null);
     setPaymentData({
-      method: "efectivo",
+      method: billing.payment_method || "cash",
       amount: getBillingDisplayBalance(billing),
       installments: 1,
       interestRate: 0,
@@ -741,7 +745,7 @@ export function EmployeePayments() {
                       <Button 
                         size="sm" 
                         onClick={() => handleOpenPaymentFromBilling(b)}
-                        disabled={hasInstallments(b.id)}
+                        disabled={hasInstallments(b.id) || b.claim_approval_status === 'rejected'}
                       >
                         Forma de Pago
                       </Button>
@@ -782,6 +786,12 @@ export function EmployeePayments() {
                       <p className="text-muted-foreground text-xs">Patente</p>
                       <p className="font-medium font-mono">{selectedClaim.vehiclePlate}</p>
                     </div>
+                    {selectedClaim.type === 'insurance' && selectedClaim.companyName && (
+                      <div>
+                        <p className="text-muted-foreground text-xs">Aseguradora</p>
+                        <p className="font-medium">{selectedClaim.companyName}</p>
+                      </div>
+                    )}
                     <div>
                       <p className="text-muted-foreground text-xs">Total</p>
                       <p className="font-bold text-green-600">${(selectedBilling ? getBillingDisplayTotal(selectedBilling) : getDisplayTotal(selectedClaim)).toFixed(2)}</p>
@@ -790,52 +800,49 @@ export function EmployeePayments() {
                 </CardContent>
               </Card>
 
-              {/* Payment Method */}
+              {/* Payment Method - Read only desde claim */}
               <div className="space-y-2">
                 <Label>Método de Pago</Label>
-                <Select
-                  value={paymentData.method}
-                  onValueChange={(value) =>
-                    setPaymentData({ ...paymentData, method: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="efectivo">
-                      <div className="flex items-center gap-2">
-                        <Banknote className="h-4 w-4" />
-                        Efectivo
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="transferencia">
-                      <div className="flex items-center gap-2">
-                        <Building className="h-4 w-4" />
-                        Transferencia
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="tarjeta">
-                      <div className="flex items-center gap-2">
-                        <CreditCard className="h-4 w-4" />
-                        Tarjeta de Crédito
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="px-3 py-2 bg-muted rounded-md text-sm font-medium flex items-center gap-2">
+                  {paymentData.method === "cash" && (
+                    <>
+                      <Banknote className="h-4 w-4" />
+                      Efectivo
+                    </>
+                  )}
+                  {paymentData.method === "transfer" && (
+                    <>
+                      <Building className="h-4 w-4" />
+                      Transferencia Bancaria
+                    </>
+                  )}
+                  {paymentData.method === "credit_card" && (
+                    <>
+                      <CreditCard className="h-4 w-4" />
+                      Tarjeta de Crédito
+                    </>
+                  )}
+                  {paymentData.method === "debit_card" && (
+                    <>
+                      <CreditCard className="h-4 w-4" />
+                      Tarjeta de Débito
+                    </>
+                  )}
+                  {paymentData.method === "insurance" && (
+                    <>
+                      <Shield className="h-4 w-4" />
+                      Seguro
+                    </>
+                  )}
+                </div>
               </div>
 
-              {/* Amount */}
+              {/* Amount - Read only desde presupuesto */}
               <div className="space-y-2">
                 <Label>Monto Base</Label>
-                <Input
-                  type="number"
-                  value={paymentData.amount}
-                  onChange={(e) =>
-                    setPaymentData({ ...paymentData, amount: e.target.value })
-                  }
-                  step="0.01"
-                />
+                <div className="px-3 py-2 bg-muted rounded-md text-sm font-medium">
+                  ${parseFloat(paymentData.amount || 0).toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
               </div>
 
               {/* Cuotas e Interés - para cualquier método */}

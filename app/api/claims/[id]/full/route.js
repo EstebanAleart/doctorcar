@@ -1,19 +1,16 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { query, billingDb, billingItemDb, paymentDb, paymentInstallmentDb } from "@/lib/database";
 
 export async function GET(request, context) {
   try {
-    const cookie = request.cookies.get("auth_session");
-    if (!cookie?.value) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const decoded = JSON.parse(Buffer.from(cookie.value, "base64url").toString());
-    if (!decoded?.sub) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const userResult = await query("SELECT id, role FROM users WHERE auth0_id = $1", [decoded.sub]);
+    const userResult = await query("SELECT id, role FROM users WHERE email = $1", [session.user.email]);
     if (userResult.rows.length === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { EmployeeHeader } from "./employee-header.jsx";
+import { AppHeader } from "@/components/app-header.jsx";
 import { EmployeeWorkOrders } from "./employee-work-orders.jsx";
 import { EmployeePendingApproval } from "./employee-pending-approval.jsx";
 import { EmployeeCalendar } from "./employee-calendar.jsx";
@@ -14,7 +14,7 @@ export function EmployeeDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <EmployeeHeader />
+      <AppHeader />
       <div className="container mx-auto p-4 md:p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 md:space-y-6">
           <TabsList className="grid w-full grid-cols-2 gap-2 h-auto md:grid-cols-3 lg:grid-cols-5 lg:w-auto lg:inline-grid">

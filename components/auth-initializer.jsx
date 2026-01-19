@@ -17,8 +17,9 @@ export function AuthInitializer() {
           if (!cancelled) dispatch(clearUser());
           return;
         }
-        const user = await res.json();
-        if (!cancelled) dispatch(setUser(user));
+        const data = await res.json();
+        // data tiene estructura: { user: {...}, isAuthenticated: true }
+        if (!cancelled) dispatch(setUser(data));
       } catch (e) {
         console.error("Failed to load user:", e);
         if (!cancelled) dispatch(clearUser());

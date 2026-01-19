@@ -84,11 +84,16 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
     }
 
     setErrors([]);
-    await onApprovalUpdate({
-      approval_status: "accepted",
-      payment_method: isParticular ? approvalData.paymentMethod : "insurance",
-      appointment_date: approvalData.appointmentDate,
-    });
+    try {
+      await onApprovalUpdate({
+        approval_status: "accepted",
+        payment_method: isParticular ? approvalData.paymentMethod : "insurance",
+        appointment_date: approvalData.appointmentDate,
+      });
+    } catch (error) {
+      // Mostrar error en el formulario
+      setErrors([error.message || "Error al actualizar el presupuesto"]);
+    }
   };
 
   const handleSubmitReject = async () => {
@@ -96,8 +101,13 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
   };
 
   const handleConfirmReject = async () => {
-    await onApprovalUpdate({ approval_status: "rejected" });
-    setRejectDialogOpen(false);
+    try {
+      await onApprovalUpdate({ approval_status: "rejected" });
+      setRejectDialogOpen(false);
+    } catch (error) {
+      setErrors([error.message || "Error al rechazar el presupuesto"]);
+      setRejectDialogOpen(false);
+    }
   };
 
   return (
@@ -124,6 +134,15 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
 
       {claim.approval_status === "pending" && (
         <div className="space-y-4">
+          {!isParticular && claim.companyName && (
+            <div className="space-y-2">
+              <Label>Compañía Aseguradora</Label>
+              <div className="px-3 py-2 bg-muted rounded-md text-sm font-medium">
+                {claim.companyName}
+              </div>
+            </div>
+          )}
+
           {isParticular && (
             <div className="space-y-2">
               <Label htmlFor="payment-method">Método de Pago</Label>
@@ -135,9 +154,10 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
                   <SelectValue placeholder="Selecciona un método de pago" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="efectivo">Efectivo</SelectItem>
-                  <SelectItem value="transferencia">Transferencia Bancaria</SelectItem>
-                  <SelectItem value="tarjeta">Tarjeta de Crédito/Débito</SelectItem>
+                  <SelectItem value="cash">Efectivo</SelectItem>
+                  <SelectItem value="transfer">Transferencia Bancaria</SelectItem>
+                  <SelectItem value="credit_card">Tarjeta de Crédito</SelectItem>
+                  <SelectItem value="debit_card">Tarjeta de Débito</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -264,6 +284,9 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
             const appointmentDate = getFirstAppointmentDate();
             return (
               <>
+                {!isParticular && claim.companyName && (
+                  <p className="text-sm"><strong>Compañía Aseguradora:</strong> {claim.companyName}</p>
+                )}
                 <p className="text-sm"><strong>Fecha de Turno:</strong> {appointmentDate ? new Date(appointmentDate + 'T00:00:00').toLocaleDateString("es-AR") : "N/A"}</p>
                 {isParticular && <p className="text-sm"><strong>Método de Pago:</strong> {claim.payment_method || "N/A"}</p>}
               </>

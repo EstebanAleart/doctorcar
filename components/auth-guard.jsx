@@ -18,6 +18,7 @@ export function AuthGuard({ children, allowedRoles }) {
         admin: "/admin",
         employee: "/employee",
         client: "/client",
+        admindev: "/admindev",
       };
       const target = roleRedirects[user.role];
       router.replace(target || "/unauthorized");
