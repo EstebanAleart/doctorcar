@@ -10,7 +10,7 @@
     "db:init": "node scripts/db-init.js"
   },
   "dependencies": {
-    "@auth0/nextjs-auth0": "4.14.0",
+    "@auth0/nextjs-auth0": "^4.14.0",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
@@ -54,6 +54,7 @@
     "lucide-react": "^0.454.0",
     "nanoid": "^5.0.7",
     "next": "16.0.10",
+    "next-auth": "^4.24.13",
     "next-themes": "^0.4.6",
     "pg": "^8.16.3",
     "react": "^19.0.0",
