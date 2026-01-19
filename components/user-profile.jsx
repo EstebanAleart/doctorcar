@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "@/lib/store";
 import { useAuth } from "@/hooks/use-auth";
@@ -15,8 +15,9 @@ import Swal from "sweetalert2";
 
 export function UserProfile() {
   const { user: authUser } = useAuth();
-  const reduxUser = useSelector((state) => state.user?.data);
-  const user = reduxUser || authUser;
+  const reduxUserData = useSelector((state) => state.user?.data);
+  // reduxUserData tiene estructura { user: {...}, isAuthenticated: true }
+  const user = reduxUserData?.user || authUser;
   const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -26,10 +27,19 @@ export function UserProfile() {
     phone: user?.phone || "",
   });
 
+  // Update formData when user data changes
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+      });
+    }
+  }, [user]);
+
   const handleChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
-    // Actualizar Redux en tiempo real
-    dispatch(updateUser({ [field]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -54,8 +64,10 @@ export function UserProfile() {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        dispatch(updateUser(data));
+        const updatedUser = await response.json();
+        // PATCH devuelve el usuario directamente, no { user: {...} }
+        // Actualizar Redux con la estructura correcta
+        dispatch(updateUser({ user: updatedUser }));
         await Swal.fire({
           title: "¡Actualizado!",
           text: "Tu perfil ha sido actualizado correctamente",
