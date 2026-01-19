@@ -145,9 +145,10 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
                   <SelectValue placeholder="Selecciona un método de pago" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="efectivo">Efectivo</SelectItem>
-                  <SelectItem value="transferencia">Transferencia Bancaria</SelectItem>
-                  <SelectItem value="tarjeta">Tarjeta de Crédito/Débito</SelectItem>
+                  <SelectItem value="cash">Efectivo</SelectItem>
+                  <SelectItem value="transfer">Transferencia Bancaria</SelectItem>
+                  <SelectItem value="credit_card">Tarjeta de Crédito</SelectItem>
+                  <SelectItem value="debit_card">Tarjeta de Débito</SelectItem>
                 </SelectContent>
               </Select>
             </div>

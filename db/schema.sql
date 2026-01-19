@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS claims (
   estimated_cost DECIMAL(10,2),
   photos TEXT,
   approval_status TEXT DEFAULT 'pending' CHECK(approval_status IN ('pending','accepted','rejected')),
-  payment_method TEXT,
+  payment_method TEXT CHECK(payment_method IN ('insurance','credit_card','debit_card','cash','transfer')),
   appointment_id TEXT REFERENCES appointments(id) ON DELETE SET NULL,
   pdf_url TEXT,
   workshop_id INTEGER DEFAULT 1,
