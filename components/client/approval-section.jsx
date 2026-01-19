@@ -134,6 +134,15 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
 
       {claim.approval_status === "pending" && (
         <div className="space-y-4">
+          {!isParticular && claim.companyName && (
+            <div className="space-y-2">
+              <Label>Compañía Aseguradora</Label>
+              <div className="px-3 py-2 bg-muted rounded-md text-sm font-medium">
+                {claim.companyName}
+              </div>
+            </div>
+          )}
+
           {isParticular && (
             <div className="space-y-2">
               <Label htmlFor="payment-method">Método de Pago</Label>
@@ -275,6 +284,9 @@ export function ApprovalSection({ claim, onApprovalUpdate, loading }) {
             const appointmentDate = getFirstAppointmentDate();
             return (
               <>
+                {!isParticular && claim.companyName && (
+                  <p className="text-sm"><strong>Compañía Aseguradora:</strong> {claim.companyName}</p>
+                )}
                 <p className="text-sm"><strong>Fecha de Turno:</strong> {appointmentDate ? new Date(appointmentDate + 'T00:00:00').toLocaleDateString("es-AR") : "N/A"}</p>
                 {isParticular && <p className="text-sm"><strong>Método de Pago:</strong> {claim.payment_method || "N/A"}</p>}
               </>
