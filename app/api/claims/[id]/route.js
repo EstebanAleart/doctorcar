@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { query, billingDb, billingItemDb } from '@/lib/database';
 import pool from '@/lib/database';
 import { uploadMultipleImages, deleteMultipleImages } from '@/lib/cloudinary';
@@ -8,17 +10,12 @@ import { nanoid } from 'nanoid';
 // GET /api/claims/[id] - Obtener un reclamo específico
 export async function GET(request, { params }) {
   try {
-    const cookie = request.cookies.get('auth_session');
-    if (!cookie?.value) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const decoded = JSON.parse(Buffer.from(cookie.value, 'base64url').toString());
-    if (!decoded?.sub) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const userResult = await query('SELECT id, role FROM users WHERE auth0_id = $1', [decoded.sub]);
+    const userResult = await query('SELECT id, role FROM users WHERE email = $1', [session.user.email]);
     if (userResult.rows.length === 0) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -29,15 +26,17 @@ export async function GET(request, { params }) {
     const claim = await query(
       `SELECT c.*, v.brand, v.model, v.plate, v.year, v.color,
               u.name as client_name, u.email as client_email, u.phone as client_phone,
+              ic.name as "companyName",
               COALESCE(json_agg(b.*) FILTER (WHERE b.id IS NOT NULL), '[]') AS items,
               COALESCE(json_agg(a.*) FILTER (WHERE a.id IS NOT NULL), '[]') AS appointments
        FROM claims c
        JOIN vehicles v ON c.vehicle_id = v.id
        JOIN users u ON c.client_id = u.id
+       LEFT JOIN insurance_companies ic ON c.company_name = ic.id
        LEFT JOIN budget_items b ON b.claim_id = c.id
        LEFT JOIN appointments a ON a.claim_id = c.id AND a.status != 'cancelled'
        WHERE c.id = $1
-       GROUP BY c.id, v.brand, v.model, v.plate, v.year, v.color, u.name, u.email, u.phone`,
+       GROUP BY c.id, v.brand, v.model, v.plate, v.year, v.color, u.name, u.email, u.phone, ic.name`,
       [id]
     );
 
@@ -59,17 +58,12 @@ export async function GET(request, { params }) {
 // PUT /api/claims/[id] - Actualizar un reclamo
 export async function PUT(request, { params }) {
   try {
-    const cookie = request.cookies.get('auth_session');
-    if (!cookie?.value) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const decoded = JSON.parse(Buffer.from(cookie.value, 'base64url').toString());
-    if (!decoded?.sub) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const userResult = await query('SELECT id, role FROM users WHERE auth0_id = $1', [decoded.sub]);
+    const userResult = await query('SELECT id, role FROM users WHERE email = $1', [session.user.email]);
     if (userResult.rows.length === 0) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -216,6 +210,22 @@ export async function PUT(request, { params }) {
           }
         }
       }
+
+      // Si el cliente rechaza el presupuesto, cancelar claim y billing
+      if (approval_status === 'rejected') {
+        updates.push(`status = $${paramIndex++}`);
+        values.push('cancelled');
+        
+        // Actualizar status de billing a cancelled
+        try {
+          await query(
+            'UPDATE billing SET status = $1 WHERE claim_id = $2',
+            ['cancelled', id]
+          );
+        } catch (billingError) {
+          // Si no hay billing, continuar
+        }
+      }
     }
 
     // Manejo de items de presupuesto (solo employee/admin)
@@ -356,17 +366,12 @@ export async function PUT(request, { params }) {
 // DELETE /api/claims/[id] - Eliminar un reclamo
 export async function DELETE(request, { params }) {
   try {
-    const cookie = request.cookies.get('auth_session');
-    if (!cookie?.value) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const decoded = JSON.parse(Buffer.from(cookie.value, 'base64url').toString());
-    if (!decoded?.sub) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const userResult = await query('SELECT id, role FROM users WHERE auth0_id = $1', [decoded.sub]);
+    const userResult = await query('SELECT id, role FROM users WHERE email = $1', [session.user.email]);
     if (userResult.rows.length === 0) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }

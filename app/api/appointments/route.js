@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { query } from '@/lib/database';
 import { nanoid } from 'nanoid';
 
@@ -30,7 +32,6 @@ export async function GET(request) {
        ORDER BY a.scheduled_date DESC, a.scheduled_time`
     );
     
-    console.log(`[APPOINTMENTS API] Devolviendo ${result.rows.length} citas`);
     return NextResponse.json(result.rows);
   } catch (error) {
     console.error("[APPOINTMENTS API] Error:", error);
@@ -41,8 +42,8 @@ export async function GET(request) {
 // POST create appointment
 export async function POST(request) {
   try {
-    const cookie = request.cookies.get('auth_session');
-    if (!cookie?.value) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

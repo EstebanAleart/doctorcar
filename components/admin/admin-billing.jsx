@@ -129,23 +129,23 @@ export function AdminBilling() {
 
     filteredBillings.forEach((billing) => {
       const subtotal = parseFloat(billing.subtotal) || 0;
-      const totalAmount = parseFloat(billing.total_amount) || 0;
       const paid = parseFloat(billing.paid_amount) || 0;
+      const pending = parseFloat(billing.balance) || 0;
       
       // Separar rechazados/cancelados de los activos
       if (billing.status === 'rejected' || billing.status === 'cancelled') {
-        // Para rechazados/cancelados: usar subtotal
+        // Para rechazados/cancelados
         cancelledTotal += subtotal;
         cancelledPaidAmount += paid;
-        cancelledPendingAmount += (subtotal - paid);
+        cancelledPendingAmount += pending;
       } else {
         // Para activos
-        // Total: subtotal (sin intereses)
+        // Total: subtotal (sin develop fee)
         total += subtotal;
-        // Pending: total_amount - paid (incluye intereses de installments)
-        pendingAmount += (totalAmount - paid);
-        // Development fee es el 10% de TODO lo que se va a facturar (total_amount)
-        developmentFee += (totalAmount * 0.1);
+        // Pending: suma del balance (pagos pendientes desde payment_installment)
+        pendingAmount += pending;
+        // Development fee es el 10% del subtotal
+        developmentFee += (subtotal * 0.1);
         paidAmount += paid;
       }
     });
@@ -572,7 +572,7 @@ export function AdminBilling() {
                   {filteredBillings.map((billing) => {
                     const subtotal = parseFloat(billing.subtotal) || 0;
                     const paidAmount = parseFloat(billing.paid_amount) || 0;
-                    const balance = parseFloat(billing.balance) || 0;
+                    const saldo = parseFloat(billing.balance) || 0;
 
                     return (
                       <TableRow key={billing.id}>
@@ -600,7 +600,7 @@ export function AdminBilling() {
                           ${paidAmount.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-right text-yellow-600 font-medium">
-                          ${balance.toFixed(2)}
+                          ${saldo.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-xs text-muted-foreground">
                           {billing.billing_date 

@@ -1,27 +1,16 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { billingDb, billingItemDb, paymentDb, paymentInstallmentDb, query } from "@/lib/database";
-
-const decodeSession = (cookie) => {
-  try {
-    return JSON.parse(Buffer.from(cookie, "base64url").toString());
-  } catch (error) {
-    return null;
-  }
-};
 
 export async function GET(request, context) {
   try {
-    const session = request.cookies.get("auth_session");
-    if (!session?.value) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const decoded = decodeSession(session.value);
-    if (!decoded?.sub) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const userResult = await query("SELECT id, role FROM users WHERE auth0_id = $1", [decoded.sub]);
+    const userResult = await query("SELECT id, role FROM users WHERE email = $1", [session.user.email]);
     if (userResult.rows.length === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -87,14 +76,27 @@ export async function GET(request, context) {
       return total + installmentPaid;
     }, 0);
 
-    const totalAmountRaw = parseFloat(billing.total_amount ?? billing.totalAmount ?? 0);
-    const totalAmount = Number.isFinite(totalAmountRaw) ? totalAmountRaw : 0;
+    // Calcular balance de cuotas pendientes
+    const balanceFromInstallments = paymentsWithInstallments.reduce((total, payment) => {
+      const installmentBalance = (payment.installments || []).reduce((acc, installment) => {
+        if (installment.status !== "paid") {
+          const amount = parseFloat(installment.installment_amount || 0);
+          return acc + (Number.isFinite(amount) ? amount : 0);
+        }
+        return acc;
+      }, 0);
+      return total + installmentBalance;
+    }, 0);
 
-    const paidAmountRaw = parseFloat(billing.paid_amount ?? billing.paidAmount ?? paidFromInstallments);
-    const paidAmount = Number.isFinite(paidAmountRaw) ? paidAmountRaw : 0;
+    // Total = subtotal (lo que aprobó el cliente, sin develop fee)
+    const subtotalRaw = parseFloat(billing.subtotal ?? 0);
+    const totalAmount = Number.isFinite(subtotalRaw) ? subtotalRaw : 0;
 
-    const balanceRaw = billing.balance ?? totalAmount - paidAmount;
-    const balance = Number.isFinite(parseFloat(balanceRaw)) ? parseFloat(balanceRaw) : totalAmount - paidAmount;
+    // Pagado = suma de installments con status='paid'
+    const paidAmount = Number.isFinite(paidFromInstallments) ? paidFromInstallments : 0;
+
+    // Saldo = suma de installments con status!='paid'
+    const balance = Number.isFinite(balanceFromInstallments) ? balanceFromInstallments : 0;
 
     let status = billing.status;
     if (!status) {

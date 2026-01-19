@@ -21,7 +21,6 @@ export function EmployeePendingApproval() {
   
   // Estados para búsqueda y filtrado
   const [searchTerm, setSearchTerm] = useState("");
-  const [approvalFilter, setApprovalFilter] = useState("all");
   const [sortBy, setSortBy] = useState("date-desc");
 
   useEffect(() => {
@@ -100,16 +99,13 @@ export function EmployeePendingApproval() {
   const filteredClaims = useMemo(() => {
     let result = claims;
 
-    // Filtro por estado de aprobación
-    if (approvalFilter !== "all") {
-      result = result.filter((c) => c.approval_status === approvalFilter);
-    }
-
     // Búsqueda
     if (searchTerm.trim()) {
       const search = searchTerm.toLowerCase();
       result = result.filter((c) =>
         c.client?.name.toLowerCase().includes(search) ||
+        c.client?.email.toLowerCase().includes(search) ||
+        c.client?.phone.toLowerCase().includes(search) ||
         c.vehicle?.brand.toLowerCase().includes(search) ||
         c.vehicle?.model.toLowerCase().includes(search) ||
         c.vehicle?.plate.toLowerCase().includes(search) ||
@@ -136,7 +132,7 @@ export function EmployeePendingApproval() {
     });
 
     return result;
-  }, [claims, searchTerm, approvalFilter, sortBy]);
+  }, [claims, searchTerm, sortBy]);
 
   const getStatusColor = (status) => {
     const colors = {
@@ -168,7 +164,7 @@ export function EmployeePendingApproval() {
       {/* Controles de búsqueda y filtrado */}
       <Card>
         <CardContent className="pt-6 space-y-4">
-          <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
             {/* Búsqueda */}
             <div className="space-y-2">
               <Label htmlFor="search" className="flex items-center gap-2">
@@ -177,29 +173,10 @@ export function EmployeePendingApproval() {
               </Label>
               <Input
                 id="search"
-                placeholder="Cliente, vehículo, patente..."
+                placeholder="Cliente, email, teléfono, vehículo, patente..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-            </div>
-
-            {/* Filtro por estado */}
-            <div className="space-y-2">
-              <Label htmlFor="approval-filter" className="flex items-center gap-2">
-                <Filter className="h-4 w-4" />
-                Estado
-              </Label>
-              <Select value={approvalFilter} onValueChange={setApprovalFilter}>
-                <SelectTrigger id="approval-filter">
-                  <SelectValue placeholder="Selecciona estado" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos los estados</SelectItem>
-                  <SelectItem value="pending">Pendiente</SelectItem>
-                  <SelectItem value="accepted">Aceptado</SelectItem>
-                  <SelectItem value="rejected">Rechazado</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
 
             {/* Ordenamiento */}
@@ -207,13 +184,13 @@ export function EmployeePendingApproval() {
               <Label htmlFor="sort-by">Ordenar por</Label>
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger id="sort-by">
-                  <SelectValue placeholder="Selecciona orden" />
+                  <SelectValue placeholder="Ordenar por" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="date-desc">Más reciente</SelectItem>
                   <SelectItem value="date-asc">Más antiguo</SelectItem>
-                  <SelectItem value="amount-desc">Monto (mayor)</SelectItem>
-                  <SelectItem value="amount-asc">Monto (menor)</SelectItem>
+                  <SelectItem value="amount-desc">Mayor monto</SelectItem>
+                  <SelectItem value="amount-asc">Menor monto</SelectItem>
                   <SelectItem value="client-asc">Cliente (A-Z)</SelectItem>
                 </SelectContent>
               </Select>
@@ -221,7 +198,7 @@ export function EmployeePendingApproval() {
           </div>
 
           {/* Indicador de resultados */}
-          {searchTerm || approvalFilter !== "all" ? (
+          {searchTerm ? (
             <p className="text-sm text-muted-foreground">
               {filteredClaims.length} resultado(s) encontrado(s)
             </p>
@@ -253,6 +230,12 @@ export function EmployeePendingApproval() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid gap-2 text-sm sm:grid-cols-2">
+                  <div className="sm:col-span-2">
+                    <span className="text-muted-foreground">Cliente:</span>
+                    <p className="font-medium">{claim.client?.name || "Desconocido"}</p>
+                    <p className="text-sm text-muted-foreground">{claim.client?.email || "Sin email"}</p>
+                    <p className="text-sm text-muted-foreground">{claim.client?.phone || "Sin teléfono"}</p>
+                  </div>
                   <div>
                     <span className="text-muted-foreground">Vehículo:</span>
                     <p className="font-medium">
@@ -327,11 +310,14 @@ export function EmployeePendingApproval() {
           {selectedClaim && (
             <div className="space-y-4">
               <div className="rounded-lg border p-4 grid gap-3 sm:grid-cols-2 text-sm bg-muted/40">
-                <div>
+                <div className="sm:col-span-2">
                   <p className="text-muted-foreground">Cliente</p>
-                  <p className="font-medium">{selectedClaim.client?.name}</p>
+                  <p className="font-medium text-lg">{selectedClaim.client?.name}</p>
+                  {selectedClaim.client?.email && (
+                    <p className="text-sm text-muted-foreground">📧 {selectedClaim.client.email}</p>
+                  )}
                   {selectedClaim.client?.phone && (
-                    <p className="text-xs text-muted-foreground">{selectedClaim.client.phone}</p>
+                    <p className="text-sm text-muted-foreground">📞 {selectedClaim.client.phone}</p>
                   )}
                 </div>
                 <div>
