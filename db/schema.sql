@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS roles (
 INSERT INTO roles (id, name) VALUES
   ('admin','Administrator'),
   ('client','Client'),
-  ('employee','Employee')
+  ('employee','Employee'),
+  ('admindev','AdminDev')
 ON CONFLICT (id) DO NOTHING;
 
 -- Users

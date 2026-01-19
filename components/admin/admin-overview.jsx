@@ -40,32 +40,16 @@ export function AdminOverview() {
       const usersData = await usersResponse.json();
       const users = Array.isArray(usersData) ? usersData : [];
 
-      // Fetch claims
+      // Fetch finance stats
+      const financeRes = await fetch("/api/finance-stats", { credentials: "include" });
+      const financeData = await financeRes.json();
+      const totalRevenue = financeData.totalRevenue || 0;
+      const pendingRevenue = financeData.pendingRevenue || 0;
+
+      // Fetch claims for stats and recent claims
       const claimsResponse = await fetch("/api/claims", { credentials: "include" });
       const claimsData = await claimsResponse.json();
       const claims = Array.isArray(claimsData) ? claimsData : [];
-
-      // Calculate revenue from claims with items
-      const totalRevenue = claims.reduce((sum, claim) => {
-        if (claim.items && Array.isArray(claim.items) && claim.approval_status === "accepted") {
-          const claimTotal = claim.items.reduce((itemSum, item) => {
-            return itemSum + (parseFloat(item.quantity) || 0) * (parseFloat(item.unit_price) || 0);
-          }, 0);
-          return sum + claimTotal;
-        }
-        return sum;
-      }, 0);
-
-      // Calculate pending revenue (with items but not accepted yet)
-      const pendingRevenue = claims.reduce((sum, claim) => {
-        if (claim.items && Array.isArray(claim.items) && claim.approval_status === "pending") {
-          const claimTotal = claim.items.reduce((itemSum, item) => {
-            return itemSum + (parseFloat(item.quantity) || 0) * (parseFloat(item.unit_price) || 0);
-          }, 0);
-          return sum + claimTotal;
-        }
-        return sum;
-      }, 0);
 
       setStats({
         totalUsers: users.filter((u) => u.role === "client").length,
