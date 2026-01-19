@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AdminHeader } from "./admin-header.jsx";
+import { AppHeader } from "@/components/app-header.jsx";
 import { AdminOverview } from "./admin-overview.jsx";
 import { AdminUsers } from "./admin-users.jsx";
 import { AdminClaims } from "./admin-claims.jsx";
@@ -17,7 +17,7 @@ export function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AdminHeader />
+      <AppHeader />
       <div className="container mx-auto p-4 md:p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 md:space-y-6">
           <TabsList className="grid w-full grid-cols-2 gap-2 h-auto md:grid-cols-4 lg:grid-cols-8 lg:w-auto lg:inline-grid">

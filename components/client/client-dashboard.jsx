@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ClientHeader } from "./client-header.jsx";
+import { AppHeader } from "@/components/app-header.jsx";
 import { ClientClaims } from "./client-claims.jsx";
 import { ClientNewClaim } from "./client-new-claim.jsx";
 import { ClientVehicles } from "./client-vehicles.jsx";
@@ -14,7 +14,7 @@ export function ClientDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <ClientHeader />
+      <AppHeader />
       <div className="container mx-auto p-4 md:p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 md:space-y-6">
           <TabsList className="grid w-full grid-cols-2 gap-2 h-auto md:grid-cols-5 lg:w-auto lg:inline-grid">

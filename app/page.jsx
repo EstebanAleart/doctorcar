@@ -1,19 +1,20 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { signIn, signOut } from "next-auth/react";
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wrench, FileCheck, Clock, Shield, CheckCircle, LogOut } from "lucide-react";
+import { Wrench, FileCheck, Clock, Shield, CheckCircle, LogOut, Menu, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function HomePage() {
   const router = useRouter();
   const { user } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Generar foto de avatar basada en email o usar profile_image
   const getAvatar = (user) => {
@@ -45,10 +46,10 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-3">
-            <div className="relative h-12 w-12">
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <div className="relative h-10 w-10">
               <Image
                 src="/images/whatsapp-20image-202025-12-29-20at-2000.jpeg"
                 alt="DOCTORCAR"
@@ -56,31 +57,33 @@ export default function HomePage() {
                 className="object-contain"
               />
             </div>
-            <span className="text-xl font-bold text-[#1a4d6d]">DOCTORCAR</span>
+            <span className="text-lg sm:text-xl font-bold text-[#1a4d6d]">DOCTORCAR</span>
           </div>
-          <div className="flex items-center gap-4">
+          {/* Desktop View */}
+          <div className="hidden sm:flex items-center gap-3">
             {user ? (
               <>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 min-w-0">
                   {user.email && (
                     <Image
                       src={getAvatar(user)}
                       alt={user.name || "Perfil"}
                       width={36}
                       height={36}
-                      className="rounded-full"
+                      className="rounded-full flex-shrink-0"
                     />
                   )}
-                  <div>
-                    <p className="text-sm font-medium text-[#1a4d6d]">{user.name}</p>
-                    <p className="text-xs text-[#6cb4d8]">{user.email}</p>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-[#1a4d6d] truncate">{user.name}</p>
+                    <p className="text-xs text-[#6cb4d8] truncate">{user.email}</p>
                   </div>
                 </div>
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  className="text-[#1a4d6d] hover:bg-[#6cb4d8]/10"
+                  className="text-[#1a4d6d] hover:bg-[#6cb4d8]/10 flex-shrink-0"
                   onClick={() => signOut({ callbackUrl: "/" })}
+                  title="Cerrar sesión"
                 >
                   <LogOut className="h-4 w-4" />
                 </Button>
@@ -89,13 +92,13 @@ export default function HomePage() {
               <>
                 <Button 
                   variant="ghost" 
-                  className="text-[#1a4d6d] hover:text-[#6cb4d8]"
+                  className="text-[#1a4d6d] hover:text-[#6cb4d8] text-sm"
                   onClick={() => signIn("auth0")}
                 >
                   Iniciar Sesión
                 </Button>
                 <Button 
-                  className="bg-[#1a4d6d] hover:bg-[#6cb4d8]"
+                  className="bg-[#1a4d6d] hover:bg-[#6cb4d8] text-sm"
                   onClick={() => signIn("auth0")}
                 >
                   Registrarse
@@ -103,11 +106,69 @@ export default function HomePage() {
               </>
             )}
           </div>
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="sm:hidden p-2 hover:bg-[#6cb4d8]/10 rounded-md"
+            aria-label="Menu"
+          >
+            {mobileMenuOpen ? (
+              <X className="h-5 w-5 text-[#1a4d6d]" />
+            ) : (
+              <Menu className="h-5 w-5 text-[#1a4d6d]" />
+            )}
+          </button>
         </div>
-      </nav>
 
-      {/* Función auxiliar para avatar */}
-      {/* getAvatar esta definida en el component */}
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="sm:hidden border-t border-[#6cb4d8]/20 bg-background p-4 space-y-3">
+            {user ? (
+              <>
+                <div className="flex items-center gap-2 pb-3 border-b border-[#6cb4d8]/20">
+                  {user.email && (
+                    <Image
+                      src={getAvatar(user)}
+                      alt={user.name || "Perfil"}
+                      width={32}
+                      height={32}
+                      className="rounded-full flex-shrink-0"
+                    />
+                  )}
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-[#1a4d6d] truncate">{user.name}</p>
+                    <p className="text-xs text-[#6cb4d8] truncate">{user.email}</p>
+                  </div>
+                </div>
+                <Button 
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="w-full flex items-center justify-center gap-2 bg-[#1a4d6d] hover:bg-[#2d6a8f]"
+                  size="sm"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Cerrar sesión
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button 
+                  variant="ghost" 
+                  className="w-full text-[#1a4d6d] hover:bg-[#6cb4d8]/10"
+                  onClick={() => signIn("auth0")}
+                >
+                  Iniciar Sesión
+                </Button>
+                <Button 
+                  className="w-full bg-[#1a4d6d] hover:bg-[#2d6a8f]"
+                  onClick={() => signIn("auth0")}
+                >
+                  Registrarse
+                </Button>
+              </>
+            )}
+          </div>
+        )}
+      </nav>
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 md:py-32">
