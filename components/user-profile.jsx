@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User, Mail, Phone } from "lucide-react";
+import { User, Mail, Phone, Camera } from "lucide-react";
 import Image from "next/image";
 import Swal from "sweetalert2";
 
@@ -21,6 +21,7 @@ export function UserProfile() {
   const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
@@ -40,6 +41,82 @@ export function UserProfile() {
 
   const handleChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validar tamaño (máx 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      await Swal.fire({
+        title: "Archivo muy grande",
+        text: "La imagen no puede superar los 5MB",
+        icon: "warning",
+        confirmButtonColor: "#1a4d6d",
+      });
+      return;
+    }
+
+    // Validar tipo
+    if (!file.type.startsWith("image/")) {
+      await Swal.fire({
+        title: "Tipo inválido",
+        text: "Solo se permiten imágenes",
+        icon: "warning",
+        confirmButtonColor: "#1a4d6d",
+      });
+      return;
+    }
+
+    try {
+      setUploadingImage(true);
+
+      // Crear FormData con el archivo
+      const formData = new FormData();
+      formData.append("file", file);
+
+      // Subir a Cloudinary via API
+      const uploadRes = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+
+      if (!uploadRes.ok) {
+        throw new Error("Error al subir imagen");
+      }
+
+      const { secure_url } = await uploadRes.json();
+
+      // Actualizar perfil con nueva URL
+      const updateRes = await fetch("/api/user", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profile_image: secure_url }),
+        credentials: "include",
+      });
+
+      if (updateRes.ok) {
+        const updatedUser = await updateRes.json();
+        dispatch(updateUser({ user: updatedUser }));
+        await Swal.fire({
+          title: "¡Imagen actualizada!",
+          text: "Tu foto de perfil ha sido actualizada",
+          icon: "success",
+          confirmButtonColor: "#1a4d6d",
+        });
+      }
+    } catch (error) {
+      await Swal.fire({
+        title: "Error",
+        text: "No se pudo subir la imagen",
+        icon: "error",
+        confirmButtonColor: "#1a4d6d",
+      });
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -96,10 +173,15 @@ export function UserProfile() {
     }
   };
 
-  // Generar foto de avatar basada en email
-  const getAvatar = (email) => {
-    if (!email) return null;
-    return `https://www.gravatar.com/avatar/${email}?d=identicon&s=64`;
+  // Generar foto de avatar basada en email o usar profile_image
+  const getAvatar = (user) => {
+    // Si tiene profile_image personalizada, usarla
+    if (user?.profile_image) {
+      return user.profile_image;
+    }
+    // Si no, usar Gravatar basado en email
+    if (!user?.email) return null;
+    return `https://www.gravatar.com/avatar/${user.email}?d=identicon&s=200`;
   };
 
   return (
@@ -116,14 +198,39 @@ export function UserProfile() {
         <CardContent>
           {isEditing ? (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex justify-center mb-4">
+              <div className="relative flex justify-center mb-4">
                 <Image
-                  src={getAvatar(user?.email)}
+                  src={getAvatar(user)}
                   alt="Foto de perfil"
                   width={80}
                   height={80}
                   className="rounded-full"
                 />
+                <label 
+                  htmlFor="profile-image-input"
+                  className="absolute bottom-0 right-[calc(50%-50px)] cursor-pointer"
+                >
+                  <input
+                    id="profile-image-input"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    disabled={uploadingImage}
+                  />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="secondary"
+                    disabled={uploadingImage}
+                    className="h-8 w-8 rounded-full"
+                    asChild
+                  >
+                    <span>
+                      <Camera className="h-4 w-4" />
+                    </span>
+                  </Button>
+                </label>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="name">Nombre completo</Label>
@@ -182,7 +289,7 @@ export function UserProfile() {
             <div className="space-y-4">
               <div className="flex justify-center mb-4">
                 <Image
-                  src={getAvatar(user?.email)}
+                  src={getAvatar(user)}
                   alt="Foto de perfil"
                   width={100}
                   height={100}

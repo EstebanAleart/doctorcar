@@ -25,7 +25,7 @@ export async function POST(request) {
       cloudinary.uploader.upload_stream(
         {
           resource_type: 'auto',
-          folder: 'doctorcar/receipts',
+          folder: 'doctorcar/profiles',
         },
         (error, result) => {
           if (error) reject(error);
