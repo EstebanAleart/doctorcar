@@ -7,12 +7,15 @@ import { LogOut } from "lucide-react";
 import Image from "next/image";
 
 export function ClientHeader() {
-  const user = useSelector((state) => state.user.data);
+  const user = useSelector((state) => state.user.data?.user);
 
-  // Generar foto de Gmail basada en email
-  const getGmailAvatar = (email) => {
-    if (!email) return null;
-    return `https://www.gravatar.com/avatar/${email}?d=identicon&s=40`;
+  // Generar foto de avatar basada en email o usar profile_image
+  const getAvatar = (user) => {
+    if (user?.profile_image) {
+      return user.profile_image;
+    }
+    if (!user?.email) return null;
+    return `https://www.gravatar.com/avatar/${user.email}?d=identicon&s=200`;
   };
 
   const handleLogout = () => {
@@ -40,10 +43,10 @@ export function ClientHeader() {
           {user && user.email && (
             <div className="flex items-center gap-3">
               <Image
-                src={getGmailAvatar(user.email)}
+                src={getAvatar(user)}
                 alt={user.name || "Perfil"}
-                width={40}
-                height={40}
+                width={36}
+                height={36}
                 className="rounded-full"
               />
               <div>

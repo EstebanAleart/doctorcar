@@ -3,7 +3,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { LogOut, User } from "lucide-react";
+import { LogOut } from "lucide-react";
 import Image from "next/image";
 
 export function AdminHeader() {
@@ -11,6 +11,15 @@ export function AdminHeader() {
 
   const handleLogout = () => {
     signOut({ callbackUrl: "/" });
+  };
+
+  // Generar foto de avatar basada en email o usar profile_image
+  const getAvatar = (user) => {
+    if (user?.profile_image) {
+      return user.profile_image;
+    }
+    if (!user?.email) return null;
+    return `https://www.gravatar.com/avatar/${user.email}?d=identicon&s=200`;
   };
 
   return (
@@ -31,10 +40,23 @@ export function AdminHeader() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            <span className="text-sm">{user?.name}</span>
-          </div>
+          {user && (
+            <div className="flex items-center gap-3">
+              {user.email && (
+                <Image
+                  src={getAvatar(user)}
+                  alt={user.name || "Perfil"}
+                  width={36}
+                  height={36}
+                  className="rounded-full"
+                />
+              )}
+              <div>
+                <p className="text-sm font-medium">{user.name}</p>
+                <p className="text-xs text-[#6cb4d8]">{user.email}</p>
+              </div>
+            </div>
+          )}
           <Button onClick={handleLogout} variant="ghost" size="sm" className="text-white hover:bg-[#2d6a8f]">
             <LogOut className="h-4 w-4" />
           </Button>

@@ -3,19 +3,44 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wrench, FileCheck, Clock, Shield, CheckCircle } from "lucide-react";
+import { Wrench, FileCheck, Clock, Shield, CheckCircle, LogOut } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function HomePage() {
+  const router = useRouter();
+  const { user } = useAuth();
+
+  // Generar foto de avatar basada en email o usar profile_image
+  const getAvatar = (user) => {
+    if (user?.profile_image) {
+      return user.profile_image;
+    }
+    if (!user?.email) return null;
+    return `https://www.gravatar.com/avatar/${user.email}?d=identicon&s=200`;
+  };
+
   useEffect(() => {
     // Initialize database with demo data
     db.initialize();
   }, []);
+
+  // Redirigir al dashboard si hay sesión activa
+  useEffect(() => {
+    if (user) {
+      if (user.role === "admin") {
+        router.push("/admin");
+      } else if (user.role === "employee") {
+        router.push("/employee");
+      } else if (user.role === "client") {
+        router.push("/client");
+      }
+    }
+  }, [user, router]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -34,22 +59,55 @@ export default function HomePage() {
             <span className="text-xl font-bold text-[#1a4d6d]">DOCTORCAR</span>
           </div>
           <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              className="text-[#1a4d6d] hover:text-[#6cb4d8]"
-              onClick={() => signIn("auth0")}
-            >
-              Iniciar Sesión
-            </Button>
-            <Button 
-              className="bg-[#1a4d6d] hover:bg-[#6cb4d8]"
-              onClick={() => signIn("auth0")}
-            >
-              Registrarse
-            </Button>
+            {user ? (
+              <>
+                <div className="flex items-center gap-3">
+                  {user.email && (
+                    <Image
+                      src={getAvatar(user)}
+                      alt={user.name || "Perfil"}
+                      width={36}
+                      height={36}
+                      className="rounded-full"
+                    />
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-[#1a4d6d]">{user.name}</p>
+                    <p className="text-xs text-[#6cb4d8]">{user.email}</p>
+                  </div>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="text-[#1a4d6d] hover:bg-[#6cb4d8]/10"
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button 
+                  variant="ghost" 
+                  className="text-[#1a4d6d] hover:text-[#6cb4d8]"
+                  onClick={() => signIn("auth0")}
+                >
+                  Iniciar Sesión
+                </Button>
+                <Button 
+                  className="bg-[#1a4d6d] hover:bg-[#6cb4d8]"
+                  onClick={() => signIn("auth0")}
+                >
+                  Registrarse
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </nav>
+
+      {/* Función auxiliar para avatar */}
+      {/* getAvatar esta definida en el component */}
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 md:py-32">
