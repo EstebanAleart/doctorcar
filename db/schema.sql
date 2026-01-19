@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT UNIQUE NOT NULL,
   name TEXT NOT NULL,
   phone TEXT,
+  profile_image TEXT,
   role TEXT NOT NULL CHECK(role IN ('admin','client','employee')),
   role_id TEXT,
   workshop_id INTEGER DEFAULT 1,
@@ -29,6 +30,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- Ensure columns exist for existing databases
 ALTER TABLE users ADD COLUMN IF NOT EXISTS role_id TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS workshop_id INTEGER DEFAULT 1;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_image TEXT;
 
 -- Ensure users.role_id references roles and is populated
 ALTER TABLE users
