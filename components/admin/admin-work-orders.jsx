@@ -52,13 +52,15 @@ export function AdminWorkOrders() {
     try {
       const response = await fetch("/api/claims", { credentials: "include" });
       const data = await response.json();
-      setClaims(data);
+      setClaims(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error loading claims:", error);
+      setClaims([]);
     }
   };
 
   const filteredClaims = useMemo(() => {
+    if (!Array.isArray(claims)) return [];
     let result = [...claims];
 
     // Status filter

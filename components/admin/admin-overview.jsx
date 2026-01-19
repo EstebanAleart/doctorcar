@@ -37,11 +37,13 @@ export function AdminOverview() {
       setLoading(true);
       // Fetch users
       const usersResponse = await fetch("/api/users", { credentials: "include" });
-      const users = await usersResponse.json();
+      const usersData = await usersResponse.json();
+      const users = Array.isArray(usersData) ? usersData : [];
 
       // Fetch claims
       const claimsResponse = await fetch("/api/claims", { credentials: "include" });
-      const claims = await claimsResponse.json();
+      const claimsData = await claimsResponse.json();
+      const claims = Array.isArray(claimsData) ? claimsData : [];
 
       // Calculate revenue from claims with items
       const totalRevenue = claims.reduce((sum, claim) => {
