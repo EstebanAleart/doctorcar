@@ -76,14 +76,27 @@ export async function GET(request, context) {
       return total + installmentPaid;
     }, 0);
 
-    const totalAmountRaw = parseFloat(billing.total_amount ?? billing.totalAmount ?? 0);
-    const totalAmount = Number.isFinite(totalAmountRaw) ? totalAmountRaw : 0;
+    // Calcular balance de cuotas pendientes
+    const balanceFromInstallments = paymentsWithInstallments.reduce((total, payment) => {
+      const installmentBalance = (payment.installments || []).reduce((acc, installment) => {
+        if (installment.status !== "paid") {
+          const amount = parseFloat(installment.installment_amount || 0);
+          return acc + (Number.isFinite(amount) ? amount : 0);
+        }
+        return acc;
+      }, 0);
+      return total + installmentBalance;
+    }, 0);
 
-    const paidAmountRaw = parseFloat(billing.paid_amount ?? billing.paidAmount ?? paidFromInstallments);
-    const paidAmount = Number.isFinite(paidAmountRaw) ? paidAmountRaw : 0;
+    // Total = subtotal (lo que aprobó el cliente, sin develop fee)
+    const subtotalRaw = parseFloat(billing.subtotal ?? 0);
+    const totalAmount = Number.isFinite(subtotalRaw) ? subtotalRaw : 0;
 
-    const balanceRaw = billing.balance ?? totalAmount - paidAmount;
-    const balance = Number.isFinite(parseFloat(balanceRaw)) ? parseFloat(balanceRaw) : totalAmount - paidAmount;
+    // Pagado = suma de installments con status='paid'
+    const paidAmount = Number.isFinite(paidFromInstallments) ? paidFromInstallments : 0;
+
+    // Saldo = suma de installments con status!='paid'
+    const balance = Number.isFinite(balanceFromInstallments) ? balanceFromInstallments : 0;
 
     let status = billing.status;
     if (!status) {
