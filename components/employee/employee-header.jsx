@@ -1,13 +1,17 @@
 "use client";
 
 import { useAuth } from "@/hooks/use-auth";
+import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { LogOut, User } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
 export function EmployeeHeader() {
   const { user } = useAuth();
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: "/" });
+  };
 
   return (
     <header className="border-b bg-[#1a4d6d] text-white">
@@ -31,11 +35,9 @@ export function EmployeeHeader() {
             <User className="h-4 w-4" />
             <span className="text-sm">{user?.name}</span>
           </div>
-          <Link href="/api/auth/logout">
-            <Button variant="ghost" size="sm" className="text-white hover:bg-[#2d6a8f]">
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </Link>
+          <Button onClick={handleLogout} variant="ghost" size="sm" className="text-white hover:bg-[#2d6a8f]">
+            <LogOut className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </header>

@@ -1,10 +1,10 @@
 "use client";
 
 import { useSelector } from "react-redux";
+import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
 export function ClientHeader() {
   const user = useSelector((state) => state.user.data);
@@ -13,6 +13,10 @@ export function ClientHeader() {
   const getGmailAvatar = (email) => {
     if (!email) return null;
     return `https://www.gravatar.com/avatar/${email}?d=identicon&s=40`;
+  };
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: "/" });
   };
 
   return (
@@ -33,7 +37,7 @@ export function ClientHeader() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          {user && (
+          {user && user.email && (
             <div className="flex items-center gap-3">
               <Image
                 src={getGmailAvatar(user.email)}
@@ -48,11 +52,9 @@ export function ClientHeader() {
               </div>
             </div>
           )}
-          <Link href="/api/auth/logout">
-            <Button variant="ghost" size="sm" className="text-white hover:bg-[#2d6a8f]">
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </Link>
+          <Button onClick={handleLogout} variant="ghost" size="sm" className="text-white hover:bg-[#2d6a8f]">
+            <LogOut className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </header>
