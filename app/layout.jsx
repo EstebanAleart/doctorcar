@@ -4,6 +4,8 @@ import "./globals.css";
 import { ReduxProvider } from "@/components/redux-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthInitializer } from "@/components/auth-initializer";
+import { SessionProviderWrapper } from "@/components/session-provider";
+import { RoleRedirect } from "@/components/role-redirect";
 
 const geist = Geist({ subsets: ["latin"] });
 const geistMono = Geist_Mono({ subsets: ["latin"] });
@@ -35,17 +37,20 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="font-sans antialiased" suppressHydrationWarning>
-        <ReduxProvider>
-          <AuthInitializer />
-          <ThemeProvider 
-            attribute="class" 
-            defaultTheme="light" 
-            enableSystem={false}
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-        </ReduxProvider>
+        <SessionProviderWrapper>
+          <ReduxProvider>
+            <AuthInitializer />
+            <RoleRedirect />
+            <ThemeProvider 
+              attribute="class" 
+              defaultTheme="light" 
+              enableSystem={false}
+              disableTransitionOnChange
+            >
+              {children}
+            </ThemeProvider>
+          </ReduxProvider>
+        </SessionProviderWrapper>
         <Analytics />
       </body>
     </html>

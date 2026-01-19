@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
+import { signIn } from "next-auth/react";
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,34 +12,10 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function HomePage() {
-  const { user, loading } = useAuth();
-  const router = useRouter();
-
   useEffect(() => {
     // Initialize database with demo data
     db.initialize();
   }, []);
-
-  useEffect(() => {
-    if (user && !loading) {
-      switch (user.role) {
-        case "admin":
-          router.push("/admin");
-          break;
-        case "employee":
-          router.push("/employee");
-          break;
-        case "client":
-          router.push("/client");
-          break;
-      }
-    }
-  }, [user, loading, router]);
-
-  // Si está logueado, no mostrar nada (va a redirigir)
-  if (user) {
-    return null;
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -57,14 +34,19 @@ export default function HomePage() {
             <span className="text-xl font-bold text-[#1a4d6d]">DOCTORCAR</span>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/api/auth/login">
-              <Button variant="ghost" className="text-[#1a4d6d] hover:text-[#6cb4d8]">
-                Iniciar Sesión
-              </Button>
-            </Link>
-            <Link href="/api/auth/login?screen_hint=signup">
-              <Button className="bg-[#1a4d6d] hover:bg-[#6cb4d8]">Registrarse</Button>
-            </Link>
+            <Button 
+              variant="ghost" 
+              className="text-[#1a4d6d] hover:text-[#6cb4d8]"
+              onClick={() => signIn("auth0")}
+            >
+              Iniciar Sesión
+            </Button>
+            <Button 
+              className="bg-[#1a4d6d] hover:bg-[#6cb4d8]"
+              onClick={() => signIn("auth0")}
+            >
+              Registrarse
+            </Button>
           </div>
         </div>
       </nav>
@@ -82,20 +64,21 @@ export default function HomePage() {
             seguros.
           </p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Link href="/api/auth/login?screen_hint=signup">
-              <Button size="lg" className="bg-[#1a4d6d] hover:bg-[#6cb4d8]">
-                Empezar Ahora
-              </Button>
-            </Link>
-            <Link href="/api/auth/login">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-[#1a4d6d] text-[#1a4d6d] hover:bg-[#1a4d6d] hover:text-white bg-transparent"
-              >
-                Iniciar Sesión
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              className="bg-[#1a4d6d] hover:bg-[#6cb4d8]"
+              onClick={() => signIn("auth0")}
+            >
+              Empezar Ahora
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-[#1a4d6d] text-[#1a4d6d] hover:bg-[#1a4d6d] hover:text-white bg-transparent"
+              onClick={() => signIn("auth0")}
+            >
+              Iniciar Sesión
+            </Button>
           </div>
         </div>
       </section>
@@ -221,15 +204,14 @@ export default function HomePage() {
           <p className="mb-8 text-lg text-[#6cb4d8] text-pretty">
             Unite a cientos de clientes satisfechos que confían en DOCTORCAR
           </p>
-          <Link href="/api/auth/login?screen_hint=signup">
-            <Button
-              size="lg"
-              variant="secondary"
-              className="bg-white text-[#1a4d6d] hover:bg-[#6cb4d8] hover:text-white"
-            >
-              Comenzar Ahora
-            </Button>
-          </Link>
+          <Button
+            size="lg"
+            variant="secondary"
+            className="bg-white text-[#1a4d6d] hover:bg-[#6cb4d8] hover:text-white"
+            onClick={() => signIn("auth0")}
+          >
+            Comenzar Ahora
+          </Button>
         </div>
       </section>
 
