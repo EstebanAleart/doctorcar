@@ -167,45 +167,45 @@ export default function ChapaPinturaRosario() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
-      <main className="min-h-screen">
+      <main className="min-h-screen bg-white">
         {/* Hero Section */}
-        <section className="relative py-20 md:py-28 bg-gradient-to-br from-primary/10 via-white to-secondary/10 border-b border-primary/10">
+        <section className="relative py-20 md:py-28 bg-gradient-to-br from-[#eaf3fa] via-white to-[#d6eaf7] border-b border-[#6cb4d8]/20">
           <div className="container mx-auto px-4 max-w-5xl">
             <div className="flex items-center gap-3 mb-6">
-              <img src="/logo.jpeg" alt="DoctorCar Logo" className="w-14 h-14 rounded shadow-sm object-contain bg-white" />
-              <span className="text-3xl font-bold text-primary tracking-tight">DOCTORCAR</span>
-              <span className="ml-4 flex items-center gap-2 text-base text-muted-foreground"><MapPin className="h-4 w-4" />Rosario, Santa Fe</span>
+              <img src="/logo.jpeg" alt="DoctorCar Logo" className="w-14 h-14 rounded shadow-sm object-contain bg-white border border-[#1a4d6d]/10" />
+              <span className="text-3xl font-bold text-[#1a4d6d] tracking-tight">DOCTORCAR</span>
+              <span className="ml-4 flex items-center gap-2 text-base text-[#1a4d6d]/70"><MapPin className="h-4 w-4" />Rosario, Santa Fe</span>
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-balance drop-shadow-sm">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-balance drop-shadow-sm text-[#1a4d6d]">
               Taller de Chapa y Pintura en Rosario
             </h1>
-            <p className="text-lg md:text-xl mb-8 max-w-3xl opacity-95 leading-relaxed">
+            <p className="text-lg md:text-xl mb-8 max-w-3xl opacity-95 leading-relaxed text-[#1a4d6d]/80">
               En <strong>DoctorCar</strong> somos especialistas en <strong>reparación de vehículos siniestrados</strong>, trabajos de carrocería, pintura automotor y gestión integral de reclamos con compañías de seguros.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-white font-semibold shadow-md">
-                <a href="https://wa.me/5493415551234?text=Hola,%20quiero%20un%20presupuesto" target="_blank" rel="noopener noreferrer">
+                <a href="https://wa.me/34673782934?text=Hola,%20quiero%20un%20presupuesto" target="_blank" rel="noopener noreferrer">
                   <Phone className="mr-2 h-4 w-4" />
                   Presupuesto por WhatsApp
                 </a>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-primary text-primary bg-white hover:bg-primary/10 font-semibold">
+              <Button asChild size="lg" variant="outline" className="border-[#1a4d6d] text-[#1a4d6d] bg-white hover:bg-[#1a4d6d]/10 font-semibold">
                 <Link href="/portal">
                   Iniciar Reclamo Online
                 </Link>
               </Button>
             </div>
-            <div className="flex flex-wrap gap-6 mt-10 pt-8 border-t border-primary/20">
+            <div className="flex flex-wrap gap-6 mt-10 pt-8 border-t border-[#6cb4d8]/20">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-accent" />
+                <CheckCircle2 className="h-5 w-5 text-[#6cb4d8]" />
                 <span>Presupuestos gratis</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-accent" />
+                <Clock className="h-5 w-5 text-[#6cb4d8]" />
                 <span>Respuesta en 24hs</span>
               </div>
               <div className="flex items-center gap-2">
-                <Shield className="h-5 w-5 text-accent" />
+                <Shield className="h-5 w-5 text-[#6cb4d8]" />
                 <span>Garantía escrita</span>
               </div>
             </div>
@@ -213,18 +213,18 @@ export default function ChapaPinturaRosario() {
         </section>
 
         {/* Intro Section */}
-        <section className="py-16 bg-card">
+        <section className="py-16 bg-[#f4fafd]">
           <div className="container mx-auto px-4 max-w-5xl">
-            <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-foreground">
+            <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-[#1a4d6d]">
               Especialistas en reparación de siniestros en Rosario
             </h2>
-            <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+            <p className="text-[#1a4d6d]/80 text-lg leading-relaxed mb-6">
               Atendemos todo tipo de daños producto de <strong>choques, roces, granizo y accidentes viales</strong>. 
               Realizamos diagnóstico estructural, enderezado de chasis, reemplazo de piezas, 
               preparación de superficies y pintura en cabina presurizada para lograr terminaciones 
               de calidad original.
             </p>
-            <p className="text-muted-foreground text-lg leading-relaxed">
+            <p className="text-[#1a4d6d]/80 text-lg leading-relaxed">
               Con más de <strong>15 años de experiencia</strong> en el rubro automotor, nuestro equipo 
               técnico está capacitado para trabajar con todas las marcas y modelos del mercado argentino.
             </p>
@@ -232,24 +232,23 @@ export default function ChapaPinturaRosario() {
         </section>
 
         {/* Servicios Section */}
-        <section className="py-16 bg-muted/30">
+        <section className="py-16 bg-white">
           <div className="container mx-auto px-4 max-w-5xl">
-            <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-foreground">
+            <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-[#1a4d6d]">
               Servicios de chapa y pintura automotor
             </h2>
-            <p className="text-muted-foreground mb-10 max-w-2xl">
+            <p className="text-[#1a4d6d]/80 mb-10 max-w-2xl">
               Ofrecemos soluciones completas para la reparación y restauración de tu vehículo.
             </p>
-            
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {servicios.map((servicio, index) => (
                 <article 
                   key={index}
-                  className="bg-card p-6 rounded-lg border border-border hover:border-primary/30 transition-colors"
+                  className="bg-[#f4fafd] p-6 rounded-lg border border-[#6cb4d8]/30 hover:border-[#1a4d6d] transition-colors"
                 >
-                  <servicio.icon className="h-10 w-10 text-primary mb-4" />
-                  <h3 className="font-semibold text-lg mb-2 text-foreground">{servicio.title}</h3>
-                  <p className="text-muted-foreground text-sm">{servicio.description}</p>
+                  <servicio.icon className="h-10 w-10 text-[#1a4d6d] mb-4" />
+                  <h3 className="font-semibold text-lg mb-2 text-[#1a4d6d]">{servicio.title}</h3>
+                  <p className="text-[#1a4d6d]/80 text-sm">{servicio.description}</p>
                 </article>
               ))}
             </div>
@@ -257,17 +256,16 @@ export default function ChapaPinturaRosario() {
         </section>
 
         {/* Proceso Section */}
-        <section className="py-16 bg-card">
+        <section className="py-16 bg-[#f4fafd]">
           <div className="container mx-auto px-4 max-w-5xl">
-            <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-foreground">
+            <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-[#1a4d6d]">
               Taller de carrocería en Rosario con seguimiento online
             </h2>
-            <p className="text-muted-foreground mb-10 max-w-3xl text-lg leading-relaxed">
+            <p className="text-[#1a4d6d]/80 mb-10 max-w-3xl text-lg leading-relaxed">
               En DoctorCar combinamos la experiencia de taller tradicional con tecnología. 
               Nuestros clientes pueden cargar su siniestro, recibir presupuestos y seguir el 
               estado de la reparación en tiempo real a través de nuestro portal online.
             </p>
-            
             <div className="grid md:grid-cols-4 gap-8">
               {[
                 { step: "1", title: "Cargá tu siniestro", desc: "Subí fotos del daño desde cualquier dispositivo" },
@@ -276,11 +274,11 @@ export default function ChapaPinturaRosario() {
                 { step: "4", title: "Seguí el avance", desc: "Monitoreá la reparación en tiempo real" }
               ].map((item, index) => (
                 <div key={index} className="text-center">
-                  <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground font-bold text-xl flex items-center justify-center mx-auto mb-4">
+                  <div className="w-12 h-12 rounded-full bg-[#6cb4d8] text-white font-bold text-xl flex items-center justify-center mx-auto mb-4">
                     {item.step}
                   </div>
-                  <h3 className="font-semibold mb-2 text-foreground">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">{item.desc}</p>
+                  <h3 className="font-semibold mb-2 text-[#1a4d6d]">{item.title}</h3>
+                  <p className="text-[#1a4d6d]/80 text-sm">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -288,27 +286,25 @@ export default function ChapaPinturaRosario() {
         </section>
 
         {/* Aseguradoras Section */}
-        <section className="py-16 bg-muted/30">
+        <section className="py-16 bg-white">
           <div className="container mx-auto px-4 max-w-5xl">
-            <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-foreground">
+            <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-[#1a4d6d]">
               Atención a particulares y aseguradoras en Rosario
             </h2>
-            <p className="text-muted-foreground mb-8 text-lg leading-relaxed max-w-3xl">
+            <p className="text-[#1a4d6d]/80 mb-8 text-lg leading-relajada max-w-3xl">
               Trabajamos tanto con clientes particulares como con compañías de seguros, 
               gestionando presupuestos, aprobaciones y reparaciones bajo estándares profesionales, 
               reduciendo tiempos y asegurando transparencia en cada etapa del proceso.
             </p>
-            
             <div className="flex items-center gap-3 mb-6">
-              <Users className="h-6 w-6 text-primary" />
-              <h3 className="font-semibold text-foreground">Trabajamos con las principales aseguradoras:</h3>
+              <Users className="h-6 w-6 text-[#1a4d6d]" />
+              <h3 className="font-semibold text-[#1a4d6d]">Trabajamos con las principales aseguradoras:</h3>
             </div>
-            
             <div className="flex flex-wrap gap-3">
               {["La Segunda", "Federación Patronal", "Sancor Seguros", "Mapfre", "Allianz", "Zurich", "Rivadavia", "San Cristóbal"].map((aseg, i) => (
                 <span 
                   key={i}
-                  className="px-4 py-2 bg-card border border-border rounded-full text-sm text-foreground"
+                  className="px-4 py-2 bg-[#f4fafd] border border-[#6cb4d8]/30 rounded-full text-sm text-[#1a4d6d]"
                 >
                   {aseg}
                 </span>
@@ -318,31 +314,29 @@ export default function ChapaPinturaRosario() {
         </section>
 
         {/* Zona de Cobertura Section */}
-        <section className="py-16 bg-card">
+        <section className="py-16 bg-[#f4fafd]">
           <div className="container mx-auto px-4 max-w-5xl">
-            <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-foreground">
+            <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-[#1a4d6d]">
               Zona de cobertura en Rosario y alrededores
             </h2>
-            <p className="text-muted-foreground mb-8 text-lg leading-relaxed">
+            <p className="text-[#1a4d6d]/80 mb-8 text-lg leading-relajada">
               Nuestro taller de chapa y pintura presta servicios en Rosario y zonas cercanas, 
               atendiendo vehículos particulares, flotas y siniestros asegurados.
             </p>
-            
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
               {zonas.map((zona, i) => (
                 <div 
                   key={i}
-                  className="flex items-center gap-2 text-foreground"
+                  className="flex items-center gap-2 text-[#1a4d6d]"
                 >
-                  <MapPin className="h-4 w-4 text-primary shrink-0" />
+                  <MapPin className="h-4 w-4 text-[#6cb4d8] shrink-0" />
                   <span>{zona}</span>
                 </div>
               ))}
             </div>
-            
-            <div className="rounded-lg overflow-hidden border border-border h-80">
+            <div className="rounded-lg overflow-hidden border border-[#6cb4d8]/30 h-80">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d106948.41625705942!2d-60.73969645!3d-32.9587022!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95b6539335d7d75b%3A0xec4086e90258a557!2sRosario%2C%20Santa%20Fe%2C%20Argentina!5e0!3m2!1ses!2sus!4v1706097600000!5m2!1ses!2sus"
+                src="https://maps.app.goo.gl/yiu5wrHtwoESWRt18"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -356,20 +350,19 @@ export default function ChapaPinturaRosario() {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-16 bg-muted/30">
+        <section className="py-16 bg-white">
           <div className="container mx-auto px-4 max-w-5xl">
-            <h2 className="text-2xl md:text-3xl font-semibold mb-8 text-foreground">
+            <h2 className="text-2xl md:text-3xl font-semibold mb-8 text-[#1a4d6d]">
               Preguntas frecuentes sobre chapa y pintura
             </h2>
-            
             <div className="space-y-6">
               {faqs.map((faq, index) => (
                 <article 
                   key={index}
-                  className="bg-card p-6 rounded-lg border border-border"
+                  className="bg-[#f4fafd] p-6 rounded-lg border border-[#6cb4d8]/30"
                 >
-                  <h3 className="font-semibold text-lg mb-3 text-foreground">{faq.question}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{faq.answer}</p>
+                  <h3 className="font-semibold text-lg mb-3 text-[#1a4d6d]">{faq.question}</h3>
+                  <p className="text-[#1a4d6d]/80 leading-relaxed">{faq.answer}</p>
                 </article>
               ))}
             </div>
@@ -377,7 +370,7 @@ export default function ChapaPinturaRosario() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 bg-primary text-primary-foreground">
+        <section className="py-16 bg-[#1a4d6d] text-white">
           <div className="container mx-auto px-4 max-w-5xl text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">
               ¿Tuviste un siniestro en Rosario?
@@ -387,16 +380,15 @@ export default function ChapaPinturaRosario() {
               coordinar la reparación de tu vehículo con nuestro equipo especializado en 
               chapa y pintura automotor.
             </p>
-            
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" variant="secondary" className="font-semibold">
+              <Button asChild size="lg" variant="secondary" className="font-semibold bg-white text-[#1a4d6d] hover:bg-[#eaf3fa]">
                 <Link href="/portal">
                   Iniciar Reclamo en DoctorCar
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 bg-transparent">
+              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 bg-transparent">
                 <a 
-                  href="https://wa.me/5493415551234?text=Hola%2C%20necesito%20un%20presupuesto%20de%20chapa%20y%20pintura"
+                  href="https://wa.me/34673782934?text=Hola%2C%20necesito%20un%20presupuesto%20de%20chapa%20y%20pintura"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
