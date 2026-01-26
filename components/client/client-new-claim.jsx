@@ -162,6 +162,24 @@ export function ClientNewClaim({ onSuccess }) {
     photos.length > 0 &&
     (claimType === "particular" || companyName);
 
+  if (vehicles.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold">Nuevo Reclamo</h2>
+          <p className="text-muted-foreground">Solicita un servicio de reparación para tu vehículo</p>
+        </div>
+        <Card>
+          <CardContent>
+            <p className="text-center text-muted-foreground py-8">
+              Para poder realizar un reclamo primero debes registrar al menos un vehículo en la sección "Mis Vehículos".
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -169,6 +187,7 @@ export function ClientNewClaim({ onSuccess }) {
         <p className="text-muted-foreground">Solicita un servicio de reparación para tu vehículo</p>
       </div>
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* ...existing code for the form... */}
         <Card>
           <CardHeader>
             <CardTitle>Tipo de Reclamo</CardTitle>
@@ -241,11 +260,6 @@ export function ClientNewClaim({ onSuccess }) {
                   ))}
                 </SelectContent>
               </Select>
-              {vehicles.length === 0 && (
-                <p className="text-sm text-muted-foreground">
-                  Primero debes agregar un vehículo en la sección "Mis Vehículos"
-                </p>
-              )}
             </div>
           </CardContent>
         </Card>
