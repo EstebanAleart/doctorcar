@@ -6,7 +6,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
 import { Calendar as CalendarIcon, Clock } from "lucide-react";
 
-export function SharedCalendar({ title, subtitle, filterAppointments }) {
+export function SharedCalendar({ title, subtitle, filterAppointments, extraBlockedDates = [] }) {
   const [bookedDates, setBookedDates] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -20,9 +20,11 @@ export function SharedCalendar({ title, subtitle, filterAppointments }) {
       // Get booked dates from calendar endpoint (48h already calculated)
       const calendarResponse = await fetch("/api/calendar");
       const calendarData = await calendarResponse.json();
-      const bookedDates = calendarData.bookedDates || [];
+      let bookedDates = calendarData.bookedDates || [];
+      // Unir con fechas bloqueadas extra
+      bookedDates = Array.from(new Set([...bookedDates, ...extraBlockedDates]));
       setBookedDates(bookedDates);
-      
+
       // Get all appointments
       const response = await fetch("/api/appointments");
       const allAppointments = await response.json();
