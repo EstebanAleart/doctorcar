@@ -6,8 +6,27 @@ import { useAuth } from "@/hooks/use-auth";
 import { signIn, signOut } from "next-auth/react";
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wrench, FileCheck, Clock, Shield, CheckCircle, LogOut, Menu, X } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  Wrench, 
+  FileCheck, 
+  Clock, 
+  Shield, 
+  CheckCircle, 
+  LogOut, 
+  Menu, 
+  X,
+  Car,
+  Calendar,
+  FileText,
+  MessageCircle,
+  ChevronRight,
+  Phone,
+  MapPin,
+  Users,
+  Star,
+  ArrowRight
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -16,7 +35,6 @@ export default function PortalHomePage() {
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Generar foto de avatar basada en email o usar profile_image
   const getAvatar = (user) => {
     if (user?.profile_image) {
       return user.profile_image;
@@ -26,11 +44,9 @@ export default function PortalHomePage() {
   };
 
   useEffect(() => {
-    // Initialize database with demo data
     db.initialize();
   }, []);
 
-  // Redirigir al dashboard si hay sesión activa
   useEffect(() => {
     if (user) {
       if (user.role === "admin") {
@@ -43,172 +59,405 @@ export default function PortalHomePage() {
     }
   }, [user, router]);
 
+  const features = [
+    {
+      icon: Car,
+      title: "Seguimiento en Tiempo Real",
+      description: "Conoce el estado de tu vehiculo en cada etapa del proceso de reparacion."
+    },
+    {
+      icon: Calendar,
+      title: "Gestion de Turnos",
+      description: "Agenda y administra tus turnos de forma rapida y sencilla."
+    },
+    {
+      icon: FileText,
+      title: "Reclamos y Siniestros",
+      description: "Gestiona tus reclamos con aseguradoras desde un solo lugar."
+    },
+    {
+      icon: MessageCircle,
+      title: "Comunicacion Directa",
+      description: "Chatea con nuestro equipo y recibe notificaciones de avances."
+    }
+  ];
+
+  const stats = [
+    { value: "+300", label: "Vehiculos Reparados" },
+    { value: "4.9", label: "Calificacion Promedio" },
+    { value: "24hs", label: "Respuesta Garantizada" },
+    { value: "15+", label: "Anos de Experiencia" }
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+      <nav className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <div className="relative h-10 w-10">
-              <Image
-                src="/images/whatsapp-20image-202025-12-29-20at-2000.jpeg"
-                alt="DOCTORCAR"
-                fill
-                className="object-contain"
-              />
-            </div>
-            <span className="text-lg sm:text-xl font-bold text-[#1a4d6d]">DOCTORCAR</span>
-            <Link
-              href="/"
-              className="ml-3 flex items-center gap-1 px-2 py-1 bg-[#1a4d6d] hover:bg-[#2d6a8f] text-white rounded text-xs font-semibold"
-              title="Ir a Home SEO"
-            >
-              Home
-            </Link>
-            <Link
-              href="/chapa-pintura-rosario"
-              className="ml-2 flex items-center gap-1 px-2 py-1 bg-[#6cb4d8] hover:bg-[#1a4d6d] text-white rounded text-xs font-semibold"
-              title="Chapa y Pintura"
-            >
-              Chapa y Pintura
+          <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="relative h-10 w-10 rounded-lg bg-primary flex items-center justify-center">
+                <Car className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <span className="text-xl font-bold text-primary hidden sm:block">DOCTORCAR</span>
             </Link>
           </div>
-          {/* Desktop View */}
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-6">
+            <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+              Inicio
+            </Link>
+            <Link href="/chapa-pintura-rosario" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+              Servicios
+            </Link>
+            <Link href="#features" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+              Funciones
+            </Link>
+          </div>
+
+          {/* Desktop Auth */}
           <div className="hidden sm:flex items-center gap-3">
             {user ? (
-              <>
-                <div className="flex items-center gap-2 min-w-0">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   {user.email && (
                     <Image
-                      src={getAvatar(user)}
+                      src={getAvatar(user) || "/placeholder.svg"}
                       alt={user.name || "Perfil"}
                       width={36}
                       height={36}
-                      className="rounded-full shrink-0"
+                      className="rounded-full border-2 border-primary/20"
                     />
                   )}
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-[#1a4d6d] truncate">{user.name}</p>
-                    <p className="text-xs text-[#6cb4d8] truncate">{user.email}</p>
+                  <div className="hidden lg:block">
+                    <p className="text-sm font-medium text-foreground">{user.name}</p>
+                    <p className="text-xs text-muted-foreground">{user.email}</p>
                   </div>
                 </div>
                 <Button 
                   variant="ghost" 
-                  size="sm"
-                  className="text-[#1a4d6d] hover:bg-[#6cb4d8]/10 shrink-0"
+                  size="icon"
+                  className="text-muted-foreground hover:text-primary hover:bg-primary/10"
                   onClick={() => signOut({ callbackUrl: "/" })}
-                  title="Cerrar sesión"
+                  title="Cerrar sesion"
                 >
                   <LogOut className="h-4 w-4" />
                 </Button>
-              </>
+              </div>
             ) : (
-              <>
+              <div className="flex items-center gap-2">
                 <Button 
                   variant="ghost" 
-                  className="text-[#1a4d6d] hover:text-[#6cb4d8] text-sm cursor-pointer"
+                  className="text-foreground hover:text-primary hover:bg-primary/10"
                   onClick={() => signIn("auth0")}
                 >
-                  Iniciar Sesión
+                  Iniciar Sesion
                 </Button>
                 <Button 
-                  className="bg-[#1a4d6d] hover:bg-[#6cb4d8] text-sm cursor-pointer"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
                   onClick={() => signIn("auth0")}
                 >
                   Registrarse
                 </Button>
-              </>
+              </div>
             )}
           </div>
+
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="sm:hidden p-2 hover:bg-[#6cb4d8]/10 rounded-md"
+            className="sm:hidden p-2 hover:bg-muted rounded-lg transition-colors"
             aria-label="Menu"
           >
             {mobileMenuOpen ? (
-              <X className="h-5 w-5 text-[#1a4d6d]" />
+              <X className="h-5 w-5 text-foreground" />
             ) : (
-              <Menu className="h-5 w-5 text-[#1a4d6d]" />
+              <Menu className="h-5 w-5 text-foreground" />
             )}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="sm:hidden border-t border-[#6cb4d8]/20 bg-background p-4 space-y-3">
-            {user ? (
-              <>
-                <div className="flex items-center gap-2 pb-3 border-b border-[#6cb4d8]/20">
-                  {user.email && (
-                    <Image
-                      src={getAvatar(user)}
-                      alt={user.name || "Perfil"}
-                      width={32}
-                      height={32}
-                      className="rounded-full shrink-0"
-                    />
-                  )}
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-[#1a4d6d] truncate">{user.name}</p>
-                    <p className="text-xs text-[#6cb4d8] truncate">{user.email}</p>
+          <div className="sm:hidden border-t bg-card p-4 space-y-4">
+            <div className="flex flex-col gap-2">
+              <Link href="/" className="px-3 py-2 text-sm font-medium text-foreground hover:bg-muted rounded-lg transition-colors">
+                Inicio
+              </Link>
+              <Link href="/chapa-pintura-rosario" className="px-3 py-2 text-sm font-medium text-foreground hover:bg-muted rounded-lg transition-colors">
+                Servicios
+              </Link>
+            </div>
+            <div className="border-t pt-4">
+              {user ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 px-3">
+                    {user.email && (
+                      <Image
+                        src={getAvatar(user) || "/placeholder.svg"}
+                        alt={user.name || "Perfil"}
+                        width={40}
+                        height={40}
+                        className="rounded-full border-2 border-primary/20"
+                      />
+                    )}
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{user.name}</p>
+                      <p className="text-xs text-muted-foreground">{user.email}</p>
+                    </div>
                   </div>
+                  <Button 
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Cerrar sesion
+                  </Button>
                 </div>
-                <Button 
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="w-full flex items-center justify-center gap-2 bg-[#1a4d6d] hover:bg-[#2d6a8f]"
-                  size="sm"
-                >
-                  <LogOut className="h-4 w-4" />
-                  Cerrar sesión
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button 
-                  variant="ghost" 
-                  className="w-full text-[#1a4d6d] hover:bg-[#6cb4d8]/10 cursor-pointer"
-                  onClick={() => signIn("auth0")}
-                >
-                  Iniciar Sesión
-                </Button>
-                <Button 
-                  className="w-full bg-[#1a4d6d] hover:bg-[#2d6a8f] cursor-pointer"
-                  onClick={() => signIn("auth0")}
-                >
-                  Registrarse
-                </Button>
-              </>
-            )}
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="w-full bg-transparent"
+                    onClick={() => signIn("auth0")}
+                  >
+                    Iniciar Sesion
+                  </Button>
+                  <Button 
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                    onClick={() => signIn("auth0")}
+                  >
+                    Registrarse
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </nav>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20 md:py-32">
-        <div className="flex justify-center mb-6">
-          <a
-            href="https://wa.me/34673782934"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded shadow font-semibold text-base"
-            title="Contactar por WhatsApp"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M20.52 3.48A11.94 11.94 0 0012 0C5.37 0 0 5.37 0 12c0 2.12.55 4.13 1.6 5.93L0 24l6.27-1.64A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52zM12 22c-1.85 0-3.63-.5-5.18-1.44l-.37-.22-3.72.97.99-3.62-.24-.38A9.94 9.94 0 012 12c0-5.52 4.48-10 10-10s10 4.48 10 10-4.48 10-10 10zm5.07-7.75c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.25-1.4-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.13-.13.28-.34.42-.51.14-.17.18-.29.28-.48.09-.19.05-.36-.02-.5-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.62-.47-.16-.01-.36-.01-.56-.01-.19 0-.5.07-.76.34-.26.27-1 1-.97 2.43.03 1.43 1.03 2.81 1.18 3.01.15.2 2.03 3.1 4.93 4.23.69.3 1.23.48 1.65.61.69.22 1.32.19 1.81.12.55-.08 1.65-.67 1.89-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.19-.53-.33z" />
-            </svg>
-            Contactar por WhatsApp
-          </a>
-        </div>
-        <div className="mx-auto max-w-4xl text-center">
-          <h1 className="mb-6 text-4xl font-bold text-balance md:text-6xl">
-            Bienvenido al Portal de DoctorCar
-          </h1>
-          <p className="mb-8 text-lg text-muted-foreground md:text-xl text-pretty">
-            Accedé a tu panel, gestioná reclamos, turnos y seguí el estado de tu vehículo en tiempo real.
-          </p>
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
+        <div className="container mx-auto px-4 py-16 md:py-24 relative">
+          <div className="mx-auto max-w-4xl text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
+              <Shield className="h-4 w-4" />
+              <span>Portal de Clientes DoctorCar</span>
+            </div>
+            
+            <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl text-balance">
+              Gestiona tu vehiculo desde cualquier lugar
+            </h1>
+            
+            <p className="mb-8 text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto text-pretty">
+              Accede a tu panel personal, gestiona reclamos, agenda turnos y sigue el estado de tu vehiculo en tiempo real.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              {!user && (
+                <>
+                  <Button 
+                    size="lg"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8"
+                    onClick={() => signIn("auth0")}
+                  >
+                    Acceder al Portal
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                  <Button 
+                    size="lg"
+                    variant="outline"
+                    className="text-lg px-8 border-primary/30 hover:bg-primary/10 bg-transparent"
+                    asChild
+                  >
+                    <a 
+                      href="https://wa.me/5493415551234?text=Hola,%20quiero%20información%20sobre%20el%20portal"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <MessageCircle className="mr-2 h-5 w-5" />
+                      Contactar por WhatsApp
+                    </a>
+                  </Button>
+                </>
+              )}
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-3xl md:text-4xl font-bold text-primary mb-1">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-16 md:py-24 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Todo lo que necesitas en un solo lugar
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Nuestro portal te ofrece todas las herramientas para gestionar tus vehiculos y servicios de forma eficiente.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {features.map((feature, index) => (
+              <Card key={index} className="border-0 shadow-sm hover:shadow-md transition-shadow bg-card">
+                <CardHeader>
+                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                    <feature.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-lg text-foreground">{feature.title}</CardTitle>
+                  <CardDescription className="text-muted-foreground">{feature.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How it Works */}
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Como funciona el portal
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              En simples pasos, accede a todos nuestros servicios digitales.
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                { step: "1", title: "Registrate", desc: "Crea tu cuenta en segundos con tu email o redes sociales." },
+                { step: "2", title: "Accede al Panel", desc: "Ingresa a tu dashboard personalizado segun tu rol." },
+                { step: "3", title: "Gestiona Todo", desc: "Turnos, reclamos, seguimiento y comunicacion en un solo lugar." }
+              ].map((item, index) => (
+                <div key={index} className="text-center">
+                  <div className="h-16 w-16 rounded-full bg-primary text-primary-foreground text-2xl font-bold flex items-center justify-center mx-auto mb-4">
+                    {item.step}
+                  </div>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">{item.title}</h3>
+                  <p className="text-muted-foreground">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 md:py-24 bg-primary">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
+            Comienza a usar el portal hoy
+          </h2>
+          <p className="text-lg text-primary-foreground/80 max-w-2xl mx-auto mb-8">
+            Registrate gratis y accede a todas las funcionalidades para gestionar tu vehiculo de forma simple y rapida.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              size="lg"
+              variant="secondary"
+              className="text-lg px-8 bg-card text-foreground hover:bg-card/90"
+              onClick={() => signIn("auth0")}
+            >
+              Crear Cuenta Gratis
+              <ChevronRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button 
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 bg-transparent"
+              asChild
+            >
+              <Link href="/chapa-pintura-rosario">
+                Ver Servicios
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-card border-t py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="md:col-span-2">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center">
+                  <Car className="h-6 w-6 text-primary-foreground" />
+                </div>
+                <span className="text-xl font-bold text-primary">DOCTORCAR</span>
+              </div>
+              <p className="text-muted-foreground mb-4 max-w-md">
+                Taller especializado en chapa y pintura en Rosario. Mas de 15 anos de experiencia cuidando tu vehiculo.
+              </p>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <MapPin className="h-4 w-4" />
+                <span className="text-sm">Rosario, Santa Fe, Argentina</span>
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-foreground mb-4">Enlaces</h4>
+              <ul className="space-y-2">
+                <li><Link href="/" className="text-muted-foreground hover:text-primary transition-colors text-sm">Inicio</Link></li>
+                <li><Link href="/chapa-pintura-rosario" className="text-muted-foreground hover:text-primary transition-colors text-sm">Servicios</Link></li>
+                <li><Link href="/portal" className="text-muted-foreground hover:text-primary transition-colors text-sm">Portal</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-foreground mb-4">Contacto</h4>
+              <ul className="space-y-2">
+                <li className="flex items-center gap-2 text-muted-foreground text-sm">
+                  <Phone className="h-4 w-4" />
+                  <span>+54 341 555-1234</span>
+                </li>
+                <li>
+                  <a 
+                    href="https://wa.me/5493415551234"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    <span>WhatsApp</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
+            <p>&copy; {new Date().getFullYear()} DoctorCar. Todos los derechos reservados.</p>
+          </div>
+        </div>
+      </footer>
+
+      {/* WhatsApp Floating Button */}
+      <a
+        href="https://wa.me/5493415551234?text=Hola,%20necesito%20información%20sobre%20el%20portal"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 h-14 w-14 bg-accent hover:bg-accent/90 text-accent-foreground rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-110"
+        aria-label="Contactar por WhatsApp"
+      >
+        <MessageCircle className="h-7 w-7" />
+      </a>
     </div>
   );
 }
