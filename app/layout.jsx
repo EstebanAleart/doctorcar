@@ -11,8 +11,24 @@ const geist = Geist({ subsets: ["latin"] });
 const geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "DOCTORCAR - Sistema de Gestión",
-  description: "Sistema de gestión para taller mecánico y chapa y pintura",
+  title: "Taller de Chapa y Pintura en Rosario | DoctorCar – Siniestros y Aseguradoras",
+  description:
+    "DoctorCar es un taller de chapa y pintura en Rosario especializado en reparación de siniestros, pintura automotor y gestión con aseguradoras. Presupuestos, turnos y seguimiento online.",
+  keywords: [
+    "taller de chapa y pintura rosario",
+    "reparación de siniestros rosario",
+    "pintura automotor rosario",
+    "taller carrocería rosario",
+    "taller aseguradoras rosario",
+    "arreglo de golpes rosario"
+  ],
+  openGraph: {
+    title: "DoctorCar – Chapa y Pintura en Rosario",
+    description:
+      "Especialistas en reparación de siniestros y pintura automotor en Rosario. Seguimiento online y trabajo con aseguradoras.",
+    locale: "es_AR",
+    type: "website",
+  },
   generator: "v0.app",
   icons: {
     icon: [
