@@ -48,7 +48,7 @@ export default function HomePage() {
       {/* Navbar */}
       <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <div className="relative h-10 w-10">
               <Image
                 src="/images/whatsapp-20image-202025-12-29-20at-2000.jpeg"
@@ -58,6 +58,18 @@ export default function HomePage() {
               />
             </div>
             <span className="text-lg sm:text-xl font-bold text-[#1a4d6d]">DOCTORCAR</span>
+            <a
+              href="https://wa.me/34673782934"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-3 flex items-center gap-1 px-2 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-semibold"
+              title="Contacto WhatsApp"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M20.52 3.48A11.94 11.94 0 0012 0C5.37 0 0 5.37 0 12c0 2.12.55 4.13 1.6 5.93L0 24l6.27-1.64A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52zM12 22c-1.85 0-3.63-.5-5.18-1.44l-.37-.22-3.72.97.99-3.62-.24-.38A9.94 9.94 0 012 12c0-5.52 4.48-10 10-10s10 4.48 10 10-4.48 10-10 10zm5.07-7.75c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.25-1.4-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.13-.13.28-.34.42-.51.14-.17.18-.29.28-.48.09-.19.05-.36-.02-.5-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.62-.47-.16-.01-.36-.01-.56-.01-.19 0-.5.07-.76.34-.26.27-1 1-.97 2.43.03 1.43 1.03 2.81 1.18 3.01.15.2 2.03 3.1 4.93 4.23.69.3 1.23.48 1.65.61.69.22 1.32.19 1.81.12.55-.08 1.65-.67 1.89-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.19-.53-.33z" />
+              </svg>
+              Contactar por WhatsApp
+            </a>
           </div>
           {/* Desktop View */}
           <div className="hidden sm:flex items-center gap-3">
@@ -70,7 +82,7 @@ export default function HomePage() {
                       alt={user.name || "Perfil"}
                       width={36}
                       height={36}
-                      className="rounded-full flex-shrink-0"
+                      className="rounded-full shrink-0"
                     />
                   )}
                   <div className="min-w-0">
@@ -81,7 +93,7 @@ export default function HomePage() {
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  className="text-[#1a4d6d] hover:bg-[#6cb4d8]/10 flex-shrink-0"
+                  className="text-[#1a4d6d] hover:bg-[#6cb4d8]/10 shrink-0"
                   onClick={() => signOut({ callbackUrl: "/" })}
                   title="Cerrar sesión"
                 >
@@ -92,13 +104,13 @@ export default function HomePage() {
               <>
                 <Button 
                   variant="ghost" 
-                  className="text-[#1a4d6d] hover:text-[#6cb4d8] text-sm"
+                  className="text-[#1a4d6d] hover:text-[#6cb4d8] text-sm cursor-pointer"
                   onClick={() => signIn("auth0")}
                 >
                   Iniciar Sesión
                 </Button>
                 <Button 
-                  className="bg-[#1a4d6d] hover:bg-[#6cb4d8] text-sm"
+                  className="bg-[#1a4d6d] hover:bg-[#6cb4d8] text-sm cursor-pointer"
                   onClick={() => signIn("auth0")}
                 >
                   Registrarse
@@ -132,7 +144,7 @@ export default function HomePage() {
                       alt={user.name || "Perfil"}
                       width={32}
                       height={32}
-                      className="rounded-full flex-shrink-0"
+                      className="rounded-full shrink-0"
                     />
                   )}
                   <div className="min-w-0">
@@ -153,13 +165,13 @@ export default function HomePage() {
               <>
                 <Button 
                   variant="ghost" 
-                  className="w-full text-[#1a4d6d] hover:bg-[#6cb4d8]/10"
+                  className="w-full text-[#1a4d6d] hover:bg-[#6cb4d8]/10 cursor-pointer"
                   onClick={() => signIn("auth0")}
                 >
                   Iniciar Sesión
                 </Button>
                 <Button 
-                  className="w-full bg-[#1a4d6d] hover:bg-[#2d6a8f]"
+                  className="w-full bg-[#1a4d6d] hover:bg-[#2d6a8f] cursor-pointer"
                   onClick={() => signIn("auth0")}
                 >
                   Registrarse
@@ -172,6 +184,20 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 md:py-32">
+        <div className="flex justify-center mb-6">
+          <a
+            href="https://wa.me/34673782934"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded shadow font-semibold text-base"
+            title="Contactar por WhatsApp"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20.52 3.48A11.94 11.94 0 0012 0C5.37 0 0 5.37 0 12c0 2.12.55 4.13 1.6 5.93L0 24l6.27-1.64A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52zM12 22c-1.85 0-3.63-.5-5.18-1.44l-.37-.22-3.72.97.99-3.62-.24-.38A9.94 9.94 0 012 12c0-5.52 4.48-10 10-10s10 4.48 10 10-4.48 10-10 10zm5.07-7.75c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.25-1.4-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.13-.13.28-.34.42-.51.14-.17.18-.29.28-.48.09-.19.05-.36-.02-.5-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.62-.47-.16-.01-.36-.01-.56-.01-.19 0-.5.07-.76.34-.26.27-1 1-.97 2.43.03 1.43 1.03 2.81 1.18 3.01.15.2 2.03 3.1 4.93 4.23.69.3 1.23.48 1.65.61.69.22 1.32.19 1.81.12.55-.08 1.65-.67 1.89-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.19-.53-.33z" />
+            </svg>
+            Contactar por WhatsApp
+          </a>
+        </div>
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="mb-6 text-4xl font-bold text-balance md:text-6xl">
             Reparación y pintura de vehículos{" "}
@@ -185,7 +211,7 @@ export default function HomePage() {
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Button 
               size="lg" 
-              className="bg-[#1a4d6d] hover:bg-[#6cb4d8]"
+              className="bg-[#1a4d6d] hover:bg-[#6cb4d8] cursor-pointer"
               onClick={() => signIn("auth0")}
             >
               Empezar Ahora
@@ -193,7 +219,7 @@ export default function HomePage() {
             <Button
               size="lg"
               variant="outline"
-              className="border-[#1a4d6d] text-[#1a4d6d] hover:bg-[#1a4d6d] hover:text-white bg-transparent"
+              className="border-[#1a4d6d] text-[#1a4d6d] hover:bg-[#1a4d6d] hover:text-white bg-transparent cursor-pointer"
               onClick={() => signIn("auth0")}
             >
               Iniciar Sesión
@@ -216,6 +242,20 @@ export default function HomePage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <Card>
               <CardHeader>
+                <div className="flex justify-end mb-2">
+                  <a
+                    href="https://wa.me/34673782934"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 px-2 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-semibold"
+                    title="WhatsApp"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M20.52 3.48A11.94 11.94 0 0012 0C5.37 0 0 5.37 0 12c0 2.12.55 4.13 1.6 5.93L0 24l6.27-1.64A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52zM12 22c-1.85 0-3.63-.5-5.18-1.44l-.37-.22-3.72.97.99-3.62-.24-.38A9.94 9.94 0 012 12c0-5.52 4.48-10 10-10s10 4.48 10 10-4.48 10-10 10zm5.07-7.75c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.25-1.4-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.13-.13.28-.34.42-.51.14-.17.18-.29.28-.48.09-.19.05-.36-.02-.5-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.62-.47-.16-.01-.36-.01-.56-.01-.19 0-.5.07-.76.34-.26.27-1 1-.97 2.43.03 1.43 1.03 2.81 1.18 3.01.15.2 2.03 3.1 4.93 4.23.69.3 1.23.48 1.65.61.69.22 1.32.19 1.81.12.55-.08 1.65-.67 1.89-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.19-.53-.33z" />
+                    </svg>
+                    Contactar por WhatsApp
+                  </a>
+                </div>
                 <Wrench className="mb-2 h-10 w-10 text-[#1a4d6d]" />
                 <CardTitle>Reclamos Simples</CardTitle>
                 <CardDescription>
@@ -275,6 +315,20 @@ export default function HomePage() {
 
       {/* How it works */}
       <section className="py-20">
+        <div className="flex justify-center mb-6">
+          <a
+            href="https://wa.me/34673782934"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded shadow font-semibold text-base"
+            title="Contactar por WhatsApp"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20.52 3.48A11.94 11.94 0 0012 0C5.37 0 0 5.37 0 12c0 2.12.55 4.13 1.6 5.93L0 24l6.27-1.64A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52zM12 22c-1.85 0-3.63-.5-5.18-1.44l-.37-.22-3.72.97.99-3.62-.24-.38A9.94 9.94 0 012 12c0-5.52 4.48-10 10-10s10 4.48 10 10-4.48 10-10 10zm5.07-7.75c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.25-1.4-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.13-.13.28-.34.42-.51.14-.17.18-.29.28-.48.09-.19.05-.36-.02-.5-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.62-.47-.16-.01-.36-.01-.56-.01-.19 0-.5.07-.76.34-.26.27-1 1-.97 2.43.03 1.43 1.03 2.81 1.18 3.01.15.2 2.03 3.1 4.93 4.23.69.3 1.23.48 1.65.61.69.22 1.32.19 1.81.12.55-.08 1.65-.67 1.89-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.19-.53-.33z" />
+            </svg>
+            WhatsApp
+          </a>
+        </div>
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
             <h2 className="mb-4 text-3xl font-bold text-balance md:text-4xl">¿Cómo funciona?</h2>
@@ -316,6 +370,20 @@ export default function HomePage() {
 
       {/* CTA Section */}
       <section className="border-t bg-[#1a4d6d] py-20 text-white">
+        <div className="flex justify-center mb-6">
+          <a
+            href="https://wa.me/34673782934"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded shadow font-semibold text-base"
+            title="Contactar por WhatsApp"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20.52 3.48A11.94 11.94 0 0012 0C5.37 0 0 5.37 0 12c0 2.12.55 4.13 1.6 5.93L0 24l6.27-1.64A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52zM12 22c-1.85 0-3.63-.5-5.18-1.44l-.37-.22-3.72.97.99-3.62-.24-.38A9.94 9.94 0 012 12c0-5.52 4.48-10 10-10s10 4.48 10 10-4.48 10-10 10zm5.07-7.75c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.25-1.4-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.13-.13.28-.34.42-.51.14-.17.18-.29.28-.48.09-.19.05-.36-.02-.5-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.62-.47-.16-.01-.36-.01-.56-.01-.19 0-.5.07-.76.34-.26.27-1 1-.97 2.43.03 1.43 1.03 2.81 1.18 3.01.15.2 2.03 3.1 4.93 4.23.69.3 1.23.48 1.65.61.69.22 1.32.19 1.81.12.55-.08 1.65-.67 1.89-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.19-.53-.33z" />
+            </svg>
+            WhatsApp
+          </a>
+        </div>
         <div className="container mx-auto px-4 text-center">
           <h2 className="mb-4 text-3xl font-bold text-balance md:text-4xl">
             ¿Listo para reparar tu vehículo?
@@ -326,7 +394,7 @@ export default function HomePage() {
           <Button
             size="lg"
             variant="secondary"
-            className="bg-white text-[#1a4d6d] hover:bg-[#6cb4d8] hover:text-white"
+            className="bg-white text-[#1a4d6d] hover:bg-[#6cb4d8] hover:text-white cursor-pointer"
             onClick={() => signIn("auth0")}
           >
             Comenzar Ahora
@@ -337,6 +405,20 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+          <div className="mb-2">
+            <a
+              href="https://wa.me/34673782934"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-semibold"
+              title="WhatsApp"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M20.52 3.48A11.94 11.94 0 0012 0C5.37 0 0 5.37 0 12c0 2.12.55 4.13 1.6 5.93L0 24l6.27-1.64A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52zM12 22c-1.85 0-3.63-.5-5.18-1.44l-.37-.22-3.72.97.99-3.62-.24-.38A9.94 9.94 0 012 12c0-5.52 4.48-10 10-10s10 4.48 10 10-4.48 10-10 10zm5.07-7.75c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.25-1.4-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.13-.13.28-.34.42-.51.14-.17.18-.29.28-.48.09-.19.05-.36-.02-.5-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.62-.47-.16-.01-.36-.01-.56-.01-.19 0-.5.07-.76.34-.26.27-1 1-.97 2.43.03 1.43 1.03 2.81 1.18 3.01.15.2 2.03 3.1 4.93 4.23.69.3 1.23.48 1.65.61.69.22 1.32.19 1.81.12.55-.08 1.65-.67 1.89-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.19-.53-.33z" />
+              </svg>
+              Contactar por WhatsApp
+            </a>
+          </div>
           <p>&copy; 2025 DOCTORCAR Rosario. Todos los derechos reservados.</p>
         </div>
       </footer>
