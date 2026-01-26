@@ -271,8 +271,17 @@ export function ClientVehicles() {
               <Label htmlFor="year">Año</Label>
               <Input
                 id="year"
+                type="number"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                min="1900"
+                max={new Date().getFullYear() + 1}
                 value={formData.year}
-                onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                onChange={(e) => {
+                  // Solo permitir números y máximo 4 dígitos
+                  const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 4);
+                  setFormData({ ...formData, year: val });
+                }}
                 placeholder="Ej: 2020"
                 required
               />
