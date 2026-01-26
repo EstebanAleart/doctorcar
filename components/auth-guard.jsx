@@ -10,19 +10,12 @@ export function AuthGuard({ children, allowedRoles }) {
 
   useEffect(() => {
     if (loading) return; // Wait for auth check to complete
-    
+
     if (!user) {
       router.push("/login");
     } else if (allowedRoles && !allowedRoles.includes(user.role)) {
-      const roleRedirects = {
-        admin: "/admin",
-        employee: "/employee",
-        client: "/client",
-        admindev: "/admindev",
-      };
-      const target = roleRedirects[user.role];
-      router.replace(target || "/unauthorized");
-    } else {
+      // Redirigir a la ruta relativa para compatibilidad con despliegue
+      router.replace("/unauthorized");
     }
   }, [user, loading, allowedRoles, router]);
 
