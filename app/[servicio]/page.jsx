@@ -3,6 +3,8 @@ import Link from "next/link";
 import JsonLd from "@/components/seo/JsonLd";
 import FaqList from "@/components/seo/FaqList";
 import Breadcrumb from "@/components/seo/Breadcrumb";
+import CtaBox from "@/components/seo/CtaBox";
+import SeoPageLayout from "@/components/seo/SeoPageLayout";
 import {
   findServicio,
   getServicios,
@@ -42,90 +44,75 @@ export default async function ServicioHubPage({ params }) {
   const faqs = seo?.faqs || [];
 
   return (
-    <>
+    <SeoPageLayout>
       <JsonLd data={[schemaService(servicio.slug), schemaFaq(faqs)]} />
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <Breadcrumb
-          items={[{ name: "Inicio", url: "/" }, { name: servicio.nombre }]}
-        />
+      <Breadcrumb
+        items={[{ name: "Inicio", url: "/" }, { name: servicio.nombre }]}
+      />
 
-        <h1 className="text-4xl font-bold mb-4">
-          {servicio.nombre_h1} en Rosario y Zona
-        </h1>
+      <h1 className="text-3xl md:text-4xl font-bold text-dc-navy mb-4">
+        {servicio.nombre_h1} en Rosario y Zona
+      </h1>
 
-        {seo?.parrafo && (
-          <p className="text-lg text-gray-700 leading-relaxed mb-8">
-            {seo.parrafo}
-          </p>
-        )}
+      {seo?.parrafo && (
+        <p className="text-lg text-dc-navy/80 leading-relaxed mb-8">
+          {seo.parrafo}
+        </p>
+      )}
 
-        {!seo?.parrafo && (
-          <p className="text-lg text-gray-700 leading-relaxed mb-8">
-            {servicio.descripcion_corta} En DoctorCar trabajamos con todas las
-            aseguradoras y damos presupuesto en menos de 24 horas.
-          </p>
-        )}
+      {!seo?.parrafo && (
+        <p className="text-lg text-dc-navy/80 leading-relaxed mb-8">
+          {servicio.descripcion_corta} En DoctorCar trabajamos con todas las
+          aseguradoras del pais y damos presupuesto en menos de 24 horas.
+        </p>
+      )}
 
-        {/* CTA arriba — intención transaccional */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-12 flex flex-col md:flex-row gap-4 items-center">
-          <div className="flex-1">
-            <p className="font-semibold text-lg">
-              Presupuesto sin cargo en 24 horas
-            </p>
-            <p className="text-sm text-gray-700">
-              Enviá fotos por WhatsApp y recibí el detalle.
-            </p>
-          </div>
-          <Link
-            href="https://wa.me/549341XXXXXXX?text=Hola,%20quiero%20un%20presupuesto"
-            className="bg-green-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-green-700"
-          >
-            Pedir presupuesto
-          </Link>
+      <CtaBox
+        titulo="Presupuesto sin cargo en 24 horas"
+        subtitulo="Envia fotos por WhatsApp y recibi el detalle."
+        whatsappText={`Hola, quiero presupuesto de ${servicio.nombre}`}
+      />
+
+      {/* Interlinking: servicio en cada ciudad */}
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold text-dc-navy mb-4">
+          {servicio.nombre} por zona
+        </h2>
+        <div className="grid md:grid-cols-3 gap-3">
+          {ciudadesHub.map((z) => (
+            <Link
+              key={z.id}
+              href={`/${servicio.slug}/${z.slug}`}
+              className="border border-dc-blue/30 rounded-lg p-3 hover:bg-dc-blue-light hover:border-dc-navy/40 transition-colors text-dc-navy font-medium"
+            >
+              {servicio.nombre} {z.nombre_h1_sufijo}
+            </Link>
+          ))}
         </div>
+      </section>
 
-        {/* Interlinking: servicio en cada ciudad */}
+      {/* Aseguradoras */}
+      {servicio.id === "siniestros" && (
         <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4">
-            {servicio.nombre} por zona
+          <h2 className="text-2xl font-bold text-dc-navy mb-4">
+            Aseguradoras con las que trabajamos
           </h2>
-          <div className="grid md:grid-cols-3 gap-3">
-            {ciudadesHub.map((z) => (
+          <div className="grid md:grid-cols-4 gap-3">
+            {aseguradoras.map((a) => (
               <Link
-                key={z.id}
-                href={`/${servicio.slug}/${z.slug}`}
-                className="border rounded p-3 hover:bg-gray-50"
+                key={a.id}
+                href={`/aseguradoras/${a.slug}`}
+                className="border border-dc-blue/30 rounded-lg p-3 text-center hover:bg-dc-blue-light hover:border-dc-navy/40 transition-colors text-dc-navy font-medium"
               >
-                {servicio.nombre} {z.nombre_h1_sufijo}
+                {a.nombre}
               </Link>
             ))}
           </div>
         </section>
+      )}
 
-        {/* Aseguradoras */}
-        {servicio.id === "siniestros" && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold mb-4">
-              Aseguradoras con las que trabajamos
-            </h2>
-            <div className="grid md:grid-cols-4 gap-3">
-              {aseguradoras.map((a) => (
-                <Link
-                  key={a.id}
-                  href={`/aseguradoras/${a.slug}`}
-                  className="border rounded p-3 text-center hover:bg-gray-50"
-                >
-                  {a.nombre}
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* FAQs */}
-        <FaqList faqs={faqs} />
-      </main>
-    </>
+      <FaqList faqs={faqs} />
+    </SeoPageLayout>
   );
 }

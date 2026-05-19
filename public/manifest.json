@@ -1,11 +1,11 @@
 {
   "name": "DoctorCar – Taller de Chapa y Pintura",
   "short_name": "DoctorCar",
-  "description": "Taller de chapa y pintura en Rosario. Siniestros, granizo, pintura automotor y gestión con aseguradoras.",
+  "description": "Taller de chapa y pintura en Rosario. Siniestros, granizo, pintura automotor y gestion con aseguradoras.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#1a1a2e",
+  "theme_color": "#1a4d6d",
   "lang": "es-AR",
   "icons": [
     {

@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import JsonLd from "@/components/seo/JsonLd";
 import FaqList from "@/components/seo/FaqList";
 import Breadcrumb from "@/components/seo/Breadcrumb";
+import CtaBox from "@/components/seo/CtaBox";
+import SeoPageLayout from "@/components/seo/SeoPageLayout";
 import {
   findAseguradora,
   findZona,
@@ -43,7 +44,7 @@ export default async function AseguradoraCiudadPage({ params }) {
   const faqs = getFaqsAseguradoraCiudad(aseg.id, zona.id);
 
   return (
-    <>
+    <SeoPageLayout>
       <JsonLd
         data={[
           schemaServiceAseguradora(aseg.slug, zona.slug),
@@ -51,46 +52,38 @@ export default async function AseguradoraCiudadPage({ params }) {
         ]}
       />
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <Breadcrumb
-          items={[
-            { name: "Inicio", url: "/" },
-            { name: "Aseguradoras", url: "/aseguradoras" },
-            { name: aseg.nombre, url: `/aseguradoras/${aseg.slug}` },
-            { name: zona.nombre },
-          ]}
-        />
+      <Breadcrumb
+        items={[
+          { name: "Inicio", url: "/" },
+          { name: "Aseguradoras", url: "/aseguradoras" },
+          { name: aseg.nombre, url: `/aseguradoras/${aseg.slug}` },
+          { name: zona.nombre },
+        ]}
+      />
 
-        <h1 className="text-4xl font-bold mb-4">
-          Taller habilitado {aseg.nombre} {zona.nombre_h1_sufijo}
-        </h1>
+      <h1 className="text-3xl md:text-4xl font-bold text-dc-navy mb-4">
+        Taller habilitado {aseg.nombre} {zona.nombre_h1_sufijo}
+      </h1>
 
-        {asegSeo?.parrafo && (
-          <p className="text-lg text-gray-700 leading-relaxed mb-4">
-            {asegSeo.parrafo}
-          </p>
-        )}
+      {asegSeo?.parrafo && (
+        <p className="text-lg text-dc-navy/80 leading-relaxed mb-4">
+          {asegSeo.parrafo}
+        </p>
+      )}
 
-        {zonaSeo?.parrafo && (
-          <p className="text-base text-gray-700 leading-relaxed mb-6">
-            {zonaSeo.parrafo}
-          </p>
-        )}
+      {zonaSeo?.parrafo && (
+        <p className="text-base text-dc-navy/70 leading-relaxed mb-6">
+          {zonaSeo.parrafo}
+        </p>
+      )}
 
-        <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-12">
-          <p className="font-semibold mb-2">
-            Siniestro con {aseg.nombre} {zona.nombre_h1_sufijo}
-          </p>
-          <Link
-            href={`https://wa.me/549341XXXXXXX?text=Siniestro%20${aseg.nombre}%20en%20${encodeURIComponent(zona.nombre)}`}
-            className="bg-green-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-green-700 inline-block"
-          >
-            Iniciar gestión por WhatsApp
-          </Link>
-        </div>
+      <CtaBox
+        titulo={`Siniestro con ${aseg.nombre} ${zona.nombre_h1_sufijo}`}
+        subtitulo="Envia numero de denuncia y fotos por WhatsApp."
+        whatsappText={`Siniestro ${aseg.nombre} en ${zona.nombre}`}
+      />
 
-        <FaqList faqs={faqs} />
-      </main>
-    </>
+      <FaqList faqs={faqs} />
+    </SeoPageLayout>
   );
 }

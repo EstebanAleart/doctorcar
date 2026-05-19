@@ -4,6 +4,13 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /* DoctorCar brand tokens */
+  --dc-navy: #1a4d6d;
+  --dc-blue: #6cb4d8;
+  --dc-blue-light: #eaf3fa;
+  --dc-blue-pale: #f4fafd;
+  --dc-green: #25D366;
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -77,6 +84,11 @@
 @theme inline {
   --font-sans: 'Geist', 'Geist Fallback';
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --color-dc-navy: var(--dc-navy);
+  --color-dc-blue: var(--dc-blue);
+  --color-dc-blue-light: var(--dc-blue-light);
+  --color-dc-blue-pale: var(--dc-blue-pale);
+  --color-dc-green: var(--dc-green);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

@@ -3,8 +3,8 @@ import JsonLd from "./JsonLd";
 import { schemaBreadcrumb } from "@/lib/schema";
 
 /**
- * Breadcrumb visible + JSON-LD BreadcrumbList automático.
- * items: [{ name, url }] — el último item NO debe tener url (es la página actual).
+ * Breadcrumb visible + JSON-LD BreadcrumbList automatico.
+ * items: [{ name, url }] — el ultimo item NO debe tener url (es la pagina actual).
  */
 export default function Breadcrumb({ items }) {
   if (!items?.length) return null;
@@ -12,24 +12,24 @@ export default function Breadcrumb({ items }) {
   return (
     <>
       <JsonLd data={schemaBreadcrumb(items)} />
-      <nav aria-label="breadcrumb" className="text-sm text-gray-600 mb-4">
+      <nav aria-label="breadcrumb" className="text-sm text-dc-navy/60 mb-4">
         <ol className="flex flex-wrap gap-2 items-center">
           {items.map((it, i) => (
             <li key={i} className="flex items-center gap-2">
               {it.url ? (
                 <Link
                   href={it.url}
-                  className="hover:text-blue-600 hover:underline"
+                  className="hover:text-dc-blue hover:underline transition-colors"
                 >
                   {it.name}
                 </Link>
               ) : (
-                <span aria-current="page" className="text-gray-900">
+                <span aria-current="page" className="text-dc-navy font-medium">
                   {it.name}
                 </span>
               )}
               {i < items.length - 1 && (
-                <span className="text-gray-400">&rsaquo;</span>
+                <span className="text-dc-navy/30">&rsaquo;</span>
               )}
             </li>
           ))}
