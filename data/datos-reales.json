@@ -1,0 +1,52 @@
+{
+  "meta": {
+    "fuentes": [
+      "Datos propios DoctorCar (vehículos reparados, tiempos)",
+      "ONSV - Observatorio Nacional de Seguridad Vial",
+      "DNRPA - Patentamientos por provincia",
+      "SMN - Eventos meteorológicos (granizadas)"
+    ],
+    "periodo": "2025-Q1 a 2026-Q1",
+    "generado": "2026-05-19",
+    "descripcion": "Datos verificables que se inyectan en las páginas como capa 2 (diferenciación vs templates). ESTRUCTURA PROVISIONAL — completar con data del proyecto paralelo de Esteban."
+  },
+  "agregado_taller": {
+    "vehiculos_reparados_total": 300,
+    "tiempo_promedio_reparacion_dias": 12,
+    "porcentaje_gestion_directa_aseguradora": 0.78,
+    "calificacion_google": 4.9,
+    "ultima_actualizacion": "2026-05-01"
+  },
+  "por_zona": {
+    "rosario": {
+      "siniestros_tipo_distribucion": {
+        "choque_urbano": 0.55,
+        "granizo": 0.18,
+        "vandalismo": 0.09,
+        "estacionamiento": 0.10,
+        "otros": 0.08
+      },
+      "modelos_mas_reparados_top5": [],
+      "_TODO": "Completar desde proyecto paralelo de Esteban"
+    },
+    "rosario-norte": {
+      "_TODO": "Foco granizo (Fisherton zona típica)"
+    },
+    "funes": {
+      "_TODO": "Foco residencial / autos premium"
+    }
+  },
+  "por_aseguradora": {
+    "la-caja": {
+      "casos_gestionados_2025": null,
+      "tiempo_promedio_peritaje_dias": null,
+      "_TODO": "Completar con métricas propias de Esteban"
+    }
+  },
+  "estacionalidad": {
+    "granizo": {
+      "meses_pico_rosario": ["octubre", "noviembre", "diciembre", "enero"],
+      "nota": "Llanura pampeana — eventos severos típicos primavera-verano"
+    }
+  }
+}

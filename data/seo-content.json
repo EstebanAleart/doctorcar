@@ -1,0 +1,10 @@
+{
+  "meta": {
+    "actualizado": "2026-05-19",
+    "descripcion": "Contenido generado por LLM por dimensión. NO editar a mano. Lo genera scripts/generate-seo-content.mjs.",
+    "patron_composicion": "N (servicios) + M (zonas) + K (aseguradoras) llamadas LLM → N×M + N×K + M×K páginas únicas"
+  },
+  "servicios": {},
+  "zonas": {},
+  "aseguradoras": {}
+}

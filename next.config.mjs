@@ -8,6 +8,21 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-}
 
-export default nextConfig
+  async redirects() {
+    return [
+      {
+        source: "/chapa-pintura-rosario",
+        destination: "/chapa-y-pintura/rosario",
+        permanent: true,
+      },
+      {
+        source: "/siniestros-rosario",
+        destination: "/siniestros/rosario",
+        permanent: true,
+      },
+    ];
+  },
+};
+
+export default nextConfig;

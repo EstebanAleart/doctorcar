@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "actualizado": "2026-05-19",
+    "descripcion": "Aseguradoras con las que se opera. Cada item genera /aseguradoras/[slug] y /aseguradoras/[slug]/rosario."
+  },
+  "aseguradoras": [
+    {
+      "id": "la-caja",
+      "slug": "la-caja",
+      "nombre": "La Caja",
+      "nombre_completo": "La Caja Seguros",
+      "logo": "/aseguradoras/la-caja.svg",
+      "es_principal": true,
+      "atributos": {
+        "tipo_facturacion": "directa",
+        "tiempo_peritaje_promedio_dias": 3,
+        "tipo_de_taller": "libre elección con presupuesto"
+      },
+      "telefono_siniestros": "0800-999-2252",
+      "url_oficial": "https://www.lacaja.com.ar"
+    },
+    {
+      "id": "sancor",
+      "slug": "sancor-seguros",
+      "nombre": "Sancor",
+      "nombre_completo": "Sancor Seguros",
+      "logo": "/aseguradoras/sancor.svg",
+      "es_principal": true,
+      "atributos": {
+        "tipo_facturacion": "directa",
+        "tiempo_peritaje_promedio_dias": 2,
+        "tipo_de_taller": "red propia + libre elección",
+        "nota_local": "cooperativa con fuerte presencia en zona núcleo de Santa Fe"
+      },
+      "telefono_siniestros": "0800-444-2273",
+      "url_oficial": "https://www.sancorseguros.com.ar"
+    },
+    {
+      "id": "allianz",
+      "slug": "allianz",
+      "nombre": "Allianz",
+      "nombre_completo": "Allianz Argentina",
+      "logo": "/aseguradoras/allianz.svg",
+      "es_principal": true,
+      "atributos": {
+        "tipo_facturacion": "directa",
+        "tiempo_peritaje_promedio_dias": 4,
+        "tipo_de_taller": "red propia y libre elección"
+      },
+      "telefono_siniestros": "0800-444-2554",
+      "url_oficial": "https://www.allianz.com.ar"
+    },
+    {
+      "id": "federacion-patronal",
+      "slug": "federacion-patronal",
+      "nombre": "Federación Patronal",
+      "nombre_completo": "Federación Patronal Seguros",
+      "logo": "/aseguradoras/federacion-patronal.svg",
+      "es_principal": true,
+      "atributos": {
+        "tipo_facturacion": "directa",
+        "tiempo_peritaje_promedio_dias": 3,
+        "tipo_de_taller": "libre elección con presupuesto"
+      },
+      "telefono_siniestros": "0800-555-3333",
+      "url_oficial": "https://www.fedpat.com.ar"
+    },
+    {
+      "id": "zurich",
+      "slug": "zurich",
+      "nombre": "Zurich",
+      "nombre_completo": "Zurich Argentina",
+      "logo": "/aseguradoras/zurich.svg",
+      "es_principal": true,
+      "atributos": {
+        "tipo_facturacion": "directa",
+        "tiempo_peritaje_promedio_dias": 4,
+        "tipo_de_taller": "red propia preferida"
+      },
+      "telefono_siniestros": "0800-666-9874",
+      "url_oficial": "https://www.zurich.com.ar"
+    },
+    {
+      "id": "san-cristobal",
+      "slug": "san-cristobal",
+      "nombre": "San Cristóbal",
+      "nombre_completo": "San Cristóbal Seguros",
+      "logo": "/aseguradoras/san-cristobal.svg",
+      "es_principal": true,
+      "atributos": {
+        "tipo_facturacion": "directa",
+        "tiempo_peritaje_promedio_dias": 3,
+        "tipo_de_taller": "libre elección con presupuesto",
+        "nota_local": "cooperativa santafesina, fuerte en Rosario y zona"
+      },
+      "telefono_siniestros": "0810-444-0000",
+      "url_oficial": "https://www.sancristobal.com.ar"
+    },
+    {
+      "id": "provincia-seguros",
+      "slug": "provincia-seguros",
+      "nombre": "Provincia Seguros",
+      "nombre_completo": "Provincia Seguros",
+      "logo": "/aseguradoras/provincia.svg",
+      "es_principal": false,
+      "atributos": {
+        "tipo_facturacion": "directa",
+        "tiempo_peritaje_promedio_dias": 5,
+        "tipo_de_taller": "libre elección"
+      },
+      "url_oficial": "https://www.provinciaseguros.com.ar"
+    },
+    {
+      "id": "mercantil-andina",
+      "slug": "mercantil-andina",
+      "nombre": "Mercantil Andina",
+      "nombre_completo": "Mercantil Andina Seguros",
+      "logo": "/aseguradoras/mercantil-andina.svg",
+      "es_principal": false,
+      "atributos": {
+        "tipo_facturacion": "directa",
+        "tiempo_peritaje_promedio_dias": 4,
+        "tipo_de_taller": "libre elección"
+      },
+      "url_oficial": "https://www.mercantilandina.com.ar"
+    }
+  ]
+}
