@@ -15,6 +15,14 @@ description: Estado completo del proyecto SEO programático de DoctorCar. Arquit
 
 ### Rama activa: `seo-rebranding`
 
+### Decisión estratégica
+
+**El dashboard admin/client/employee y la DB PostgreSQL quedan EN PAUSA.**
+- El dashboard de usuario se va a manejar desde otro proyecto externo.
+- DoctorCar ahora es 100% propaganda + SEO programático + redirección a dashboard externo.
+- Los componentes admin/client/employee y las API routes siguen en el repo pero no son prioridad.
+- Pendiente: auditar qué componentes/routes se pueden reutilizar en el otro proyecto.
+
 ### Progreso general
 
 | Fase | Estado | Detalle |
