@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "actualizado": "2026-05-19",
+    "descripcion": "Servicios de DoctorCar. Cada item es una página de hub (/[slug]) y genera N páginas servicio×ciudad."
+  },
+  "servicios": [
+    {
+      "id": "chapa-y-pintura",
+      "slug": "chapa-y-pintura",
+      "nombre": "Chapa y Pintura",
+      "nombre_h1": "Taller de Chapa y Pintura",
+      "keyword_principal": "taller de chapa y pintura",
+      "keywords_secundarias": ["taller de carrocería", "pintura automotor", "chapista"],
+      "intencion": "transaccional",
+      "descripcion_corta": "Reparación y pintura de carrocería con materiales premium y acabado de fábrica.",
+      "icono": "PaintBucket"
+    },
+    {
+      "id": "siniestros",
+      "slug": "siniestros",
+      "nombre": "Reparación de Siniestros",
+      "nombre_h1": "Reparación de Siniestros Viales",
+      "keyword_principal": "reparación de siniestros",
+      "keywords_secundarias": ["taller de siniestros", "reparar choque", "siniestro vial"],
+      "intencion": "transaccional",
+      "descripcion_corta": "Especialistas en todo tipo de siniestros: choques, accidentes viales y daños estructurales.",
+      "icono": "Car"
+    },
+    {
+      "id": "granizo",
+      "slug": "granizo",
+      "nombre": "Reparación de Granizo",
+      "nombre_h1": "Reparación de Daños por Granizo",
+      "keyword_principal": "reparación de granizo",
+      "keywords_secundarias": ["arreglo granizo auto", "abolladuras granizo", "auto granizado"],
+      "intencion": "transaccional",
+      "descripcion_corta": "Reparación de abolladuras por granizo con técnica PDR (sin pintura) o repintado integral.",
+      "icono": "CloudHail",
+      "padre": "siniestros"
+    },
+    {
+      "id": "abolladuras-sin-pintura",
+      "slug": "abolladuras-sin-pintura",
+      "nombre": "Abolladuras Sin Pintura (PDR)",
+      "nombre_h1": "Reparación de Abolladuras Sin Pintura",
+      "keyword_principal": "abolladuras sin pintura",
+      "keywords_secundarias": ["PDR auto", "sacar abolladuras sin pintar", "técnica PDR"],
+      "intencion": "transaccional",
+      "descripcion_corta": "Técnica PDR (Paintless Dent Repair): eliminamos abolladuras conservando la pintura original.",
+      "icono": "Wrench"
+    },
+    {
+      "id": "enderezado-carroceria",
+      "slug": "enderezado-carroceria",
+      "nombre": "Enderezado de Carrocería",
+      "nombre_h1": "Enderezado de Carrocería con Bancada",
+      "keyword_principal": "enderezado de carrocería",
+      "keywords_secundarias": ["bancada de enderezado", "alineación de chasis", "estructura del auto"],
+      "intencion": "transaccional",
+      "descripcion_corta": "Recuperamos la estructura original del vehículo con bancada y medición electrónica.",
+      "icono": "Ruler"
+    },
+    {
+      "id": "pintura-automotor",
+      "slug": "pintura-automotor",
+      "nombre": "Pintura Automotor Completa",
+      "nombre_h1": "Pintura Automotor Completa",
+      "keyword_principal": "pintura automotor",
+      "keywords_secundarias": ["pintar auto completo", "repintado auto", "cambio de color auto"],
+      "intencion": "transaccional",
+      "descripcion_corta": "Pintura completa o parcial con pintura poliuretánica e igualación exacta de color.",
+      "icono": "Spray"
+    },
+    {
+      "id": "peritaje-aseguradora",
+      "slug": "peritaje-aseguradora",
+      "nombre": "Gestión con Aseguradora",
+      "nombre_h1": "Gestión Integral con tu Aseguradora",
+      "keyword_principal": "taller para aseguradora",
+      "keywords_secundarias": ["taller habilitado seguro", "peritaje siniestro", "gestión seguro auto"],
+      "intencion": "transaccional",
+      "descripcion_corta": "Nos encargamos del trámite con tu compañía: peritaje, reclamo y facturación directa.",
+      "icono": "FileText"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+prioridad,query,intencion,volumen_mensual_estimado,dificultad,competencia,pagina_destino,score_oportunidad,notas
+P0,chapa y pintura rosario,transaccional,560,media,media,/chapa-y-pintura/rosario,9.2,head term del nicho - 5-6 competidores reales
+P0,taller chapa y pintura rosario,transaccional,400,media,media,/chapa-y-pintura/rosario,9.0,variante head term - mismo destino
+P0,sacabollos rosario,transaccional,320,baja,baja,/abolladuras-sin-pintura/rosario,9.5,competencia floja - artesanos sin SEO
+P0,taller siniestros rosario,transaccional,180,baja,baja,/siniestros/rosario,9.0,hueco grande
+P0,reparacion siniestros rosario,transaccional,140,baja,baja,/siniestros/rosario,8.8,variante
+P0,taller habilitado la caja rosario,transaccional,80,muy baja,ninguna,/aseguradoras/la-caja/rosario,9.8,CERO competencia con intent taller
+P0,taller habilitado sancor rosario,transaccional,70,muy baja,ninguna,/aseguradoras/sancor-seguros/rosario,9.8,idem
+P0,taller habilitado federacion patronal rosario,transaccional,60,muy baja,ninguna,/aseguradoras/federacion-patronal/rosario,9.8,idem
+P0,taller habilitado allianz rosario,transaccional,40,muy baja,ninguna,/aseguradoras/allianz/rosario,9.7,idem
+P0,taller habilitado zurich rosario,transaccional,30,muy baja,ninguna,/aseguradoras/zurich/rosario,9.5,idem
+P0,taller habilitado san cristobal rosario,transaccional,50,muy baja,ninguna,/aseguradoras/san-cristobal/rosario,9.7,cooperativa fuerte en zona
+P0,taller habilitado mercantil andina rosario,transaccional,25,muy baja,ninguna,/aseguradoras/mercantil-andina/rosario,9.3,
+P0,taller habilitado provincia seguros rosario,transaccional,20,muy baja,ninguna,/aseguradoras/provincia-seguros/rosario,9.0,
+P0,reparar siniestro la caja rosario,transaccional,40,muy baja,ninguna,/siniestros/aseguradoras/la-caja,9.5,combo siniestro x aseguradora
+P0,reparar siniestro sancor rosario,transaccional,35,muy baja,ninguna,/siniestros/aseguradoras/sancor-seguros,9.5,
+P0,siniestro federacion patronal rosario,transaccional,30,muy baja,ninguna,/siniestros/aseguradoras/federacion-patronal,9.3,
+P0,reparacion granizo rosario,transaccional,90,baja,baja,/granizo/rosario,9.0,ESTACIONAL spike oct-mar
+P0,arreglo granizo auto rosario,transaccional,70,baja,baja,/granizo/rosario,8.8,
+P0,sacabollos granizo rosario,transaccional,50,baja,baja,/granizo/rosario,8.7,sub-keyword
+P1,pintura automotor rosario,transaccional,180,media,media,/pintura-automotor/rosario,8.0,competencia mediana
+P1,pintar auto rosario,transaccional,140,media,media,/pintura-automotor/rosario,7.8,
+P1,repintar auto rosario,transaccional,90,media,media,/pintura-automotor/rosario,7.5,
+P1,enderezado carroceria rosario,transaccional,60,baja,baja,/enderezado-carroceria/rosario,8.5,
+P1,bancada enderezado rosario,transaccional,30,muy baja,ninguna,/enderezado-carroceria/rosario,8.8,muy especifica - alta conversion
+P1,taller carroceria rosario,transaccional,120,media,media,/chapa-y-pintura/rosario,7.5,sinonimo head
+P1,chapista rosario,transaccional,200,media,media,/chapa-y-pintura/rosario,7.8,sinonimo
+P1,abolladuras sin pintura rosario,transaccional,40,baja,baja,/abolladuras-sin-pintura/rosario,8.7,tecnica PDR
+P1,pdr rosario,transaccional,30,baja,baja,/abolladuras-sin-pintura/rosario,8.5,
+P1,sacar bollos auto rosario,transaccional,70,baja,baja,/abolladuras-sin-pintura/rosario,8.0,coloquial
+P1,presupuesto chapa y pintura rosario,transaccional,90,baja,baja,/chapa-y-pintura/rosario,8.5,intent comercial puro
+P1,presupuesto siniestro auto rosario,transaccional,60,baja,baja,/siniestros/rosario,8.3,
+P1,peritaje siniestro rosario,transaccional,80,baja,baja,/peritaje-aseguradora,8.0,
+P1,gestion siniestro aseguradora rosario,transaccional,40,muy baja,ninguna,/peritaje-aseguradora,8.5,
+P1,chapa y pintura funes,transaccional,80,baja,baja,/chapa-y-pintura/funes,8.5,zona alta valor
+P1,taller chapa y pintura funes,transaccional,60,baja,baja,/chapa-y-pintura/funes,8.3,
+P1,sacabollos funes,transaccional,30,muy baja,ninguna,/abolladuras-sin-pintura/funes,8.7,
+P1,chapa y pintura roldan,transaccional,40,baja,baja,/chapa-y-pintura/roldan,8.0,
+P1,chapa y pintura granadero baigorria,transaccional,30,baja,ninguna,/chapa-y-pintura/granadero-baigorria,8.5,
+P1,chapa y pintura villa gobernador galvez,transaccional,40,baja,baja,/chapa-y-pintura/villa-gobernador-galvez,8.3,
+P1,chapa y pintura perez santa fe,transaccional,30,baja,ninguna,/chapa-y-pintura/perez,8.0,
+P1,chapa y pintura fisherton,transaccional,40,baja,baja,/chapa-y-pintura/rosario-norte,8.5,subzona alta gama
+P1,sacabollos zona norte rosario,transaccional,40,baja,baja,/abolladuras-sin-pintura/rosario-norte,8.2,
+P2,que hacer despues siniestro auto,informacional,2400,media,alta,/blog/que-hacer-tras-un-siniestro,7.0,top of funnel - alto volumen
+P2,como denunciar siniestro auto,informacional,1800,media,alta,/blog/como-denunciar-siniestro,6.8,
+P2,puede aseguradora obligar taller,informacional,260,baja,baja,/recursos/elegir-taller-aseguradora,8.5,DATO CLAVE: no puede
+P2,cuanto tarda peritaje auto,informacional,520,baja,media,/blog/tiempos-peritaje,7.5,
+P2,cuanto cuesta pintar auto completo,informacional,1800,media,alta,/pintura-automotor,6.5,head info
+P2,cuanto sale chapa y pintura argentina,informacional,400,baja,media,/blog/precios-chapa-pintura,7.2,
+P2,seguro cubre granizo auto,informacional,720,baja,media,/blog/granizo-seguro,7.8,muy estacional
+P2,como reclamar granizo seguro,informacional,260,baja,baja,/blog/reclamar-granizo,8.0,
+P2,reparacion sin pintura como funciona,informacional,160,baja,baja,/abolladuras-sin-pintura,7.5,educa sobre PDR
+P2,franquicia seguro auto que es,informacional,1200,media,alta,/blog/franquicia-seguro,6.2,top funnel - mucho competidor
+P2,denuncia tercero siniestro auto,informacional,180,baja,baja,/blog/denunciar-como-tercero,7.5,intent muy especifico
+P2,cleas seguros que es,informacional,400,baja,media,/blog/cleas-explicado,7.0,sistema entre aseguradoras
+P2,tiempo reparacion chapa y pintura,informacional,120,baja,baja,/blog/tiempos-reparacion,7.5,
+P2,garantia trabajo chapa pintura,informacional,60,baja,baja,/blog/garantia-reparacion,7.8,trust signal
+P2,chapa y pintura victoria entre rios,transaccional,30,baja,ninguna,/chapa-y-pintura/victoria-entre-rios,8.0,nicho regional
+P2,chapa y pintura arroyo seco,transaccional,20,muy baja,ninguna,/chapa-y-pintura/arroyo-seco,7.5,fase 2
+P2,chapa y pintura san nicolas,transaccional,60,baja,baja,/chapa-y-pintura/san-nicolas,7.0,competencia local fuerte

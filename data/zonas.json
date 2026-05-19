@@ -1,0 +1,199 @@
+{
+  "meta": {
+    "actualizado": "2026-05-19",
+    "descripcion": "Zonas geográficas operadas. tier 1 = páginas indexables. tier 2 = expansión futura (no crear páginas todavía o usar canonical hacia tier 1)."
+  },
+  "zonas": [
+    {
+      "id": "rosario",
+      "slug": "rosario",
+      "nombre": "Rosario",
+      "nombre_h1_sufijo": "en Rosario",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 0,
+      "geo": { "lat": -32.9468, "lng": -60.6393 },
+      "poblacion": 1305000,
+      "datos_locales": {
+        "vias_principales": ["Av. Pellegrini", "Av. Circunvalación", "AU Rosario-Buenos Aires", "RN 9", "Av. 27 de Febrero"],
+        "tipo_trafico": "alto, mix urbano y de paso",
+        "siniestralidad_relativa": "alta"
+      }
+    },
+    {
+      "id": "rosario-centro",
+      "slug": "rosario-centro",
+      "nombre": "Rosario Centro",
+      "nombre_h1_sufijo": "en Rosario Centro",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "subzona",
+      "es_subzona_de": "rosario",
+      "barrios": ["Microcentro", "Centro", "Pichincha"],
+      "datos_locales": {
+        "tipo_trafico": "denso, comercial",
+        "siniestros_predominantes": ["choques urbanos baja velocidad", "rayones por estacionamiento"]
+      }
+    },
+    {
+      "id": "rosario-norte",
+      "slug": "rosario-norte",
+      "nombre": "Rosario Norte",
+      "nombre_h1_sufijo": "en Rosario Norte",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "subzona",
+      "es_subzona_de": "rosario",
+      "barrios": ["Fisherton", "Echesortu", "Alberdi", "Arroyito"],
+      "datos_locales": {
+        "tipo_trafico": "residencial alto-medio",
+        "siniestros_predominantes": ["granizo", "vandalismo", "choques sobre Av. Eva Perón"]
+      }
+    },
+    {
+      "id": "rosario-sur",
+      "slug": "rosario-sur",
+      "nombre": "Rosario Sur",
+      "nombre_h1_sufijo": "en Rosario Sur",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "subzona",
+      "es_subzona_de": "rosario",
+      "barrios": ["Saladillo", "Tablada", "Las Heras", "República de la Sexta"],
+      "datos_locales": {
+        "tipo_trafico": "tráfico pesado, comercial y portuario",
+        "siniestros_predominantes": ["choques con utilitarios", "siniestros sobre Av. San Martín"]
+      }
+    },
+    {
+      "id": "rosario-oeste",
+      "slug": "rosario-oeste",
+      "nombre": "Rosario Oeste",
+      "nombre_h1_sufijo": "en Rosario Oeste",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "subzona",
+      "es_subzona_de": "rosario",
+      "barrios": ["Empalme Graneros", "Belgrano", "Hospitales"],
+      "datos_locales": {
+        "tipo_trafico": "mixto industrial-residencial",
+        "siniestros_predominantes": ["choques en cruces de Circunvalación", "siniestros con camionetas"]
+      }
+    },
+    {
+      "id": "funes",
+      "slug": "funes",
+      "nombre": "Funes",
+      "nombre_h1_sufijo": "en Funes",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 15,
+      "geo": { "lat": -32.9171, "lng": -60.8056 },
+      "poblacion": 23500,
+      "datos_locales": {
+        "vias_principales": ["RN 9", "Av. de los Inmigrantes"],
+        "tipo_trafico": "residencial countries",
+        "siniestralidad_relativa": "media"
+      }
+    },
+    {
+      "id": "roldan",
+      "slug": "roldan",
+      "nombre": "Roldán",
+      "nombre_h1_sufijo": "en Roldán",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 22,
+      "geo": { "lat": -32.8985, "lng": -60.9020 },
+      "poblacion": 18700
+    },
+    {
+      "id": "granadero-baigorria",
+      "slug": "granadero-baigorria",
+      "nombre": "Granadero Baigorria",
+      "nombre_h1_sufijo": "en Granadero Baigorria",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 10,
+      "geo": { "lat": -32.8606, "lng": -60.7152 },
+      "poblacion": 37500
+    },
+    {
+      "id": "villa-gobernador-galvez",
+      "slug": "villa-gobernador-galvez",
+      "nombre": "Villa Gobernador Gálvez",
+      "nombre_h1_sufijo": "en Villa Gobernador Gálvez",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 8,
+      "geo": { "lat": -33.0297, "lng": -60.6357 },
+      "poblacion": 80800
+    },
+    {
+      "id": "perez",
+      "slug": "perez",
+      "nombre": "Pérez",
+      "nombre_h1_sufijo": "en Pérez",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 18,
+      "geo": { "lat": -32.9990, "lng": -60.7770 },
+      "poblacion": 27300
+    },
+    {
+      "id": "soldini",
+      "slug": "soldini",
+      "nombre": "Soldini",
+      "nombre_h1_sufijo": "en Soldini",
+      "tier": 2,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 17,
+      "geo": { "lat": -33.0086, "lng": -60.7456 },
+      "poblacion": 4200
+    },
+    {
+      "id": "victoria",
+      "slug": "victoria-entre-rios",
+      "nombre": "Victoria",
+      "nombre_h1_sufijo": "en Victoria, Entre Ríos",
+      "tier": 2,
+      "provincia": "Entre Ríos",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 60,
+      "geo": { "lat": -32.6189, "lng": -60.1556 },
+      "poblacion": 38200,
+      "datos_locales": {
+        "via_principal": "Túnel Subfluvial Uranga-Sylvestre Begnis",
+        "nota_seo": "framing: vamos a buscar el auto / cliente cruza el túnel"
+      }
+    },
+    {
+      "id": "arroyo-seco",
+      "slug": "arroyo-seco",
+      "nombre": "Arroyo Seco",
+      "nombre_h1_sufijo": "en Arroyo Seco",
+      "tier": 2,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 28,
+      "geo": { "lat": -33.1556, "lng": -60.5089 },
+      "poblacion": 27500
+    }
+  ]
+}
