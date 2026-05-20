@@ -73,7 +73,7 @@ export const metadata = {
     ],
     shortcut: "/favicon.ico",
   },
-  manifest: "/manifest.json",
+  // manifest removed — was triggering "install app" prompt on mobile
   other: {
     "msapplication-TileColor": "#1a1a2e",
     "theme-color": "#ffffff",
