@@ -124,15 +124,15 @@ export default function SiteFooter() {
             <address className="not-italic space-y-3 text-sm text-white/70">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-dc-blue" />
-                <span>Rosario, Santa Fe, Argentina</span>
+                <span>9 de julio 4231, Rosario, Santa Fe</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-dc-blue" />
                 <a
-                  href="tel:+34673782934"
+                  href="tel:+543412697000"
                   className="hover:text-white transition-colors"
                 >
-                  +34 673 782 934
+                  341 269-7000
                 </a>
               </div>
               <div className="flex items-center gap-2">
@@ -146,7 +146,7 @@ export default function SiteFooter() {
         <div className="border-t border-white/10 pt-6 text-center text-white/40 text-sm space-y-1">
           <p>
             &copy; {new Date().getFullYear()} DoctorCar. Todos los derechos
-            reservados. Rosario, Santa Fe, Argentina.
+            reservados. 9 de julio 4231, Rosario, Santa Fe.
           </p>
           <p>
             Potenciado por{" "}

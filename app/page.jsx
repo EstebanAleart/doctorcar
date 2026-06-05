@@ -43,7 +43,7 @@ export default function LandingPage() {
               Acceder al Portal
             </Link>
             <Link
-              href="https://wa.me/34673782934?text=Hola,%20quiero%20un%20presupuesto"
+              href="https://wa.me/543412697000?text=Hola,%20me%20contacto%20desde%20la%20pagina%20principal"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-dc-green text-white text-sm font-semibold px-4 py-2 rounded-md shadow-md hover:brightness-110 transition cursor-pointer"
@@ -72,7 +72,7 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <Link
-                href="https://wa.me/34673782934?text=Hola,%20quiero%20un%20presupuesto"
+                href="https://wa.me/543412697000?text=Hola,%20me%20contacto%20desde%20la%20pagina%20principal.%20Quiero%20un%20presupuesto"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-dc-green text-white text-lg font-semibold px-8 h-12 rounded-md shadow-md hover:brightness-110 transition cursor-pointer"
@@ -402,7 +402,7 @@ export default function LandingPage() {
                 ))}
               </div>
               <Link
-                href="https://wa.me/34673782934?text=Hola,%20quiero%20saber%20si%20llegan%20a%20mi%20zona"
+                href="https://wa.me/543412697000?text=Hola,%20me%20contacto%20desde%20la%20pagina%20principal.%20Quiero%20saber%20si%20llegan%20a%20mi%20zona"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-dc-navy text-white font-semibold px-6 py-3 rounded-md shadow-md hover:bg-dc-blue transition cursor-pointer"
@@ -438,7 +438,7 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="https://wa.me/34673782934?text=Hola,%20quiero%20un%20presupuesto"
+              href="https://wa.me/543412697000?text=Hola,%20me%20contacto%20desde%20la%20pagina%20principal.%20Quiero%20un%20presupuesto"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 bg-dc-green text-white text-lg font-semibold px-8 h-12 rounded-lg shadow-lg hover:brightness-110 transition cursor-pointer"
@@ -529,12 +529,12 @@ export default function LandingPage() {
               <address className="not-italic space-y-3 text-white/70">
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-dc-blue" />
-                  <span>Rosario, Santa Fe, Argentina</span>
+                  <span>9 de julio 4231, Rosario, Santa Fe</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Phone className="w-4 h-4 text-dc-blue" />
-                  <a href="tel:+34673782934" className="hover:text-white transition-colors">
-                    +34 673 782 934
+                  <a href="tel:+543412697000" className="hover:text-white transition-colors">
+                    341 269-7000
                   </a>
                 </div>
                 <div className="flex items-center gap-2">
@@ -576,7 +576,7 @@ export default function LandingPage() {
             "image": "https://doctorcar.com.ar/og-image.jpg",
             "address": {
               "@type": "PostalAddress",
-              "streetAddress": "Rosario",
+              "streetAddress": "9 de julio 4231",
               "addressLocality": "Rosario",
               "addressRegion": "Santa Fe",
               "postalCode": "2000",
@@ -588,7 +588,7 @@ export default function LandingPage() {
               "longitude": -60.63932
             },
             "url": "https://doctorcar.com.ar",
-            "telephone": "+34673782934",
+            "telephone": "+543412697000",
             "openingHoursSpecification": [
               {
                 "@type": "OpeningHoursSpecification",
@@ -610,7 +610,7 @@ export default function LandingPage() {
             ],
             "priceRange": "$$",
             "sameAs": [
-              "https://wa.me/34673782934"
+              "https://wa.me/543412697000"
             ]
           })
         }}

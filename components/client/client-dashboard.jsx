@@ -18,7 +18,7 @@ export function ClientDashboard() {
       <div className="container mx-auto p-4 md:p-6">
         <div className="flex justify-end mb-4">
           <a
-            href="https://wa.me/34673782934"
+            href="https://wa.me/543412697000"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded shadow font-semibold text-sm"

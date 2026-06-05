@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { MessageCircle, Menu, X } from "lucide-react";
+
+const PHONE = "543412697000";
 
 const NAV_LINKS = [
   { href: "/chapa-y-pintura/rosario", label: "Servicios" },
@@ -12,8 +15,16 @@ const NAV_LINKS = [
   { href: "https://miseguro.com.ar", label: "Cotizar Seguro", external: true },
 ];
 
+function pageName(pathname) {
+  if (!pathname || pathname === "/") return "la pagina principal";
+  return pathname.replace(/^\/|\/$/g, "").replace(/\//g, " > ");
+}
+
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const waText = `Hola, me contacto desde ${pageName(pathname)}`;
+  const waUrl = `https://wa.me/${PHONE}?text=${encodeURIComponent(waText)}`;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-dc-blue/20 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
@@ -64,7 +75,7 @@ export default function SiteHeader() {
             Portal
           </Link>
           <Link
-            href="https://wa.me/34673782934?text=Hola,%20quiero%20un%20presupuesto"
+            href={waUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="hidden sm:inline-flex items-center gap-2 bg-dc-green text-white text-sm font-semibold px-4 py-2 rounded-lg hover:brightness-110 transition shadow-sm"
@@ -120,7 +131,7 @@ export default function SiteHeader() {
             Portal de Clientes
           </Link>
           <Link
-            href="https://wa.me/34673782934?text=Hola,%20quiero%20un%20presupuesto"
+            href={waUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-dc-green text-white font-semibold px-4 py-2 rounded-lg mt-2"

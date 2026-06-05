@@ -80,7 +80,7 @@ export default async function AseguradoraCiudadPage({ params }) {
       <CtaBox
         titulo={`Siniestro con ${aseg.nombre} ${zona.nombre_h1_sufijo}`}
         subtitulo="Envia numero de denuncia y fotos por WhatsApp."
-        whatsappText={`Siniestro ${aseg.nombre} en ${zona.nombre}`}
+        whatsappText={`Hola, me contacto desde aseguradoras/${aseg.slug}/${zona.slug}. Siniestro ${aseg.nombre} en ${zona.nombre}`}
       />
 
       <FaqList faqs={faqs} />
