@@ -271,7 +271,7 @@ export default function PortalHomePage() {
                     asChild
                   >
                     <a 
-                      href="https://wa.me/34673782934?text=Hola,%20quiero%20información%20sobre%20el%20portal"
+                      href="https://wa.me/543412697000?text=Hola,%20quiero%20información%20sobre%20el%20portal"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -421,11 +421,11 @@ export default function PortalHomePage() {
               <ul className="space-y-2">
                 <li className="flex items-center gap-2 text-muted-foreground text-sm">
                   <Phone className="h-4 w-4" />
-                  <span className="text-[#1a4d6d] font-semibold">+34 673 782 934</span>
+                  <span className="text-[#1a4d6d] font-semibold">341 269-7000</span>
                 </li>
                 <li>
                   <a 
-                    href="https://wa.me/34673782934"
+                    href="https://wa.me/543412697000"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-[#1a4d6d] hover:text-[#6cb4d8] text-sm transition-colors font-semibold cursor-pointer"
@@ -450,7 +450,7 @@ export default function PortalHomePage() {
 
       {/* WhatsApp Floating Button */}
       <a
-        href="https://wa.me/34673782934?text=Hola,%20necesito%20información%20sobre%20el%20portal"
+        href="https://wa.me/543412697000?text=Hola,%20necesito%20información%20sobre%20el%20portal"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 h-14 w-14 bg-[#25D366] hover:bg-[#25D366]/90 text-white rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-110 cursor-pointer"

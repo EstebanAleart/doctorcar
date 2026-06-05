@@ -11,8 +11,8 @@ import { RoleRedirect } from "@/components/role-redirect";
 const geist = Geist({ subsets: ["latin"] });
 const geistMono = Geist_Mono({ subsets: ["latin"] });
 
-// TODO: reemplazar con tu GTM Container ID real
-const GTM_ID = "GTM-XXXXXXX";
+// TODO: reemplazar con tu Measurement ID real de GA4
+const GA_ID = "G-GQ5QK4C04E";
 
 export const metadata = {
   metadataBase: new URL("https://www.doctorcar.com.ar"),
@@ -84,25 +84,16 @@ export default function RootLayout({ children }) {
   return (
     <html lang="es-AR" suppressHydrationWarning>
       <head>
-        {/* Google Tag Manager */}
-        <Script id="gtm-head" strategy="afterInteractive">
-          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','${GTM_ID}');`}
+        {/* Google Analytics 4 */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`}
         </Script>
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
-        {/* GTM noscript fallback */}
-        <noscript>
-          <iframe
-            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-          />
-        </noscript>
         <SessionProviderWrapper>
           <ReduxProvider>
             <AuthInitializer />

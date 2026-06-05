@@ -88,7 +88,7 @@ export default async function ServicioCiudadPage({ params }) {
       <CtaBox
         titulo={`${servicio.nombre} ${zona.nombre_h1_sufijo} — presupuesto sin cargo`}
         subtitulo="Respondemos en menos de 24 horas."
-        whatsappText={`Hola, quiero presupuesto de ${servicio.nombre} en ${zona.nombre}`}
+        whatsappText={`Hola, me contacto desde ${servicio.slug}/${zona.slug}. Quiero presupuesto de ${servicio.nombre} en ${zona.nombre}`}
       />
 
       {/* Capa 2 — Datos reales */}

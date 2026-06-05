@@ -50,7 +50,7 @@ export default async function ZonaPage({ params }) {
       <CtaBox
         titulo={`Presupuesto sin cargo ${zona.nombre_h1_sufijo}`}
         subtitulo="Envia fotos por WhatsApp y te respondemos en menos de 24 horas."
-        whatsappText={`Hola, necesito presupuesto en ${zona.nombre}`}
+        whatsappText={`Hola, me contacto desde zonas/${zona.slug}. Necesito presupuesto en ${zona.nombre}`}
       />
 
       <section>

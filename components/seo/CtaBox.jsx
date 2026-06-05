@@ -6,7 +6,7 @@ export default function CtaBox({
   subtitulo = "Enviá fotos por WhatsApp y recibí el detalle.",
   whatsappText = "Hola, quiero un presupuesto",
 }) {
-  const waUrl = `https://wa.me/34673782934?text=${encodeURIComponent(whatsappText)}`;
+  const waUrl = `https://wa.me/543412697000?text=${encodeURIComponent(whatsappText)}`;
 
   return (
     <div className="bg-linear-to-r from-dc-navy to-dc-blue rounded-xl p-6 md:p-8 mb-12 flex flex-col md:flex-row gap-4 items-center shadow-md">

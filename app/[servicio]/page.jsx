@@ -71,7 +71,7 @@ export default async function ServicioHubPage({ params }) {
       <CtaBox
         titulo="Presupuesto sin cargo en 24 horas"
         subtitulo="Envia fotos por WhatsApp y recibi el detalle."
-        whatsappText={`Hola, quiero presupuesto de ${servicio.nombre}`}
+        whatsappText={`Hola, me contacto desde ${servicio.slug}. Quiero presupuesto de ${servicio.nombre}`}
       />
 
       {/* Interlinking: servicio en cada ciudad */}

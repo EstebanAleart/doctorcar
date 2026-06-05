@@ -95,7 +95,7 @@ export default async function AseguradoraPage({ params }) {
       <CtaBox
         titulo={`Iniciar gestion con ${aseg.nombre}`}
         subtitulo="Envia numero de denuncia y fotos por WhatsApp."
-        whatsappText={`Hola, tengo siniestro con ${aseg.nombre}`}
+        whatsappText={`Hola, me contacto desde aseguradoras/${aseg.slug}. Tengo siniestro con ${aseg.nombre}`}
       />
 
       <section className="mb-12">

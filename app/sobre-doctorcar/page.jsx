@@ -61,12 +61,11 @@ export default function SobrePage() {
       <section className="mb-8">
         <h2 className="text-2xl font-bold text-dc-navy mb-4">Direccion</h2>
         <address className="not-italic text-dc-navy/80">
-          {/* TODO: completar con direccion real */}
           <strong className="text-dc-navy">DoctorCar</strong>
           <br />
-          [Calle y numero], Rosario, Santa Fe
+          9 de julio 4231, Rosario, Santa Fe
           <br />
-          Tel: +34 673 782 934
+          Tel: 341 269-7000
           <br />
           Email: doctorcar@gmail.com
           <br />

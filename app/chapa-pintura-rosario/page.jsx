@@ -102,10 +102,10 @@ export default function ChapaPinturaRosario() {
     "name": "DoctorCar - Taller de Chapa y Pintura",
     "description": "Taller especializado en chapa y pintura en Rosario. Reparación de siniestros, pintura automotor y gestión con aseguradoras.",
     "url": "https://doctorcar.com.ar/chapa-pintura-rosario",
-    "telephone": "+54 341 555-1234",
+    "telephone": "+543412697000",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Av. Ejemplo 1234",
+      "streetAddress": "9 de julio 4231",
       "addressLocality": "Rosario",
       "addressRegion": "Santa Fe",
       "postalCode": "2000",
@@ -184,7 +184,7 @@ export default function ChapaPinturaRosario() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-white font-semibold shadow-md">
-                <a href="https://wa.me/34673782934?text=Hola,%20quiero%20un%20presupuesto" target="_blank" rel="noopener noreferrer">
+                <a href="https://wa.me/543412697000?text=Hola,%20quiero%20un%20presupuesto" target="_blank" rel="noopener noreferrer">
                   <Phone className="mr-2 h-4 w-4" />
                   Presupuesto por WhatsApp
                 </a>
@@ -388,7 +388,7 @@ export default function ChapaPinturaRosario() {
               </Button>
               <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 bg-transparent">
                 <a 
-                  href="https://wa.me/34673782934?text=Hola%2C%20necesito%20un%20presupuesto%20de%20chapa%20y%20pintura"
+                  href="https://wa.me/543412697000?text=Hola%2C%20necesito%20un%20presupuesto%20de%20chapa%20y%20pintura"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
