@@ -1,0 +1,11 @@
+{
+  "meta": {
+    "descripcion": "Combinaciones aseguradora/zona que se indexan. El resto recibe noindex y se excluye del sitemap.",
+    "criterio": "Solo combos con demanda de busqueda real (marca + rosario)."
+  },
+  "activas": [
+    "federacion-patronal/rosario",
+    "san-cristobal/rosario",
+    "provincia-seguros/rosario"
+  ]
+}

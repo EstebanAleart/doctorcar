@@ -15,6 +15,13 @@ import {
 } from "@/lib/seo";
 import { schemaServiceAseguradora, schemaFaq } from "@/lib/schema";
 import { makeAseguradoraCiudadMetadata } from "@/lib/metadata";
+import activas from "@/data/aseguradoras-zonas-activas.json";
+
+const activasSet = new Set(activas.activas);
+
+function esActiva(asegSlug, ciudadSlug) {
+  return activasSet.has(`${asegSlug}/${ciudadSlug}`);
+}
 
 export function generateStaticParams() {
   const aseguradoras = getAseguradoras();
@@ -30,7 +37,11 @@ export const dynamicParams = false;
 
 export async function generateMetadata({ params }) {
   const { aseguradora, ciudad } = await params;
-  return makeAseguradoraCiudadMetadata(aseguradora, ciudad);
+  const meta = makeAseguradoraCiudadMetadata(aseguradora, ciudad);
+  if (!esActiva(aseguradora, ciudad)) {
+    meta.robots = { index: false, follow: true };
+  }
+  return meta;
 }
 
 export default async function AseguradoraCiudadPage({ params }) {
