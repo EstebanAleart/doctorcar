@@ -98,7 +98,7 @@ const zonas = [
 export default function ChapaPinturaRosario() {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "AutoBodyShop",
+    "@type": "AutoRepair",
     "name": "DoctorCar - Taller de Chapa y Pintura",
     "description": "Taller especializado en chapa y pintura en Rosario. Reparación de siniestros, pintura automotor y gestión con aseguradoras.",
     "url": "https://doctorcar.com.ar/chapa-pintura-rosario",

@@ -1,6 +1,8 @@
 import { getServicios, getZonas, getAseguradoras } from "@/lib/seo";
+import activas from "@/data/aseguradoras-zonas-activas.json";
 
 const SITE_URL = "https://www.doctorcar.com.ar";
+const activasSet = new Set(activas.activas);
 
 export default function sitemap() {
   const now = new Date().toISOString();
@@ -35,10 +37,12 @@ export default function sitemap() {
   }));
 
   const aseguradoraCiudad = aseguradoras.flatMap((a) =>
-    ciudadesHub.map((z) => ({
-      url: `${SITE_URL}/aseguradoras/${a.slug}/${z.slug}`,
-      priority: 0.7,
-    }))
+    ciudadesHub
+      .filter((z) => activasSet.has(`${a.slug}/${z.slug}`))
+      .map((z) => ({
+        url: `${SITE_URL}/aseguradoras/${a.slug}/${z.slug}`,
+        priority: 0.7,
+      }))
   );
 
   const zonasHub = ciudadesHub.map((z) => ({

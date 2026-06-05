@@ -570,7 +570,7 @@ export default function LandingPage() {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "AutoBodyShop",
+            "@type": "AutoRepair",
             "name": "DoctorCar - Taller de Chapa y Pintura",
             "description": "Taller de chapa y pintura en Rosario especializado en reparacion de siniestros, pintura automotor y gestion con aseguradoras.",
             "image": "https://doctorcar.com.ar/og-image.jpg",

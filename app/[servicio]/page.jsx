@@ -12,7 +12,12 @@ import {
   getSeoServicio,
   getAseguradoras,
 } from "@/lib/seo";
-import { schemaService, schemaFaq } from "@/lib/schema";
+import {
+  schemaService,
+  schemaFaq,
+  schemaBreadcrumb,
+  schemaItemList,
+} from "@/lib/schema";
 import { makeServicioMetadata } from "@/lib/metadata";
 
 /* ===================== Static params ===================== */
@@ -43,25 +48,48 @@ export default async function ServicioHubPage({ params }) {
 
   const faqs = seo?.faqs || [];
 
+  const breadcrumbItems = [
+    { name: "Inicio", url: "/" },
+    { name: servicio.nombre },
+  ];
+
+  const itemListItems = ciudadesHub.map((z) => ({
+    name: `${servicio.nombre} ${z.nombre_h1_sufijo}`,
+    url: `/${servicio.slug}/${z.slug}`,
+  }));
+
   return (
     <SeoPageLayout>
-      <JsonLd data={[schemaService(servicio.slug), schemaFaq(faqs)]} />
+      <JsonLd
+        data={[
+          schemaService(servicio.slug),
+          schemaFaq(faqs),
+          schemaBreadcrumb(breadcrumbItems),
+          schemaItemList(itemListItems),
+        ]}
+      />
 
       <Breadcrumb
         items={[{ name: "Inicio", url: "/" }, { name: servicio.nombre }]}
       />
 
       <h1 className="text-3xl md:text-4xl font-bold text-dc-navy mb-4">
-        {servicio.nombre_h1} en Rosario y Zona
+        {servicio.nombre_h1}
       </h1>
 
-      {seo?.parrafo && (
+      {seo?.hubParrafo && (
+        <p className="text-lg text-dc-navy/80 leading-relaxed mb-8">
+          {seo.hubParrafo}
+        </p>
+      )}
+
+      {!seo?.hubParrafo && seo?.parrafo && (
         <p className="text-lg text-dc-navy/80 leading-relaxed mb-8">
           {seo.parrafo}
         </p>
       )}
 
-      {!seo?.parrafo && (
+      {!seo?.hubParrafo && !seo?.parrafo && (
         <p className="text-lg text-dc-navy/80 leading-relaxed mb-8">
           {servicio.descripcion_corta} En DoctorCar trabajamos con todas las
           aseguradoras del pais y damos presupuesto en menos de 24 horas.

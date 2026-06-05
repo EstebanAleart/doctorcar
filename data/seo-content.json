@@ -1,10 +1,285 @@
 {
   "meta": {
-    "actualizado": "2026-05-19",
-    "descripcion": "Contenido generado por LLM por dimensión. NO editar a mano. Lo genera scripts/generate-seo-content.mjs.",
-    "patron_composicion": "N (servicios) + M (zonas) + K (aseguradoras) llamadas LLM → N×M + N×K + M×K páginas únicas"
+    "actualizado": "2026-06-05",
+    "descripcion": "Contenido seed por dimension (servicio + zona). Compuesto en build para generar paginas unicas.",
+    "patron_composicion": "N (servicios) + M (zonas) → N×M paginas unicas"
   },
-  "servicios": {},
-  "zonas": {},
+  "servicios": {
+    "chapa-y-pintura": {
+      "nombre": "Chapa y pintura",
+      "hubParrafo": "La reparacion de chapa y pintura combina dos trabajos: enderezar o reemplazar el panel danado y repintarlo hasta igualar el color original del vehiculo. El proceso pasa por batido del metal, masillado, lijado, aplicacion de fondo, color y barniz, y secado en cabina a temperatura controlada. El punto critico es el matizado del color: una reparacion bien hecha no deja diferencia de tono entre el panel reparado y los contiguos. Aca explicamos como trabajamos cada etapa y en que zonas del Gran Rosario damos el servicio.",
+      "parrafo": "Reparamos chapa y pintura conservando el color de fabrica mediante matizado computarizado. Coordinamos la gestion con tu aseguradora si el dano entra por siniestro.",
+      "faqs": [
+        {
+          "q": "Cuanto tarda una reparacion de chapa y pintura?",
+          "a": "Depende de la cantidad de paneles y de si hay que pedir repuestos. Te damos un plazo cerrado al aprobar el presupuesto, incluyendo el secado en cabina."
+        },
+        {
+          "q": "La pintura nueva va a coincidir con el color de mi auto?",
+          "a": "Si. Usamos el codigo de color de fabrica de tu vehiculo como base y ajustamos el matiz contra los paneles contiguos antes de pintar, asi no queda diferencia de tono."
+        },
+        {
+          "q": "Tengo que pintar todo el lateral o se puede solo el panel danado?",
+          "a": "Se puede pintar por panel con tecnica de difuminado en los bordes para que la union sea invisible. Pintar de mas solo encarece el trabajo sin mejorar el resultado."
+        }
+      ]
+    },
+    "siniestros": {
+      "nombre": "Siniestros",
+      "hubParrafo": "Gestionar un siniestro implica coordinar tres partes: el titular, el taller y la aseguradora. El servicio cubre desde la denuncia y la inspeccion del perito hasta la autorizacion del presupuesto y la entrega del vehiculo reparado. El cuello de botella suele ser la aprobacion del presupuesto por parte de la compania; un taller que presenta el detalle de danos con fotos y nomenclador estandar acelera esa autorizacion.",
+      "parrafo": "Gestionamos el siniestro de punta a punta: armamos el presupuesto en el formato que espera tu compania, coordinamos la peritacion y te avisamos en cada etapa. Trabajamos con 8 aseguradoras.",
+      "faqs": [
+        {
+          "q": "Que necesito para iniciar la reparacion por siniestro?",
+          "a": "La denuncia hecha, el numero de siniestro y los datos de la poliza. Con eso coordinamos la inspeccion del perito y, una vez autorizado el presupuesto, arrancamos la reparacion."
+        },
+        {
+          "q": "Tengo que pagar algo si la reparacion la cubre el seguro?",
+          "a": "Solo la franquicia o deducible si tu poliza la tiene. El resto lo abona la aseguradora directamente al taller segun la orden de reparacion."
+        },
+        {
+          "q": "Puedo elegir el taller o me lo impone la aseguradora?",
+          "a": "En la mayoria de las polizas el asegurado puede elegir el taller. Conviene confirmarlo en tu cobertura, pero no estas obligado a usar el que sugiere la compania."
+        }
+      ]
+    },
+    "granizo": {
+      "nombre": "Granizo",
+      "hubParrafo": "El granizo deja decenas o cientos de abolladuras chicas sobre techo, capo y baul, en general sin romper la pintura. Cuando la pintura esta intacta, la tecnica indicada es el desabollado sin pintura (PDR): se retira cada abolladura desde el reverso del panel, sin masillar ni repintar, conservando la pintura original de fabrica. Es mas rapido, mas economico y mejor para el valor de reventa que el chapa-y-pintura tradicional. Santa Fe tiene eventos de granizo recurrentes, sobre todo en primavera y verano.",
+      "parrafo": "Reparamos dano de granizo con PDR cuando la pintura esta sana, conservando la terminacion de fabrica. Si hay paneles con pintura rota, combinamos PDR con chapa y pintura puntual. Coordinamos la cobertura con tu aseguradora.",
+      "faqs": [
+        {
+          "q": "El granizo se repara sin pintar?",
+          "a": "Si, siempre que la pintura no se haya fisurado. Con PDR sacamos cada abolladura desde adentro del panel y el auto queda con su pintura original."
+        },
+        {
+          "q": "El seguro cubre el dano por granizo?",
+          "a": "Los danos por granizo entran en las coberturas contra todo riesgo y en algunas intermedias. Revisa tu poliza; si esta cubierto, gestionamos la reparacion con la compania."
+        },
+        {
+          "q": "Cuanto tarda reparar un auto con dano de granizo?",
+          "a": "Depende de la cantidad de impactos. Un techo con dano moderado por PDR suele resolverse en pocos dias; te damos el plazo exacto tras inspeccionar el vehiculo."
+        }
+      ]
+    },
+    "abolladuras-sin-pintura": {
+      "nombre": "Abolladuras sin pintura",
+      "hubParrafo": "El desabollado sin pintura (Paintless Dent Repair, PDR) devuelve la forma original al panel trabajando el metal desde atras con varillas y palancas, sin masillar ni repintar. Se aplica cuando la pintura no esta fisurada: golpes de estacionamiento, abolladuras de granizo, marcas de puertas. Al conservar la pintura original mantiene la garantia anticorrosion de fabrica y el valor del vehiculo. No todos los danos son aptos: bordes filosos, pintura cuarteada o zonas con refuerzos internos pueden requerir chapa y pintura.",
+      "parrafo": "Aplicamos PDR en abolladuras con la pintura sana, sin masilla ni repintado. Evaluamos sin cargo si tu golpe es apto para esta tecnica; si no lo es, te lo decimos y proponemos la alternativa.",
+      "faqs": [
+        {
+          "q": "Cualquier abolladura se puede sacar sin pintar?",
+          "a": "No. El requisito es que la pintura este intacta. Si esta fisurada o cuarteada, hay que recurrir a chapa y pintura. Lo confirmamos al ver el dano."
+        },
+        {
+          "q": "Queda alguna marca despues del PDR?",
+          "a": "Bien ejecutado, no. El panel recupera su forma y conserva la pintura original, asi que no hay diferencia visible ni de tono."
+        },
+        {
+          "q": "Es mas barato que chapa y pintura?",
+          "a": "Si. Al no usar masilla, pintura ni cabina, el costo y el tiempo bajan respecto de una reparacion tradicional."
+        }
+      ]
+    },
+    "enderezado-carroceria": {
+      "nombre": "Enderezado de carroceria",
+      "hubParrafo": "El enderezado de carroceria corrige deformaciones estructurales del chasis o el monocasco tras un choque, devolviendo las cotas de fabrica. Se hace sobre bancada con un sistema de medicion que compara los puntos de control del vehiculo contra las especificaciones del fabricante. Un chasis fuera de cota afecta la geometria de direccion, el desgaste de cubiertas y, sobre todo, la seguridad ante un nuevo impacto. Por eso un enderezado correcto se verifica con medicion, no a ojo.",
+      "parrafo": "Enderezamos sobre bancada con medicion de cotas para devolver la estructura a las especificaciones de fabrica. Verificamos el resultado con el sistema de medicion antes de entregar el vehiculo.",
+      "faqs": [
+        {
+          "q": "Como se si mi auto tiene el chasis danado?",
+          "a": "Sintomas tipicos: el auto tira hacia un lado, las cubiertas se desgastan de forma despareja o las puertas dejaron de cerrar bien. Una medicion sobre bancada lo confirma."
+        },
+        {
+          "q": "Se puede reparar un chasis o hay que reemplazarlo?",
+          "a": "La mayoria se endereza sobre bancada recuperando las cotas. El reemplazo de secciones solo se justifica en danos severos, y siempre con medicion."
+        },
+        {
+          "q": "El enderezado afecta la seguridad del auto?",
+          "a": "Al contrario: un enderezado a cota restaura la capacidad de la carroceria de absorber un impacto. El problema es dejar un chasis torcido, no corregirlo."
+        }
+      ]
+    },
+    "pintura-automotor": {
+      "nombre": "Pintura automotor",
+      "hubParrafo": "La pintura automotor va desde el repintado de un panel hasta el cambio de color completo del vehiculo. El resultado depende de tres factores: la preparacion de la superficie (lijado y fondo), la calidad de la pintura y el control de la cabina (temperatura, humedad y ausencia de polvo). El repintado parcial exige matizado para igualar el tono con los paneles vecinos; el repintado total permite cambiar de color, pero si cambia el color registrado hay que actualizar la documentacion del vehiculo.",
+      "parrafo": "Pintamos en cabina con control de temperatura y matizado de color. Hacemos repintado de paneles, sectores o vehiculo completo, con barniz de terminacion para durabilidad y brillo.",
+      "faqs": [
+        {
+          "q": "Puedo cambiar el color de mi auto?",
+          "a": "Si. Si cambias el color registrado en el titulo, hay que declararlo en el Registro Automotor. Te orientamos sobre el tramite cuando hacemos un cambio de color."
+        },
+        {
+          "q": "Cuanto dura una buena pintura automotor?",
+          "a": "Con barniz de calidad, aplicacion en cabina y mantenimiento basico, la terminacion se mantiene por anios sin perder brillo ni descascararse."
+        },
+        {
+          "q": "Por que pintar en cabina y no al aire libre?",
+          "a": "La cabina controla el polvo y el secado a temperatura, que son las dos causas mas comunes de imperfecciones en la pintura. Al aire libre el resultado es impredecible."
+        }
+      ]
+    },
+    "peritaje-aseguradora": {
+      "nombre": "Peritaje de aseguradora",
+      "hubParrafo": "El peritaje es la inspeccion que hace la aseguradora para determinar el alcance de los danos y el monto a cubrir tras un siniestro. El perito evalua que se repara y que se reemplaza, y emite la orden de reparacion. Que la peritacion sea agil depende mucho de como se presenta el dano: fotos claras de cada parte, detalle de mano de obra y repuestos con nomenclador estandar, y plazos realistas. Un taller que arma el presupuesto en el formato que la compania espera reduce las idas y vueltas.",
+      "parrafo": "Preparamos el presupuesto para la peritacion con fotos detalladas y nomenclador estandar, lo que agiliza la autorizacion de tu compania. Coordinamos la inspeccion del perito y te mantenemos al tanto del estado.",
+      "faqs": [
+        {
+          "q": "Que hace el perito de la aseguradora?",
+          "a": "Inspecciona el vehiculo, valua los danos, define que se repara y que se reemplaza, y emite la orden de reparacion que autoriza el trabajo."
+        },
+        {
+          "q": "Puedo reparar antes de que pase el perito?",
+          "a": "No, salvo autorizacion expresa. Si reparas antes de la peritacion, podes perder la cobertura de ese dano. Espera la inspeccion."
+        },
+        {
+          "q": "Que pasa si no estoy de acuerdo con el peritaje?",
+          "a": "Podes pedir una re-peritacion y aportar un presupuesto propio detallado. Te ayudamos a documentar los danos para sostener el reclamo."
+        }
+      ]
+    }
+  },
+  "zonas": {
+    "rosario": {
+      "nombre": "Rosario",
+      "parrafo": "Rosario concentra el mayor parque automotor de la provincia de Santa Fe, y con eso la mayor cantidad de siniestros, golpes de estacionamiento y danos por granizo. Damos servicio en toda la ciudad y coordinamos retiro y entrega del vehiculo. Desde aca llegas a las paginas de cada zona de Rosario y del Gran Rosario.",
+      "faqs": [
+        {
+          "q": "En que zonas de Rosario trabajan?",
+          "a": "En toda la ciudad: centro, norte, sur y oeste, ademas de las localidades del Gran Rosario. Coordinamos la logistica segun donde estes."
+        },
+        {
+          "q": "Retiran y entregan el auto en Rosario?",
+          "a": "Si, coordinamos retiro y entrega dentro de Rosario para que no tengas que mover el vehiculo danado. Consultanos por tu zona."
+        }
+      ]
+    },
+    "rosario-centro": {
+      "nombre": "Rosario Centro",
+      "parrafo": "En el centro de Rosario el estacionamiento en la via publica es la norma, y con eso aparecen los golpes de puerta, rayones y abolladuras de estacionamiento. Muchos de esos danos se resuelven con desabollado sin pintura, sin tocar la pintura original. Damos servicio en el microcentro y alrededores.",
+      "faqs": [
+        {
+          "q": "Reparan golpes de estacionamiento en el centro?",
+          "a": "Si, es uno de los danos mas comunes en la zona. Si la pintura esta sana, lo resolvemos con PDR; si no, con chapa y pintura puntual."
+        },
+        {
+          "q": "Puedo dejar el auto si trabajo en el centro?",
+          "a": "Coordinamos horarios y, si lo necesitas, retiro del vehiculo para que no pierdas tiempo. Consultanos por tu caso."
+        }
+      ]
+    },
+    "rosario-norte": {
+      "nombre": "Rosario Norte",
+      "parrafo": "La zona norte de Rosario conecta con Granadero Baigorria por las avenidas que bajan a la ribera. Es un sector residencial y comercial con alto uso del auto particular. Damos servicio de chapa, pintura y reparacion de siniestros en toda la zona norte.",
+      "faqs": [
+        {
+          "q": "Trabajan con aseguradoras para vecinos de la zona norte?",
+          "a": "Si, gestionamos el siniestro completo con tu compania. Coordinamos la peritacion y la reparacion sin que tengas que cruzar la ciudad."
+        },
+        {
+          "q": "Hacen reparacion de granizo en zona norte?",
+          "a": "Si. Si la pintura no se rompio, reparamos el dano de granizo con PDR conservando la terminacion de fabrica."
+        }
+      ]
+    },
+    "rosario-sur": {
+      "nombre": "Rosario Sur",
+      "parrafo": "El sur de Rosario es zona de actividad industrial y portuaria, con mucho transito pesado y uso intensivo de vehiculos. Reparamos chapa, pintura y danos de siniestro, y coordinamos con aseguradoras para flotas y particulares de la zona sur, lindera a Villa Gobernador Galvez.",
+      "faqs": [
+        {
+          "q": "Atienden vehiculos de trabajo en la zona sur?",
+          "a": "Si, reparamos tanto autos particulares como vehiculos de uso intensivo. Coordinamos plazos para que el vehiculo vuelva a circular cuanto antes."
+        },
+        {
+          "q": "Cubren la zona lindera a Villa Gobernador Galvez?",
+          "a": "Si, el sur de Rosario y Villa Gobernador Galvez estan dentro de nuestra area de servicio. Consultanos por retiro."
+        }
+      ]
+    },
+    "rosario-oeste": {
+      "nombre": "Rosario Oeste",
+      "parrafo": "El oeste de Rosario, sobre el corredor que conecta con Funes y Roldan, es una de las zonas de mayor crecimiento residencial del Gran Rosario. Damos servicio de chapa y pintura, granizo y siniestros en toda la zona oeste y su conexion con las localidades vecinas.",
+      "faqs": [
+        {
+          "q": "Trabajan en la zona oeste y hacia Funes/Roldan?",
+          "a": "Si, cubrimos el oeste de Rosario y el corredor hacia Funes y Roldan. Coordinamos retiro y entrega segun tu ubicacion."
+        },
+        {
+          "q": "Reparan dano de granizo en la zona oeste?",
+          "a": "Si. Evaluamos si el dano es apto para desabollado sin pintura y, si lo es, conservamos la pintura original del vehiculo."
+        }
+      ]
+    },
+    "funes": {
+      "nombre": "Funes",
+      "parrafo": "Funes es una de las localidades residenciales del oeste del Gran Rosario, sobre el corredor de la autopista a Cordoba. Damos servicio de chapa, pintura y reparacion de siniestros para vecinos de Funes, con coordinacion de retiro y entrega para que no tengas que mover el auto danado hasta Rosario.",
+      "faqs": [
+        {
+          "q": "Retiran el auto en Funes?",
+          "a": "Si, coordinamos retiro y entrega en Funes para que no tengas que trasladar el vehiculo danado. Consultanos por la coordinacion."
+        },
+        {
+          "q": "Gestionan el siniestro con la aseguradora para vecinos de Funes?",
+          "a": "Si, hacemos la gestion completa con tu compania: peritacion, autorizacion y reparacion, sin importar que estes en Funes."
+        }
+      ]
+    },
+    "roldan": {
+      "nombre": "Roldan",
+      "parrafo": "Roldan, contigua a Funes, es una localidad en crecimiento sobre el corredor oeste del Gran Rosario. Atendemos chapa y pintura, granizo y siniestros para vecinos de Roldan, con retiro y entrega coordinados.",
+      "faqs": [
+        {
+          "q": "Dan servicio en Roldan?",
+          "a": "Si, Roldan esta dentro de nuestra area de servicio. Coordinamos retiro del vehiculo y la gestion con tu aseguradora si el dano entra por siniestro."
+        },
+        {
+          "q": "Reparan abolladuras sin pintar en Roldan?",
+          "a": "Si. Si la pintura esta sana, aplicamos desabollado sin pintura. Evaluamos tu caso sin cargo antes de arrancar."
+        }
+      ]
+    },
+    "perez": {
+      "nombre": "Perez",
+      "parrafo": "Perez, al sudoeste del Gran Rosario, es una localidad sobre la ruta con uso intensivo del auto particular para los traslados a Rosario. Reparamos chapa, pintura y siniestros, y coordinamos logistica para vecinos de Perez.",
+      "faqs": [
+        {
+          "q": "Atienden vehiculos de Perez?",
+          "a": "Si, Perez esta dentro de nuestra cobertura. Coordinamos retiro y entrega para que no tengas que llevar el auto danado hasta el taller."
+        },
+        {
+          "q": "Trabajan con seguros para siniestros en Perez?",
+          "a": "Si, gestionamos el siniestro completo con tu aseguradora, desde la peritacion hasta la reparacion final."
+        }
+      ]
+    },
+    "granadero-baigorria": {
+      "nombre": "Granadero Baigorria",
+      "parrafo": "Granadero Baigorria, al norte de Rosario sobre la ribera del Parana y conectada por la Circunvalacion, forma parte del cinturon del Gran Rosario. Damos servicio de chapa y pintura, granizo y siniestros para vecinos de Baigorria, con retiro y entrega coordinados.",
+      "faqs": [
+        {
+          "q": "Cubren Granadero Baigorria?",
+          "a": "Si, Baigorria esta dentro de nuestra area de servicio gracias a la conexion por Circunvalacion. Coordinamos retiro del vehiculo."
+        },
+        {
+          "q": "Hacen gestion de siniestro para vecinos de Baigorria?",
+          "a": "Si, llevamos la gestion con tu aseguradora de punta a punta, sin que tengas que trasladarte a Rosario para cada tramite."
+        }
+      ]
+    },
+    "villa-gobernador-galvez": {
+      "nombre": "Villa Gobernador Galvez",
+      "parrafo": "Villa Gobernador Galvez, al sur de Rosario, integra el cinturon industrial del Gran Rosario. Atendemos chapa, pintura, granizo y siniestros para vehiculos particulares y de trabajo de la zona, con coordinacion de retiro y entrega.",
+      "faqs": [
+        {
+          "q": "Dan servicio en Villa Gobernador Galvez?",
+          "a": "Si, esta dentro de nuestra cobertura por su cercania con el sur de Rosario. Coordinamos retiro y entrega del vehiculo."
+        },
+        {
+          "q": "Reparan vehiculos de trabajo en Villa Gobernador Galvez?",
+          "a": "Si, atendemos tanto autos particulares como vehiculos de uso intensivo, coordinando plazos para minimizar el tiempo fuera de circulacion."
+        }
+      ]
+    }
+  },
   "aseguradoras": {}
 }
