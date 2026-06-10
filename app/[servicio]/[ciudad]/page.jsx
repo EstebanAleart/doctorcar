@@ -34,7 +34,11 @@ export const dynamicParams = false;
 
 export async function generateMetadata({ params }) {
   const { servicio, ciudad } = await params;
-  return makeServicioCiudadMetadata(servicio, ciudad);
+  const meta = makeServicioCiudadMetadata(servicio, ciudad);
+  if (ciudad === "rosario") {
+    meta.robots = { index: false, follow: true };
+  }
+  return meta;
 }
 
 /* ===================== Page ===================== */

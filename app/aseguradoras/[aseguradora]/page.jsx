@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Shield, ArrowRight } from "lucide-react";
 import JsonLd from "@/components/seo/JsonLd";
 import FaqList from "@/components/seo/FaqList";
 import Breadcrumb from "@/components/seo/Breadcrumb";
@@ -97,6 +98,29 @@ export default async function AseguradoraPage({ params }) {
         subtitulo="Envia numero de denuncia y fotos por WhatsApp."
         whatsappText={`Hola, me contacto desde aseguradoras/${aseg.slug}. Tengo siniestro con ${aseg.nombre}`}
       />
+
+      {/* CTA miseguro — funnel cruzado */}
+      <section className="bg-linear-to-r from-dc-navy to-dc-blue rounded-xl p-6 md:p-8 mb-12 flex flex-col md:flex-row gap-4 items-center">
+        <Shield className="w-10 h-10 text-white shrink-0" />
+        <div className="flex-1 text-white">
+          <p className="font-bold text-lg">
+            Tenes que asegurar tu auto?
+          </p>
+          <p className="text-white/80 text-sm mt-1">
+            Compara precios de {aseg.nombre} y otras companias. Cotiza, emiti y
+            gestiona tu poliza 100% online en miseguro.com.ar
+          </p>
+        </div>
+        <a
+          href="https://miseguro.com.ar"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 bg-white text-dc-navy font-bold px-6 py-3 rounded-lg hover:bg-white/90 transition shadow-md whitespace-nowrap"
+        >
+          Cotizar seguro
+          <ArrowRight className="w-4 h-4" />
+        </a>
+      </section>
 
       <section className="mb-12">
         <h2 className="text-2xl font-bold text-dc-navy mb-4">Atencion por zona</h2>

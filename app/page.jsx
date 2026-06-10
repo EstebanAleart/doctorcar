@@ -503,18 +503,38 @@ export default function LandingPage() {
               <h3 className="font-semibold mb-4">Servicios</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/chapa-y-pintura/rosario" className="text-white/70 hover:text-dc-blue transition-colors">
+                  <Link href="/chapa-y-pintura" className="text-white/70 hover:text-dc-blue transition-colors">
                     Chapa y Pintura
                   </Link>
                 </li>
                 <li>
-                  <Link href="/siniestros/rosario" className="text-white/70 hover:text-dc-blue transition-colors">
-                    Reparacion de Siniestros
+                  <Link href="/siniestros" className="text-white/70 hover:text-dc-blue transition-colors">
+                    Siniestros
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/granizo" className="text-white/70 hover:text-dc-blue transition-colors">
+                    Granizo
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/pintura-automotor" className="text-white/70 hover:text-dc-blue transition-colors">
+                    Pintura Automotor
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/abolladuras-sin-pintura" className="text-white/70 hover:text-dc-blue transition-colors">
+                    Abolladuras sin Pintura
                   </Link>
                 </li>
                 <li>
                   <Link href="/aseguradoras" className="text-white/70 hover:text-dc-blue transition-colors">
                     Aseguradoras
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/zonas" className="text-white/70 hover:text-dc-blue transition-colors">
+                    Zonas
                   </Link>
                 </li>
                 <li>
