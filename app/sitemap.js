@@ -25,10 +25,12 @@ export default function sitemap() {
   }));
 
   const servicioCiudad = servicios.flatMap((s) =>
-    zonas.map((z) => ({
-      url: `${SITE_URL}/${s.slug}/${z.slug}`,
-      priority: z.tipo === "subzona" ? 0.7 : 0.8,
-    }))
+    zonas
+      .filter((z) => z.slug !== "rosario")
+      .map((z) => ({
+        url: `${SITE_URL}/${s.slug}/${z.slug}`,
+        priority: z.tipo === "subzona" ? 0.7 : 0.8,
+      }))
   );
 
   const hubsAseguradora = aseguradoras.map((a) => ({

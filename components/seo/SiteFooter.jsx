@@ -74,44 +74,52 @@ export default function SiteFooter() {
             <h3 className="font-semibold mb-4">Servicios</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link
-                  href="/chapa-y-pintura/rosario"
-                  className="text-white/70 hover:text-dc-blue transition-colors"
-                >
+                <Link href="/chapa-y-pintura" className="text-white/70 hover:text-dc-blue transition-colors">
                   Chapa y Pintura
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/siniestros/rosario"
-                  className="text-white/70 hover:text-dc-blue transition-colors"
-                >
-                  Reparacion de Siniestros
+                <Link href="/siniestros" className="text-white/70 hover:text-dc-blue transition-colors">
+                  Siniestros
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/aseguradoras"
-                  className="text-white/70 hover:text-dc-blue transition-colors"
-                >
+                <Link href="/granizo" className="text-white/70 hover:text-dc-blue transition-colors">
+                  Granizo
+                </Link>
+              </li>
+              <li>
+                <Link href="/pintura-automotor" className="text-white/70 hover:text-dc-blue transition-colors">
+                  Pintura Automotor
+                </Link>
+              </li>
+              <li>
+                <Link href="/abolladuras-sin-pintura" className="text-white/70 hover:text-dc-blue transition-colors">
+                  Abolladuras sin Pintura
+                </Link>
+              </li>
+              <li>
+                <Link href="/enderezado-carroceria" className="text-white/70 hover:text-dc-blue transition-colors">
+                  Enderezado de Carroceria
+                </Link>
+              </li>
+              <li>
+                <Link href="/peritaje-aseguradora" className="text-white/70 hover:text-dc-blue transition-colors">
+                  Peritaje de Aseguradora
+                </Link>
+              </li>
+              <li>
+                <Link href="/aseguradoras" className="text-white/70 hover:text-dc-blue transition-colors">
                   Aseguradoras
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/zonas"
-                  className="text-white/70 hover:text-dc-blue transition-colors"
-                >
+                <Link href="/zonas" className="text-white/70 hover:text-dc-blue transition-colors">
                   Zonas de Cobertura
                 </Link>
               </li>
               <li>
-                <a
-                  href="https://miseguro.com.ar"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white/70 hover:text-dc-blue transition-colors"
-                >
+                <a href="https://miseguro.com.ar" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-dc-blue transition-colors">
                   Cotizar Seguro Online
                 </a>
               </li>
