@@ -279,6 +279,86 @@
           "a": "Si, atendemos tanto autos particulares como vehiculos de uso intensivo, coordinando plazos para minimizar el tiempo fuera de circulacion."
         }
       ]
+    },
+    "soldini": {
+      "nombre": "Soldini",
+      "parrafo": "Soldini, al suroeste del Gran Rosario sobre la RN33, es una localidad de acceso al AMR. Damos servicio de chapa, pintura y siniestros para vecinos de Soldini, con retiro y entrega coordinados.",
+      "faqs": [
+        { "q": "Dan servicio en Soldini?", "a": "Si, Soldini esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo." },
+        { "q": "Trabajan con seguros para siniestros en Soldini?", "a": "Si, gestionamos el siniestro completo con tu aseguradora, desde la peritacion hasta la reparacion final." }
+      ]
+    },
+    "arroyo-seco": {
+      "nombre": "Arroyo Seco",
+      "parrafo": "Arroyo Seco, cabecera sur del Area Metropolitana de Rosario sobre la RN11, tiene buen volumen poblacional y uso intensivo del auto. Atendemos chapa, pintura, granizo y siniestros con retiro y entrega coordinados.",
+      "faqs": [
+        { "q": "Llegan hasta Arroyo Seco?", "a": "Si, Arroyo Seco esta dentro de nuestra area de servicio. Coordinamos retiro del vehiculo y entrega una vez reparado." },
+        { "q": "Gestionan siniestros con la aseguradora para Arroyo Seco?", "a": "Si, hacemos la gestion completa: peritacion, autorizacion y reparacion, coordinando con tu compania." }
+      ]
+    },
+    "san-lorenzo": {
+      "nombre": "San Lorenzo",
+      "parrafo": "San Lorenzo, en el cordon industrial norte del Gran Rosario sobre la RN11 y autopista A012, concentra alta densidad de vehiculos y flotas. Damos servicio de chapa, pintura y reparacion de siniestros para particulares y flotas de San Lorenzo.",
+      "faqs": [
+        { "q": "Atienden vehiculos de San Lorenzo?", "a": "Si, San Lorenzo esta dentro de nuestra cobertura. Coordinamos retiro y entrega para que no tengas que trasladar el vehiculo hasta Rosario." },
+        { "q": "Reparan flotas en San Lorenzo?", "a": "Si, atendemos tanto autos particulares como flotas, coordinando plazos para minimizar el tiempo fuera de circulacion." }
+      ]
+    },
+    "capitan-bermudez": {
+      "nombre": "Capitan Bermudez",
+      "parrafo": "Capitan Bermudez, en el cordon industrial norte del Gran Rosario sobre la RN11, es una ciudad con alta actividad vehicular. Damos servicio de chapa, pintura y siniestros con retiro y entrega coordinados.",
+      "faqs": [
+        { "q": "Dan servicio en Capitan Bermudez?", "a": "Si, esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo." },
+        { "q": "Trabajan con aseguradoras para vecinos de Capitan Bermudez?", "a": "Si, gestionamos el siniestro completo con tu compania, sin que tengas que trasladarte a Rosario." }
+      ]
+    },
+    "fray-luis-beltran": {
+      "nombre": "Fray Luis Beltran",
+      "parrafo": "Fray Luis Beltran, en el cordon industrial norte del Gran Rosario sobre la RN11, forma parte del eje productivo entre Rosario y San Lorenzo. Atendemos chapa, pintura y siniestros con coordinacion de retiro y entrega.",
+      "faqs": [
+        { "q": "Llegan a Fray Luis Beltran?", "a": "Si, Fray Luis Beltran esta dentro de nuestra area de servicio. Coordinamos retiro y entrega del vehiculo." },
+        { "q": "Gestionan siniestros para vecinos de Fray Luis Beltran?", "a": "Si, llevamos la gestion con tu aseguradora de punta a punta." }
+      ]
+    },
+    "puerto-general-san-martin": {
+      "nombre": "Puerto General San Martin",
+      "parrafo": "Puerto General San Martin, polo portuario granelero al norte del Gran Rosario sobre la RN11, tiene transito pesado y uso intensivo de vehiculos. Reparamos chapa, pintura y siniestros para particulares y vehiculos de trabajo de la zona.",
+      "faqs": [
+        { "q": "Dan servicio en Puerto General San Martin?", "a": "Si, esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo." },
+        { "q": "Reparan vehiculos de trabajo en Puerto Gral. San Martin?", "a": "Si, atendemos vehiculos particulares y de uso intensivo, coordinando plazos para que vuelvan a circular cuanto antes." }
+      ]
+    },
+    "ibarlucea": {
+      "nombre": "Ibarlucea",
+      "parrafo": "Ibarlucea, localidad periurbana al noroeste del Gran Rosario sobre la autopista A012, es una zona en expansion residencial. Damos servicio de chapa, pintura y siniestros para vecinos de Ibarlucea con retiro y entrega.",
+      "faqs": [
+        { "q": "Llegan hasta Ibarlucea?", "a": "Si, Ibarlucea esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo." },
+        { "q": "Trabajan con seguros en Ibarlucea?", "a": "Si, gestionamos el siniestro completo con tu aseguradora, desde la peritacion hasta la entrega." }
+      ]
+    },
+    "alvear": {
+      "nombre": "Alvear",
+      "parrafo": "Alvear, al sur del Gran Rosario sobre la RN11, es el acceso sur del Area Metropolitana. Atendemos chapa, pintura y siniestros para vecinos de Alvear con retiro y entrega coordinados.",
+      "faqs": [
+        { "q": "Dan servicio en Alvear?", "a": "Si, Alvear esta dentro de nuestra area de servicio. Coordinamos retiro del vehiculo." },
+        { "q": "Gestionan siniestros con la aseguradora para Alvear?", "a": "Si, hacemos la gestion completa con tu compania: peritacion, autorizacion y reparacion." }
+      ]
+    },
+    "pueblo-esther": {
+      "nombre": "Pueblo Esther",
+      "parrafo": "Pueblo Esther, en el corredor sur ribereno del Gran Rosario sobre la RN11, es una localidad residencial en crecimiento. Damos servicio de chapa, pintura y siniestros con retiro y entrega coordinados.",
+      "faqs": [
+        { "q": "Llegan hasta Pueblo Esther?", "a": "Si, esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo." },
+        { "q": "Trabajan con aseguradoras para vecinos de Pueblo Esther?", "a": "Si, gestionamos el siniestro completo con tu compania, sin que tengas que trasladarte a Rosario." }
+      ]
+    },
+    "zavalla": {
+      "nombre": "Zavalla",
+      "parrafo": "Zavalla, al suroeste del Gran Rosario sobre la RP18, es sede de la facultad de agronomia de la UNR. Atendemos chapa, pintura y siniestros para vecinos de Zavalla con retiro y entrega coordinados.",
+      "faqs": [
+        { "q": "Dan servicio en Zavalla?", "a": "Si, Zavalla esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo." },
+        { "q": "Trabajan con seguros para siniestros en Zavalla?", "a": "Si, gestionamos el siniestro completo con tu aseguradora, desde la peritacion hasta la reparacion final." }
+      ]
     }
   },
   "aseguradoras": {}

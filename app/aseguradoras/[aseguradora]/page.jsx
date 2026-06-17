@@ -99,25 +99,28 @@ export default async function AseguradoraPage({ params }) {
         whatsappText={`Hola, me contacto desde aseguradoras/${aseg.slug}. Tengo siniestro con ${aseg.nombre}`}
       />
 
-      {/* CTA miseguro — funnel cruzado */}
+      {/* CTA miseguro — funnel cruzado (fuerte para whitelist, medio para el resto) */}
       <section className="bg-linear-to-r from-dc-navy to-dc-blue rounded-xl p-6 md:p-8 mb-12 flex flex-col md:flex-row gap-4 items-center">
         <Shield className="w-10 h-10 text-white shrink-0" />
         <div className="flex-1 text-white">
           <p className="font-bold text-lg">
-            Tenes que asegurar tu auto?
+            {aseg.whitelist_miseguro
+              ? "Tu poliza te cubre bien la chapa y el granizo?"
+              : "Estas pagando de mas por tu seguro?"}
           </p>
           <p className="text-white/80 text-sm mt-1">
-            Compara precios de {aseg.nombre} y otras companias. Cotiza, emiti y
-            gestiona tu poliza 100% online en miseguro.com.ar
+            {aseg.whitelist_miseguro
+              ? `Compara tu cobertura en miseguro.com.ar: entre las aseguradoras que comparamos te mostramos la opcion mas conveniente para tu auto.`
+              : `Compara coberturas en miseguro.com.ar entre las aseguradoras que analizamos.`}
           </p>
         </div>
         <a
-          href="https://miseguro.com.ar"
+          href="https://miseguro.com.ar/?utm_source=doctorcar&utm_medium=referral&utm_campaign=aseguradoras"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 bg-white text-dc-navy font-bold px-6 py-3 rounded-lg hover:bg-white/90 transition shadow-md whitespace-nowrap"
         >
-          Cotizar seguro
+          {aseg.whitelist_miseguro ? "Comparar mi seguro" : "Comparar seguros"}
           <ArrowRight className="w-4 h-4" />
         </a>
       </section>

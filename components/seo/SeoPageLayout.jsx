@@ -25,7 +25,7 @@ export default function SeoPageLayout({ children }) {
             Auto-cotizacion, auto-emision, mejores precios del mercado y
             dashboard completo en{" "}
             <a
-              href="https://miseguro.com.ar"
+              href="https://miseguro.com.ar/?utm_source=doctorcar&utm_medium=referral&utm_campaign=contextual"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white font-semibold underline underline-offset-2"
@@ -34,7 +34,7 @@ export default function SeoPageLayout({ children }) {
             </a>
           </p>
           <a
-            href="https://miseguro.com.ar"
+            href="https://miseguro.com.ar/?utm_source=doctorcar&utm_medium=referral&utm_campaign=contextual"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-white text-dc-navy font-bold px-6 py-2.5 rounded-lg hover:bg-white/90 transition shadow-md"

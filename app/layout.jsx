@@ -92,6 +92,14 @@ export default function RootLayout({ children }) {
         <Script id="ga4-init" strategy="afterInteractive">
           {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`}
         </Script>
+        {/* Google AdSense */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9884098505893083"
+          crossOrigin="anonymous"
+          strategy="lazyOnload"
+        />
+        <meta name="google-adsense-account" content="ca-pub-9884098505893083" />
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <SessionProviderWrapper>
