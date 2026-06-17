@@ -117,12 +117,58 @@
       "nombre_completo": "Mercantil Andina Seguros",
       "logo": "/aseguradoras/mercantil-andina.svg",
       "es_principal": false,
+      "whitelist_miseguro": true,
       "atributos": {
         "tipo_facturacion": "directa",
         "tiempo_peritaje_promedio_dias": 4,
         "tipo_de_taller": "libre elección"
       },
       "url_oficial": "https://www.mercantilandina.com.ar"
+    },
+    {
+      "id": "nacion-seguros",
+      "slug": "nacion-seguros",
+      "nombre": "Nación Seguros",
+      "nombre_completo": "Nación Seguros S.A.",
+      "logo": "/aseguradoras/nacion-seguros.svg",
+      "es_principal": false,
+      "whitelist_miseguro": true,
+      "atributos": {
+        "tipo_facturacion": "directa",
+        "tiempo_peritaje_promedio_dias": 5,
+        "tipo_de_taller": "libre elección"
+      },
+      "url_oficial": "https://www.nacionseguros.com.ar"
+    },
+    {
+      "id": "rio-uruguay-seguros",
+      "slug": "rio-uruguay-seguros",
+      "nombre": "Río Uruguay Seguros",
+      "nombre_completo": "Río Uruguay Seguros",
+      "logo": "/aseguradoras/rio-uruguay.svg",
+      "es_principal": false,
+      "whitelist_miseguro": true,
+      "atributos": {
+        "tipo_facturacion": "directa",
+        "tiempo_peritaje_promedio_dias": 4,
+        "tipo_de_taller": "libre elección"
+      },
+      "url_oficial": "https://www.riouruguay.com.ar"
+    },
+    {
+      "id": "galicia-seguros",
+      "slug": "galicia-seguros",
+      "nombre": "Galicia Seguros",
+      "nombre_completo": "Galicia Seguros S.A.",
+      "logo": "/aseguradoras/galicia-seguros.svg",
+      "es_principal": false,
+      "whitelist_miseguro": true,
+      "atributos": {
+        "tipo_facturacion": "directa",
+        "tiempo_peritaje_promedio_dias": 4,
+        "tipo_de_taller": "libre elección"
+      },
+      "url_oficial": "https://www.galiciaseguros.com.ar"
     }
   ]
 }

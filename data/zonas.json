@@ -157,29 +157,17 @@
       "slug": "soldini",
       "nombre": "Soldini",
       "nombre_h1_sufijo": "en Soldini",
-      "tier": 2,
+      "tier": 1,
       "provincia": "Santa Fe",
       "tipo": "ciudad",
       "es_subzona_de": null,
-      "distancia_taller_km": 17,
+      "distancia_taller_km": 18,
       "geo": { "lat": -33.0086, "lng": -60.7456 },
-      "poblacion": 4200
-    },
-    {
-      "id": "victoria",
-      "slug": "victoria-entre-rios",
-      "nombre": "Victoria",
-      "nombre_h1_sufijo": "en Victoria, Entre Ríos",
-      "tier": 2,
-      "provincia": "Entre Ríos",
-      "tipo": "ciudad",
-      "es_subzona_de": null,
-      "distancia_taller_km": 60,
-      "geo": { "lat": -32.6189, "lng": -60.1556 },
-      "poblacion": 38200,
+      "poblacion": 3000,
       "datos_locales": {
-        "via_principal": "Túnel Subfluvial Uranga-Sylvestre Begnis",
-        "nota_seo": "framing: vamos a buscar el auto / cliente cruza el túnel"
+        "vias_principales": ["RN33"],
+        "tipo_trafico": "acceso suroeste del AMR",
+        "siniestralidad_relativa": "media"
       }
     },
     {
@@ -187,13 +175,162 @@
       "slug": "arroyo-seco",
       "nombre": "Arroyo Seco",
       "nombre_h1_sufijo": "en Arroyo Seco",
-      "tier": 2,
+      "tier": 1,
       "provincia": "Santa Fe",
       "tipo": "ciudad",
       "es_subzona_de": null,
       "distancia_taller_km": 28,
       "geo": { "lat": -33.1556, "lng": -60.5089 },
-      "poblacion": 27500
+      "poblacion": 25000,
+      "datos_locales": {
+        "vias_principales": ["RN11"],
+        "tipo_trafico": "cabecera sur del AMR",
+        "siniestralidad_relativa": "media"
+      }
+    },
+    {
+      "id": "san-lorenzo",
+      "slug": "san-lorenzo",
+      "nombre": "San Lorenzo",
+      "nombre_h1_sufijo": "en San Lorenzo",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 24,
+      "geo": { "lat": -32.7466, "lng": -60.7308 },
+      "poblacion": 46000,
+      "datos_locales": {
+        "vias_principales": ["RN11", "Autopista A012"],
+        "tipo_trafico": "industrial, alta densidad vehicular y flotas",
+        "siniestralidad_relativa": "alta"
+      }
+    },
+    {
+      "id": "capitan-bermudez",
+      "slug": "capitan-bermudez",
+      "nombre": "Capitán Bermúdez",
+      "nombre_h1_sufijo": "en Capitán Bermúdez",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 17,
+      "geo": { "lat": -32.8250, "lng": -60.7167 },
+      "poblacion": 30000,
+      "datos_locales": {
+        "vias_principales": ["RN11"],
+        "tipo_trafico": "cordon industrial norte",
+        "siniestralidad_relativa": "media-alta"
+      }
+    },
+    {
+      "id": "fray-luis-beltran",
+      "slug": "fray-luis-beltran",
+      "nombre": "Fray Luis Beltrán",
+      "nombre_h1_sufijo": "en Fray Luis Beltrán",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 20,
+      "geo": { "lat": -32.7850, "lng": -60.7250 },
+      "poblacion": 16000,
+      "datos_locales": {
+        "vias_principales": ["RN11"],
+        "tipo_trafico": "cordon industrial norte",
+        "siniestralidad_relativa": "media"
+      }
+    },
+    {
+      "id": "puerto-general-san-martin",
+      "slug": "puerto-general-san-martin",
+      "nombre": "Puerto General San Martín",
+      "nombre_h1_sufijo": "en Puerto General San Martín",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 28,
+      "geo": { "lat": -32.7194, "lng": -60.7278 },
+      "poblacion": 14000,
+      "datos_locales": {
+        "vias_principales": ["RN11"],
+        "tipo_trafico": "polo portuario granelero, transito pesado",
+        "siniestralidad_relativa": "media"
+      }
+    },
+    {
+      "id": "ibarlucea",
+      "slug": "ibarlucea",
+      "nombre": "Ibarlucea",
+      "nombre_h1_sufijo": "en Ibarlucea",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 14,
+      "geo": { "lat": -32.8500, "lng": -60.7833 },
+      "poblacion": 3500,
+      "datos_locales": {
+        "vias_principales": ["A012"],
+        "tipo_trafico": "periurbana en expansion",
+        "siniestralidad_relativa": "baja"
+      }
+    },
+    {
+      "id": "alvear",
+      "slug": "alvear",
+      "nombre": "Alvear",
+      "nombre_h1_sufijo": "en Alvear",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 18,
+      "geo": { "lat": -33.0917, "lng": -60.5917 },
+      "poblacion": 4500,
+      "datos_locales": {
+        "vias_principales": ["RN11"],
+        "tipo_trafico": "acceso sur del AMR",
+        "siniestralidad_relativa": "media"
+      }
+    },
+    {
+      "id": "pueblo-esther",
+      "slug": "pueblo-esther",
+      "nombre": "Pueblo Esther",
+      "nombre_h1_sufijo": "en Pueblo Esther",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 22,
+      "geo": { "lat": -33.0750, "lng": -60.5667 },
+      "poblacion": 7000,
+      "datos_locales": {
+        "vias_principales": ["RN11"],
+        "tipo_trafico": "corredor sur ribereno",
+        "siniestralidad_relativa": "baja"
+      }
+    },
+    {
+      "id": "zavalla",
+      "slug": "zavalla",
+      "nombre": "Zavalla",
+      "nombre_h1_sufijo": "en Zavalla",
+      "tier": 1,
+      "provincia": "Santa Fe",
+      "tipo": "ciudad",
+      "es_subzona_de": null,
+      "distancia_taller_km": 22,
+      "geo": { "lat": -33.0167, "lng": -60.8833 },
+      "poblacion": 6000,
+      "datos_locales": {
+        "vias_principales": ["RP18"],
+        "tipo_trafico": "sede facultad agronomia UNR",
+        "siniestralidad_relativa": "baja"
+      }
     }
   ]
 }
