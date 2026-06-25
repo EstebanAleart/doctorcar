@@ -152,6 +152,12 @@ export default function SiteFooter() {
         </div>
 
         <div className="border-t border-white/10 pt-6 text-center text-white/40 text-sm space-y-1">
+          <p className="flex flex-wrap justify-center gap-x-4 gap-y-1 mb-2">
+            <Link href="/sobre-doctorcar" className="hover:text-dc-blue transition-colors">Nosotros</Link>
+            <Link href="/contacto" className="hover:text-dc-blue transition-colors">Contacto</Link>
+            <Link href="/privacidad" className="hover:text-dc-blue transition-colors">Privacidad</Link>
+            <Link href="/terminos" className="hover:text-dc-blue transition-colors">Términos</Link>
+          </p>
           <p>
             &copy; {new Date().getFullYear()} DoctorCar. Todos los derechos
             reservados. 9 de julio 4231, Rosario, Santa Fe.
