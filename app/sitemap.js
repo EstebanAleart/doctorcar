@@ -17,6 +17,9 @@ export default function sitemap() {
     { url: `${SITE_URL}/aseguradoras`, priority: 0.8 },
     { url: `${SITE_URL}/zonas`, priority: 0.7 },
     { url: `${SITE_URL}/sobre-doctorcar`, priority: 0.5 },
+    { url: `${SITE_URL}/contacto`, priority: 0.5 },
+    { url: `${SITE_URL}/privacidad`, priority: 0.3 },
+    { url: `${SITE_URL}/terminos`, priority: 0.3 },
   ];
 
   const hubsServicio = servicios.map((s) => ({
