@@ -1,4 +1,4 @@
-/* an.js — snippet de analytics propio (estilo Evarist). Liviano, sin deps.
+/* an.js — snippet de analytics propio. Liviano, sin deps.
  * Captura PAGEVIEW + CLICK + CONVERSION y los manda a la RPC segura ingest_event
  * (Supabase de analytics pvzdtmygdsfgwncnzpsj). visitor_id persistente cruza dominios.
  * NO trackea /admin. Instalar una vez en el layout: <script src="/an.js" defer></script>

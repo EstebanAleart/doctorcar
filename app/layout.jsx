@@ -117,7 +117,7 @@ export default function RootLayout({ children }) {
           </ReduxProvider>
         </SessionProviderWrapper>
         <Analytics />
-        <script src="/an.js" data-site="doctorcar" defer />
+        <script src="https://app.seo-programatico.com/an.js" data-site="doctorcar" defer />
       </body>
     </html>
   );
