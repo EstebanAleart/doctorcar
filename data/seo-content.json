@@ -1,6 +1,6 @@
 {
   "meta": {
-    "actualizado": "2026-06-05",
+    "actualizado": "2026-08-11",
     "descripcion": "Contenido seed por dimension (servicio + zona). Compuesto en build para generar paginas unicas.",
     "patron_composicion": "N (servicios) + M (zonas) → N×M paginas unicas"
   },
@@ -284,82 +284,301 @@
       "nombre": "Soldini",
       "parrafo": "Soldini, al suroeste del Gran Rosario sobre la RN33, es una localidad de acceso al AMR. Damos servicio de chapa, pintura y siniestros para vecinos de Soldini, con retiro y entrega coordinados.",
       "faqs": [
-        { "q": "Dan servicio en Soldini?", "a": "Si, Soldini esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo." },
-        { "q": "Trabajan con seguros para siniestros en Soldini?", "a": "Si, gestionamos el siniestro completo con tu aseguradora, desde la peritacion hasta la reparacion final." }
+        {
+          "q": "Dan servicio en Soldini?",
+          "a": "Si, Soldini esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo."
+        },
+        {
+          "q": "Trabajan con seguros para siniestros en Soldini?",
+          "a": "Si, gestionamos el siniestro completo con tu aseguradora, desde la peritacion hasta la reparacion final."
+        }
       ]
     },
     "arroyo-seco": {
       "nombre": "Arroyo Seco",
       "parrafo": "Arroyo Seco, cabecera sur del Area Metropolitana de Rosario sobre la RN11, tiene buen volumen poblacional y uso intensivo del auto. Atendemos chapa, pintura, granizo y siniestros con retiro y entrega coordinados.",
       "faqs": [
-        { "q": "Llegan hasta Arroyo Seco?", "a": "Si, Arroyo Seco esta dentro de nuestra area de servicio. Coordinamos retiro del vehiculo y entrega una vez reparado." },
-        { "q": "Gestionan siniestros con la aseguradora para Arroyo Seco?", "a": "Si, hacemos la gestion completa: peritacion, autorizacion y reparacion, coordinando con tu compania." }
+        {
+          "q": "Llegan hasta Arroyo Seco?",
+          "a": "Si, Arroyo Seco esta dentro de nuestra area de servicio. Coordinamos retiro del vehiculo y entrega una vez reparado."
+        },
+        {
+          "q": "Gestionan siniestros con la aseguradora para Arroyo Seco?",
+          "a": "Si, hacemos la gestion completa: peritacion, autorizacion y reparacion, coordinando con tu compania."
+        }
       ]
     },
     "san-lorenzo": {
       "nombre": "San Lorenzo",
       "parrafo": "San Lorenzo, en el cordon industrial norte del Gran Rosario sobre la RN11 y autopista A012, concentra alta densidad de vehiculos y flotas. Damos servicio de chapa, pintura y reparacion de siniestros para particulares y flotas de San Lorenzo.",
       "faqs": [
-        { "q": "Atienden vehiculos de San Lorenzo?", "a": "Si, San Lorenzo esta dentro de nuestra cobertura. Coordinamos retiro y entrega para que no tengas que trasladar el vehiculo hasta Rosario." },
-        { "q": "Reparan flotas en San Lorenzo?", "a": "Si, atendemos tanto autos particulares como flotas, coordinando plazos para minimizar el tiempo fuera de circulacion." }
+        {
+          "q": "Atienden vehiculos de San Lorenzo?",
+          "a": "Si, San Lorenzo esta dentro de nuestra cobertura. Coordinamos retiro y entrega para que no tengas que trasladar el vehiculo hasta Rosario."
+        },
+        {
+          "q": "Reparan flotas en San Lorenzo?",
+          "a": "Si, atendemos tanto autos particulares como flotas, coordinando plazos para minimizar el tiempo fuera de circulacion."
+        }
       ]
     },
     "capitan-bermudez": {
       "nombre": "Capitan Bermudez",
       "parrafo": "Capitan Bermudez, en el cordon industrial norte del Gran Rosario sobre la RN11, es una ciudad con alta actividad vehicular. Damos servicio de chapa, pintura y siniestros con retiro y entrega coordinados.",
       "faqs": [
-        { "q": "Dan servicio en Capitan Bermudez?", "a": "Si, esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo." },
-        { "q": "Trabajan con aseguradoras para vecinos de Capitan Bermudez?", "a": "Si, gestionamos el siniestro completo con tu compania, sin que tengas que trasladarte a Rosario." }
+        {
+          "q": "Dan servicio en Capitan Bermudez?",
+          "a": "Si, esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo."
+        },
+        {
+          "q": "Trabajan con aseguradoras para vecinos de Capitan Bermudez?",
+          "a": "Si, gestionamos el siniestro completo con tu compania, sin que tengas que trasladarte a Rosario."
+        }
       ]
     },
     "fray-luis-beltran": {
       "nombre": "Fray Luis Beltran",
       "parrafo": "Fray Luis Beltran, en el cordon industrial norte del Gran Rosario sobre la RN11, forma parte del eje productivo entre Rosario y San Lorenzo. Atendemos chapa, pintura y siniestros con coordinacion de retiro y entrega.",
       "faqs": [
-        { "q": "Llegan a Fray Luis Beltran?", "a": "Si, Fray Luis Beltran esta dentro de nuestra area de servicio. Coordinamos retiro y entrega del vehiculo." },
-        { "q": "Gestionan siniestros para vecinos de Fray Luis Beltran?", "a": "Si, llevamos la gestion con tu aseguradora de punta a punta." }
+        {
+          "q": "Llegan a Fray Luis Beltran?",
+          "a": "Si, Fray Luis Beltran esta dentro de nuestra area de servicio. Coordinamos retiro y entrega del vehiculo."
+        },
+        {
+          "q": "Gestionan siniestros para vecinos de Fray Luis Beltran?",
+          "a": "Si, llevamos la gestion con tu aseguradora de punta a punta."
+        }
       ]
     },
     "puerto-general-san-martin": {
       "nombre": "Puerto General San Martin",
       "parrafo": "Puerto General San Martin, polo portuario granelero al norte del Gran Rosario sobre la RN11, tiene transito pesado y uso intensivo de vehiculos. Reparamos chapa, pintura y siniestros para particulares y vehiculos de trabajo de la zona.",
       "faqs": [
-        { "q": "Dan servicio en Puerto General San Martin?", "a": "Si, esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo." },
-        { "q": "Reparan vehiculos de trabajo en Puerto Gral. San Martin?", "a": "Si, atendemos vehiculos particulares y de uso intensivo, coordinando plazos para que vuelvan a circular cuanto antes." }
+        {
+          "q": "Dan servicio en Puerto General San Martin?",
+          "a": "Si, esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo."
+        },
+        {
+          "q": "Reparan vehiculos de trabajo en Puerto Gral. San Martin?",
+          "a": "Si, atendemos vehiculos particulares y de uso intensivo, coordinando plazos para que vuelvan a circular cuanto antes."
+        }
       ]
     },
     "ibarlucea": {
       "nombre": "Ibarlucea",
       "parrafo": "Ibarlucea, localidad periurbana al noroeste del Gran Rosario sobre la autopista A012, es una zona en expansion residencial. Damos servicio de chapa, pintura y siniestros para vecinos de Ibarlucea con retiro y entrega.",
       "faqs": [
-        { "q": "Llegan hasta Ibarlucea?", "a": "Si, Ibarlucea esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo." },
-        { "q": "Trabajan con seguros en Ibarlucea?", "a": "Si, gestionamos el siniestro completo con tu aseguradora, desde la peritacion hasta la entrega." }
+        {
+          "q": "Llegan hasta Ibarlucea?",
+          "a": "Si, Ibarlucea esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo."
+        },
+        {
+          "q": "Trabajan con seguros en Ibarlucea?",
+          "a": "Si, gestionamos el siniestro completo con tu aseguradora, desde la peritacion hasta la entrega."
+        }
       ]
     },
     "alvear": {
       "nombre": "Alvear",
       "parrafo": "Alvear, al sur del Gran Rosario sobre la RN11, es el acceso sur del Area Metropolitana. Atendemos chapa, pintura y siniestros para vecinos de Alvear con retiro y entrega coordinados.",
       "faqs": [
-        { "q": "Dan servicio en Alvear?", "a": "Si, Alvear esta dentro de nuestra area de servicio. Coordinamos retiro del vehiculo." },
-        { "q": "Gestionan siniestros con la aseguradora para Alvear?", "a": "Si, hacemos la gestion completa con tu compania: peritacion, autorizacion y reparacion." }
+        {
+          "q": "Dan servicio en Alvear?",
+          "a": "Si, Alvear esta dentro de nuestra area de servicio. Coordinamos retiro del vehiculo."
+        },
+        {
+          "q": "Gestionan siniestros con la aseguradora para Alvear?",
+          "a": "Si, hacemos la gestion completa con tu compania: peritacion, autorizacion y reparacion."
+        }
       ]
     },
     "pueblo-esther": {
       "nombre": "Pueblo Esther",
       "parrafo": "Pueblo Esther, en el corredor sur ribereno del Gran Rosario sobre la RN11, es una localidad residencial en crecimiento. Damos servicio de chapa, pintura y siniestros con retiro y entrega coordinados.",
       "faqs": [
-        { "q": "Llegan hasta Pueblo Esther?", "a": "Si, esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo." },
-        { "q": "Trabajan con aseguradoras para vecinos de Pueblo Esther?", "a": "Si, gestionamos el siniestro completo con tu compania, sin que tengas que trasladarte a Rosario." }
+        {
+          "q": "Llegan hasta Pueblo Esther?",
+          "a": "Si, esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo."
+        },
+        {
+          "q": "Trabajan con aseguradoras para vecinos de Pueblo Esther?",
+          "a": "Si, gestionamos el siniestro completo con tu compania, sin que tengas que trasladarte a Rosario."
+        }
       ]
     },
     "zavalla": {
       "nombre": "Zavalla",
       "parrafo": "Zavalla, al suroeste del Gran Rosario sobre la RP18, es sede de la facultad de agronomia de la UNR. Atendemos chapa, pintura y siniestros para vecinos de Zavalla con retiro y entrega coordinados.",
       "faqs": [
-        { "q": "Dan servicio en Zavalla?", "a": "Si, Zavalla esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo." },
-        { "q": "Trabajan con seguros para siniestros en Zavalla?", "a": "Si, gestionamos el siniestro completo con tu aseguradora, desde la peritacion hasta la reparacion final." }
+        {
+          "q": "Dan servicio en Zavalla?",
+          "a": "Si, Zavalla esta dentro de nuestra cobertura. Coordinamos retiro y entrega del vehiculo."
+        },
+        {
+          "q": "Trabajan con seguros para siniestros en Zavalla?",
+          "a": "Si, gestionamos el siniestro completo con tu aseguradora, desde la peritacion hasta la reparacion final."
+        }
       ]
     }
   },
-  "aseguradoras": {}
+  "aseguradoras": {
+    "la-caja": {
+      "nombre": "La Caja",
+      "parrafo": "Si tenes poliza de La Caja Seguros y sufriste un siniestro, en DoctorCar gestionamos la reparacion de punta a punta. Vos haces la denuncia al 0800 de la compania y nos pasas el numero de siniestro; nosotros armamos el presupuesto con fotos y detalle de danos en el formato que La Caja espera, coordinamos la inspeccion del perito (en promedio demora unos 3 dias habiles) y esperamos la orden de reparacion. La facturacion es directa: la compania le paga al taller y vos solo cubris la franquicia si tu poliza la tiene. La Caja trabaja con esquema de libre eleccion con presupuesto, asi que podes elegir DoctorCar sin que te deriven a otro taller.",
+      "faqs": [
+        {
+          "q": "Puedo elegir DoctorCar siendo cliente de La Caja?",
+          "a": "Si. La Caja opera con libre eleccion de taller contra presupuesto: presentamos el detalle de danos, la compania lo autoriza y emite la orden de reparacion a nombre de DoctorCar."
+        },
+        {
+          "q": "Cuanto tarda el peritaje con La Caja?",
+          "a": "En nuestra experiencia el perito inspecciona en unos 3 dias habiles desde que esta cargado el siniestro. Despues falta la autorizacion del presupuesto, que gestionamos nosotros."
+        },
+        {
+          "q": "Que necesito de La Caja para arrancar la reparacion?",
+          "a": "La denuncia hecha (0800-999-2252 o la app), el numero de siniestro y los datos de la poliza. Con eso coordinamos el resto directamente con la compania."
+        }
+      ]
+    },
+    "sancor": {
+      "nombre": "Sancor",
+      "parrafo": "Sancor Seguros es la cooperativa con mayor presencia en la zona nucleo de Santa Fe, y buena parte de los siniestros que entran a DoctorCar son de sus asegurados. El circuito es agil: con la denuncia y el numero de siniestro coordinamos la peritacion, que con Sancor suele resolverse en unos 2 dias habiles, de lo mas rapido entre las companias con las que trabajamos. Opera con red propia y tambien libre eleccion, por lo que podes traer tu auto a nuestro taller presentando el presupuesto. Facturamos directo a la cooperativa: no adelantas plata por la reparacion cubierta, solo la franquicia si corresponde. Armamos el legajo con fotos y nomenclador para que la autorizacion salga sin idas y vueltas.",
+      "faqs": [
+        {
+          "q": "Puedo reparar en DoctorCar si mi seguro es de Sancor?",
+          "a": "Si. Ademas de su red propia, Sancor acepta talleres de libre eleccion contra presupuesto. Presentamos el detalle de danos y la compania emite la orden de reparacion."
+        },
+        {
+          "q": "Cuanto demora el peritaje de Sancor?",
+          "a": "Es de los mas rapidos de la zona: en promedio unos 2 dias habiles desde la denuncia. La cooperativa tiene estructura local fuerte en Santa Fe y eso agiliza la inspeccion."
+        }
+      ]
+    },
+    "allianz": {
+      "nombre": "Allianz",
+      "parrafo": "Con Allianz Argentina el proceso de reparacion por siniestro arranca con tu denuncia y el numero de siniestro. A partir de ahi DoctorCar se ocupa: cargamos el presupuesto con fotos y detalle de repuestos, coordinamos la inspeccion del perito (en promedio unos 4 dias habiles) y seguimos la autorizacion hasta que sale la orden de reparacion. Allianz combina red propia con libre eleccion, asi que podes optar por nuestro taller presentando presupuesto. La facturacion es directa entre el taller y la compania: vos no adelantas el costo de la reparacion cubierta, unicamente la franquicia si tu poliza la incluye. Te vamos avisando en cada etapa para que no tengas que perseguir a la aseguradora.",
+      "faqs": [
+        {
+          "q": "Siendo cliente de Allianz, puedo elegir DoctorCar?",
+          "a": "Si. Allianz trabaja con red propia y tambien con libre eleccion: presentamos nuestro presupuesto con fotos y la compania lo evalua y autoriza la reparacion en nuestro taller."
+        },
+        {
+          "q": "Cuanto tarda Allianz en peritar el auto?",
+          "a": "En promedio unos 4 dias habiles desde que el siniestro esta denunciado. Nosotros coordinamos la inspeccion y despues gestionamos la autorizacion del presupuesto."
+        }
+      ]
+    },
+    "federacion-patronal": {
+      "nombre": "Federación Patronal",
+      "parrafo": "Federacion Patronal trabaja con esquema de libre eleccion con presupuesto: el asegurado elige el taller y la compania autoriza contra el detalle de danos. En DoctorCar ese circuito lo tenemos aceitado: nos pasas el numero de siniestro, armamos el presupuesto con fotografias y nomenclador de repuestos, y coordinamos la peritacion, que con esta compania demora en promedio unos 3 dias habiles. Con la orden de reparacion emitida arrancamos el trabajo y facturamos directo a Federacion Patronal, sin que tengas que adelantar el monto cubierto; solo pagas la franquicia si tu poliza la tiene. Durante la reparacion te informamos los avances y cualquier pedido adicional de la compania lo resolvemos nosotros.",
+      "faqs": [
+        {
+          "q": "Federacion Patronal me deja elegir el taller?",
+          "a": "Si, es una de las companias con esquema de libre eleccion mas claro: presentas presupuesto del taller que elijas, lo autoriza y emite la orden de reparacion. DoctorCar arma ese presupuesto por vos."
+        },
+        {
+          "q": "Cuanto tarda el peritaje con Federacion Patronal?",
+          "a": "En promedio unos 3 dias habiles desde la denuncia. Coordinamos la inspeccion en el taller para que no tengas que mover el auto de mas."
+        }
+      ]
+    },
+    "zurich": {
+      "nombre": "Zurich",
+      "parrafo": "Zurich Argentina orienta sus siniestros hacia una red de talleres preferida, pero eso no significa que estes obligado a repararlo ahi: conviene revisar tu poliza y, si preferis DoctorCar, armamos el presupuesto completo con fotos y detalle de danos para presentarlo a la compania. El peritaje con Zurich demora en promedio unos 4 dias habiles desde la denuncia. Una vez autorizado el presupuesto, la facturacion es directa entre el taller y la aseguradora, con lo cual no adelantas el costo de la reparacion cubierta, solo la franquicia si corresponde. Nos ocupamos del seguimiento con la compania en cada etapa, desde la carga del siniestro hasta la entrega del vehiculo terminado.",
+      "faqs": [
+        {
+          "q": "Zurich me obliga a usar su red de talleres?",
+          "a": "Zurich prefiere su red, pero en general el asegurado puede presentar presupuesto de un taller de confianza. Revisamos tu caso, armamos la documentacion y la presentamos a la compania."
+        },
+        {
+          "q": "Cuanto demora el peritaje de Zurich?",
+          "a": "En promedio unos 4 dias habiles desde que el siniestro queda denunciado. Despues la compania evalua el presupuesto y emite la orden de reparacion."
+        }
+      ]
+    },
+    "san-cristobal": {
+      "nombre": "San Cristóbal",
+      "parrafo": "San Cristobal es la cooperativa santafesina por excelencia, con sede central en Rosario y una cartera enorme de vehiculos en la ciudad y la region. Por cercania, sus siniestros son de los que mas rapido se resuelven en DoctorCar: el peritaje demora en promedio unos 3 dias habiles y la estructura local de la compania agiliza las autorizaciones. Trabaja con libre eleccion contra presupuesto, asi que podes elegir nuestro taller sin vueltas: cargamos el detalle de danos con fotos, coordinamos la inspeccion y esperamos la orden de reparacion. La facturacion es directa a la cooperativa; vos solo cubris la franquicia si tu poliza la incluye. Te avisamos en cada etapa del tramite.",
+      "faqs": [
+        {
+          "q": "Puedo reparar en DoctorCar con poliza de San Cristobal?",
+          "a": "Si. San Cristobal opera con libre eleccion de taller contra presupuesto. Al ser una cooperativa con central en Rosario, el circuito de autorizacion suele ser agil."
+        },
+        {
+          "q": "Cuanto tarda el peritaje con San Cristobal?",
+          "a": "En promedio unos 3 dias habiles. La presencia local fuerte de la compania en Rosario ayuda a que la inspeccion y la autorizacion salgan rapido."
+        }
+      ]
+    },
+    "provincia-seguros": {
+      "nombre": "Provincia Seguros",
+      "parrafo": "Con Provincia Seguros el asegurado tiene libre eleccion de taller, asi que podes traer tu vehiculo a DoctorCar directamente. El circuito es el habitual: denuncia del siniestro, numero de siniestro, presupuesto y peritacion. Tene en cuenta que el peritaje con esta compania demora en promedio unos 5 dias habiles, un poco mas que otras aseguradoras de la zona, por lo que conviene iniciar el tramite apenas ocurre el siniestro; nosotros cargamos el presupuesto con fotos el mismo dia que entra el auto. Una vez emitida la orden de reparacion, facturamos directo a Provincia Seguros: no adelantas el monto cubierto, solo la franquicia si tu poliza la tiene. Del seguimiento con la compania nos ocupamos nosotros.",
+      "faqs": [
+        {
+          "q": "Provincia Seguros acepta que repare en DoctorCar?",
+          "a": "Si, trabaja con libre eleccion de taller. Presentamos el presupuesto con el detalle de danos y la compania emite la orden de reparacion a nuestro nombre."
+        },
+        {
+          "q": "Cuanto demora el peritaje de Provincia Seguros?",
+          "a": "En promedio unos 5 dias habiles, algo mas que otras companias. Por eso cargamos el presupuesto y pedimos la inspeccion apenas entra el vehiculo al taller."
+        }
+      ]
+    },
+    "mercantil-andina": {
+      "nombre": "Mercantil Andina",
+      "parrafo": "Mercantil Andina opera con libre eleccion de taller: elegis donde reparar y la compania autoriza contra presupuesto. En DoctorCar gestionamos ese tramite completo. Con el numero de siniestro armamos el legajo con fotografias, detalle de danos y repuestos, y coordinamos la inspeccion del perito, que con esta aseguradora demora en promedio unos 4 dias habiles. Emitida la orden de reparacion, arrancamos el trabajo con plazo cerrado y facturamos directo a Mercantil Andina, de modo que no adelantas el costo cubierto por la poliza; unicamente la franquicia si corresponde. Si la compania pide documentacion adicional o una reinspeccion, lo resolvemos nosotros y te mantenemos al tanto por WhatsApp durante todo el proceso.",
+      "faqs": [
+        {
+          "q": "Puedo elegir DoctorCar siendo asegurado de Mercantil Andina?",
+          "a": "Si. Mercantil Andina trabaja con libre eleccion: presentamos nuestro presupuesto, la compania lo autoriza y emite la orden de reparacion para nuestro taller."
+        },
+        {
+          "q": "Cuanto tarda el peritaje con Mercantil Andina?",
+          "a": "En promedio unos 4 dias habiles desde la denuncia. Nosotros pedimos la inspeccion y despues seguimos la autorizacion del presupuesto hasta la orden de reparacion."
+        }
+      ]
+    },
+    "nacion-seguros": {
+      "nombre": "Nación Seguros",
+      "parrafo": "Nacion Seguros, la aseguradora vinculada al Banco Nacion, trabaja con esquema de libre eleccion de taller: como asegurado podes reparar tu vehiculo en DoctorCar presentando presupuesto. El punto a planificar es el tiempo de peritaje, que en promedio ronda los 5 dias habiles, de los mas largos entre las companias que gestionamos; por eso cargamos el presupuesto con fotos y detalle de danos apenas entra el auto, para que la inspeccion quede pedida cuanto antes. Con la orden de reparacion emitida, el trabajo arranca con plazo cerrado y la facturacion va directa del taller a la compania: vos solo pagas la franquicia si tu poliza la incluye. Nos ocupamos del seguimiento del expediente de punta a punta.",
+      "faqs": [
+        {
+          "q": "Nacion Seguros me deja reparar en el taller que yo elija?",
+          "a": "Si, opera con libre eleccion de taller contra presupuesto. DoctorCar arma la documentacion y la presenta; la compania autoriza y emite la orden de reparacion."
+        },
+        {
+          "q": "Cuanto demora el peritaje con Nacion Seguros?",
+          "a": "En promedio unos 5 dias habiles. Conviene denunciar el siniestro y traer el auto cuanto antes asi la inspeccion queda agendada sin perder dias."
+        }
+      ]
+    },
+    "rio-uruguay-seguros": {
+      "nombre": "Río Uruguay Seguros",
+      "parrafo": "Rio Uruguay Seguros (RUS) es una cooperativa de la region litoral con buena cartera de vehiculos en Santa Fe. Trabaja con libre eleccion de taller, asi que podes reparar tu auto en DoctorCar sin pasar por una red obligatoria: con el numero de siniestro armamos el presupuesto con fotos y nomenclador de danos, y coordinamos la peritacion, que con RUS demora en promedio unos 4 dias habiles. Autorizado el presupuesto, la compania emite la orden de reparacion y la facturacion es directa al taller; no adelantas el monto cubierto, solo la franquicia si tu poliza la tiene. Seguimos el expediente ante la cooperativa y te informamos cada avance hasta la entrega del vehiculo terminado.",
+      "faqs": [
+        {
+          "q": "Rio Uruguay Seguros acepta talleres de libre eleccion?",
+          "a": "Si. RUS trabaja con libre eleccion contra presupuesto: presentamos el detalle de danos con fotos y la cooperativa autoriza la reparacion en DoctorCar."
+        },
+        {
+          "q": "Cuanto tarda el peritaje con Rio Uruguay Seguros?",
+          "a": "En promedio unos 4 dias habiles desde que el siniestro esta denunciado. Nosotros gestionamos la inspeccion y la autorizacion del presupuesto."
+        }
+      ]
+    },
+    "galicia-seguros": {
+      "nombre": "Galicia Seguros",
+      "parrafo": "Galicia Seguros, la aseguradora del grupo Galicia, opera con libre eleccion de taller: si tu auto asegurado sufrio un siniestro, podes elegir DoctorCar para la reparacion. El tramite lo manejamos nosotros: con la denuncia hecha y el numero de siniestro cargamos el presupuesto con fotografias y detalle de repuestos, y pedimos la inspeccion del perito, que con esta compania demora en promedio unos 4 dias habiles. Cuando la compania autoriza y emite la orden de reparacion, arrancamos el trabajo con fecha de entrega comprometida. La facturacion es directa entre DoctorCar y Galicia Seguros, con lo cual no adelantas el costo cubierto por tu poliza; unicamente la franquicia si corresponde. Te avisamos cada avance por WhatsApp.",
+      "faqs": [
+        {
+          "q": "Siendo cliente de Galicia Seguros, puedo reparar en DoctorCar?",
+          "a": "Si. Galicia Seguros trabaja con libre eleccion de taller contra presupuesto. Armamos y presentamos la documentacion; la compania autoriza la reparacion en nuestro taller."
+        },
+        {
+          "q": "Cuanto demora el peritaje de Galicia Seguros?",
+          "a": "En promedio unos 4 dias habiles desde la denuncia del siniestro. Despues gestionamos la autorizacion del presupuesto hasta que sale la orden de reparacion."
+        }
+      ]
+    }
+  }
 }
