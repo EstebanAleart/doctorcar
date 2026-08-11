@@ -31,7 +31,7 @@ export default function ContactoPage() {
           <Phone className="w-5 h-5 text-dc-blue mt-0.5" />
           <div>
             <div className="font-semibold text-dc-navy">Teléfono</div>
-            <a href="tel:+543412697000" className="text-dc-blue hover:underline text-sm">341 269-7000</a>
+            <a href="tel:+543412697000" data-cta="contacto-telefono" className="text-dc-blue hover:underline text-sm">341 269-7000</a>
           </div>
         </div>
         <div className="flex items-start gap-3 p-5 bg-dc-blue-pale border border-dc-blue/20 rounded-xl">
@@ -42,6 +42,7 @@ export default function ContactoPage() {
               href="https://wa.me/543412697000?text=Hola,%20quiero%20un%20presupuesto"
               target="_blank"
               rel="noopener noreferrer"
+              data-cta="contacto-whatsapp"
               className="text-dc-blue hover:underline text-sm"
             >
               Escribinos por WhatsApp
@@ -61,6 +62,8 @@ export default function ContactoPage() {
         href="https://wa.me/543412697000?text=Hola,%20quiero%20un%20presupuesto"
         target="_blank"
         rel="noopener noreferrer"
+        data-goal="presupuesto"
+        data-cta="contacto-presupuesto"
         className="inline-flex items-center gap-2 bg-dc-blue text-white font-semibold px-6 py-3 rounded-lg hover:brightness-110 transition"
       >
         <MessageCircle className="w-5 h-5" />

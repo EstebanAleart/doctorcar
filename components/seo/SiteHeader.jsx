@@ -78,6 +78,7 @@ export default function SiteHeader() {
             href={waUrl}
             target="_blank"
             rel="noopener noreferrer"
+            data-cta="header-whatsapp"
             className="hidden sm:inline-flex items-center gap-2 bg-dc-green text-white text-sm font-semibold px-4 py-2 rounded-lg hover:brightness-110 transition shadow-sm"
           >
             <MessageCircle className="w-4 h-4" />
@@ -134,6 +135,7 @@ export default function SiteHeader() {
             href={waUrl}
             target="_blank"
             rel="noopener noreferrer"
+            data-cta="header-whatsapp-mobile"
             className="inline-flex items-center gap-2 bg-dc-green text-white font-semibold px-4 py-2 rounded-lg mt-2"
           >
             <MessageCircle className="w-4 h-4" />

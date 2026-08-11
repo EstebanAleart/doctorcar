@@ -46,6 +46,7 @@ export default function LandingPage() {
               href="https://wa.me/543412697000?text=Hola,%20me%20contacto%20desde%20la%20pagina%20principal"
               target="_blank"
               rel="noopener noreferrer"
+              data-cta="header-whatsapp"
               className="inline-flex items-center gap-2 bg-dc-green text-white text-sm font-semibold px-4 py-2 rounded-md shadow-md hover:brightness-110 transition cursor-pointer"
             >
               <MessageCircle className="w-4 h-4" />
@@ -75,6 +76,8 @@ export default function LandingPage() {
                 href="https://wa.me/543412697000?text=Hola,%20me%20contacto%20desde%20la%20pagina%20principal.%20Quiero%20un%20presupuesto"
                 target="_blank"
                 rel="noopener noreferrer"
+                data-goal="presupuesto"
+                data-cta="hero-presupuesto"
                 className="inline-flex items-center justify-center gap-2 bg-dc-green text-white text-lg font-semibold px-8 h-12 rounded-md shadow-md hover:brightness-110 transition cursor-pointer"
               >
                 <MessageCircle className="w-5 h-5" />
@@ -405,6 +408,7 @@ export default function LandingPage() {
                 href="https://wa.me/543412697000?text=Hola,%20me%20contacto%20desde%20la%20pagina%20principal.%20Quiero%20saber%20si%20llegan%20a%20mi%20zona"
                 target="_blank"
                 rel="noopener noreferrer"
+                data-cta="zonas-consulta"
                 className="inline-flex items-center gap-2 bg-dc-navy text-white font-semibold px-6 py-3 rounded-md shadow-md hover:bg-dc-blue transition cursor-pointer"
               >
                 <MessageCircle className="w-4 h-4" />
@@ -441,6 +445,8 @@ export default function LandingPage() {
               href="https://wa.me/543412697000?text=Hola,%20me%20contacto%20desde%20la%20pagina%20principal.%20Quiero%20un%20presupuesto"
               target="_blank"
               rel="noopener noreferrer"
+              data-goal="presupuesto"
+              data-cta="cta-final-presupuesto"
               className="inline-flex items-center justify-center gap-2 bg-dc-green text-white text-lg font-semibold px-8 h-12 rounded-lg shadow-lg hover:brightness-110 transition cursor-pointer"
             >
               <MessageCircle className="w-5 h-5" />
@@ -553,7 +559,7 @@ export default function LandingPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Phone className="w-4 h-4 text-dc-blue" />
-                  <a href="tel:+543412697000" className="hover:text-white transition-colors">
+                  <a href="tel:+543412697000" data-cta="footer-telefono" className="hover:text-white transition-colors">
                     341 269-7000
                   </a>
                 </div>

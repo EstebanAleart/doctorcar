@@ -138,6 +138,7 @@ export default function SiteFooter() {
                 <Phone className="w-4 h-4 text-dc-blue" />
                 <a
                   href="tel:+543412697000"
+                  data-cta="footer-telefono"
                   className="hover:text-white transition-colors"
                 >
                   341 269-7000

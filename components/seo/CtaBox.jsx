@@ -18,6 +18,8 @@ export default function CtaBox({
         href={waUrl}
         target="_blank"
         rel="noopener noreferrer"
+        data-goal="presupuesto"
+        data-cta="ctabox-presupuesto"
         className="inline-flex items-center gap-2 bg-dc-green text-white font-semibold px-6 py-3 rounded-lg hover:brightness-110 transition-all shadow whitespace-nowrap"
       >
         <MessageCircle className="w-5 h-5" />
